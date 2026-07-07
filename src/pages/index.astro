@@ -1,0 +1,149 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContactBlock from '../components/ContactBlock.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import { getCollection } from 'astro:content';
+
+const allWorks = await getCollection('works');
+const latestWorks = allWorks
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+  .slice(0, 3);
+---
+<Layout title="トップ">
+  <!-- Hero -->
+  <section class="relative pt-16 overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 py-12 md:py-20">
+      <div class="text-center mb-10 md:mb-16">
+        <h1 class="font-heading text-4xl md:text-6xl font-bold text-ink-strong leading-tight mb-6">
+          その願い、あきらめない。
+        </h1>
+        <!-- 代替案：「行けない」を、「行けた」に。 -->
+        <!-- 代替案：外出をあきらめない毎日を、ここから。 -->
+        <p class="text-lg md:text-xl leading-relaxed max-w-xl mx-auto">
+          医療のプロが、あなたの外出に寄り添います。<br />
+          行きたい場所へ、会いたい人のもとへ、もう一度。
+        </p>
+      </div>
+
+      <!-- 4-column photo gallery -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <div class="aspect-[3/4] bg-base-alt rounded-2xl flex items-center justify-center shadow-sm">
+          <p class="text-sm text-ink/40 px-3 text-center">スタッフと利用者が海辺の展望デッキで笑顔</p>
+        </div>
+        <div class="aspect-[3/4] bg-base-alt rounded-2xl flex items-center justify-center shadow-sm">
+          <p class="text-sm text-ink/40 px-3 text-center">桜並木を車いすで散歩する様子</p>
+        </div>
+        <div class="hidden md:flex aspect-[3/4] bg-base-alt rounded-2xl items-center justify-center shadow-sm">
+          <p class="text-sm text-ink/40 px-3 text-center">福祉車両の外観とリフト</p>
+        </div>
+        <div class="hidden md:flex aspect-[3/4] bg-base-alt rounded-2xl items-center justify-center shadow-sm">
+          <p class="text-sm text-ink/40 px-3 text-center">家族と外食を楽しむ高齢者</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission -->
+  <section class="py-20 md:py-28 fade-in">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div class="aspect-[4/3] bg-base-alt rounded-2xl flex items-center justify-center shadow-sm">
+          <p class="text-sm text-ink/40 px-4 text-center">男性スタッフが高齢の利用者と並んで歩く姿、自然光</p>
+        </div>
+        <div>
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-ink-strong mb-4">
+            あなたの「行きたい」を、かなえる。
+          </h2>
+          <p class="mb-6 leading-relaxed">
+            看護師や介護福祉士が、お出かけに付き添います。<br />
+            通院も、旅行も、お買い物も。<br />
+            ご本人もご家族も、安心できるサポートを。
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <a href="/about" class="bg-accent text-white font-bold px-6 py-3 rounded-full hover:bg-accent-hover transition-colors min-h-[44px]">
+              サービスについて
+            </a>
+            <a href="/vision" class="border-2 border-accent text-accent font-bold px-6 py-3 rounded-full hover:bg-accent hover:text-white transition-colors min-h-[44px]">
+              私たちの想い
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Taxi -->
+  <section class="bg-base-alt py-20 md:py-28 fade-in">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div class="order-2 md:order-1">
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-ink-strong mb-4">
+            医療従事者と、安全なお出かけを。
+          </h2>
+          <p class="mb-6 leading-relaxed">
+            車いすやストレッチャーに対応した福祉車両で、<br />
+            ご自宅から目的地まで安全に送迎します。<br />
+            乗り降りのお手伝いも、おまかせください。
+          </p>
+          <a href="/taxi" class="bg-accent text-white font-bold px-6 py-3 rounded-full hover:bg-accent-hover transition-colors min-h-[44px] inline-block">
+            介護タクシーについて
+          </a>
+        </div>
+        <div class="order-1 md:order-2 aspect-[4/3] bg-white rounded-2xl flex items-center justify-center shadow-sm">
+          <p class="text-sm text-ink/40 px-4 text-center">福祉車両のリフトが作動している様子</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Works -->
+  <section class="py-20 md:py-28 fade-in">
+    <div class="max-w-5xl mx-auto px-4">
+      <SectionTitle class="mb-12">お出かけ実績</SectionTitle>
+      <div class="grid md:grid-cols-3 gap-6 mb-8">
+        {latestWorks.map((work) => (
+          <article class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+            <a href={`/works/${work.id}`} class="block">
+              <div class="aspect-[4/3] bg-base-alt flex items-center justify-center">
+                <p class="text-sm text-ink/40 px-4 text-center">{work.data.excerpt}</p>
+              </div>
+              <div class="p-5">
+                <span class="inline-block bg-accent/10 text-accent text-xs font-bold px-3 py-1 rounded-full mb-2">{work.data.tag}</span>
+                <h3 class="font-heading font-bold text-lg text-ink-strong leading-snug">{work.data.title}</h3>
+                <time class="text-sm text-ink/50 mt-1 block">{work.data.date}</time>
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+      <div class="text-center">
+        <a href="/works" class="text-accent font-bold hover:text-accent-hover transition-colors underline underline-offset-4">
+          一覧をみる →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- News -->
+  <section class="bg-base-alt py-20 md:py-28 fade-in">
+    <div class="max-w-3xl mx-auto px-4">
+      <SectionTitle class="mb-10">お知らせ</SectionTitle>
+      <ul class="space-y-4">
+        <li class="flex gap-4 items-baseline border-b border-ink/10 pb-4">
+          <time class="text-sm text-ink/50 shrink-0">2026.07.01</time>
+          <p>ホームページを公開しました</p>
+        </li>
+        <li class="flex gap-4 items-baseline border-b border-ink/10 pb-4">
+          <time class="text-sm text-ink/50 shrink-0">2026.06.15</time>
+          <p>夏季の外出サポート予約を受付中です</p>
+        </li>
+        <li class="flex gap-4 items-baseline">
+          <time class="text-sm text-ink/50 shrink-0">2026.06.01</time>
+          <p>LINE公式アカウントを開設しました</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <ContactBlock />
+</Layout>

@@ -1,0 +1,23 @@
+---
+interface Props {
+  title: string;
+  tag?: string;
+  date?: string;
+  href?: string;
+  alt: string;
+}
+
+const { title, tag, date, href, alt } = Astro.props;
+---
+<article class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+  {href ? <a href={href} class="block"> : <div>}
+    <div class="aspect-[4/3] bg-base-alt flex items-center justify-center">
+      <p class="text-sm text-ink/40 px-4 text-center">{alt}</p>
+    </div>
+    <div class="p-5">
+      {tag && <span class="inline-block bg-accent/10 text-accent text-xs font-bold px-3 py-1 rounded-full mb-2">{tag}</span>}
+      <h3 class="font-heading font-bold text-lg text-ink-strong leading-snug">{title}</h3>
+      {date && <time class="text-sm text-ink/50 mt-1 block">{date}</time>}
+    </div>
+  {href ? </a> : </div>}
+</article>

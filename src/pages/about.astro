@@ -1,0 +1,125 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContactBlock from '../components/ContactBlock.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import { SITE } from '../config';
+---
+<Layout title="サービス詳細" description={`${SITE.SERVICE_NAME}の付き添いサポートサービス。医療従事者が同行し、通院・旅行・お買い物など、安心してお出かけいただけます。`}>
+  <!-- Hero -->
+  <section class="pt-16">
+    <div class="max-w-6xl mx-auto px-4 py-12 md:py-20">
+      <div class="aspect-[21/9] bg-base-alt rounded-2xl flex items-center justify-center shadow-sm mb-10">
+        <p class="text-sm text-ink/40 px-4 text-center">景色の美しい場所でスタッフと利用者が並ぶ引き構図、自然光の逆光</p>
+      </div>
+      <div class="text-center">
+        <h1 class="font-heading text-3xl md:text-5xl font-bold text-ink-strong mb-4">サービスについて</h1>
+        <p class="text-lg max-w-2xl mx-auto">医療従事者がお出かけに付き添い、安心と楽しさをお届けします。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reasons -->
+  <section class="bg-base-alt py-20 md:py-28 fade-in">
+    <div class="max-w-5xl mx-auto px-4">
+      <SectionTitle class="mb-12">選ばれる3つの理由</SectionTitle>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white rounded-2xl shadow-sm p-6 text-center">
+          <div class="aspect-square bg-base-alt rounded-2xl flex items-center justify-center mb-4">
+            <p class="text-sm text-ink/40 px-3 text-center">看護師がバイタルチェックをしている様子</p>
+          </div>
+          <h3 class="font-heading font-bold text-lg text-ink-strong mb-2">医療従事者が同行</h3>
+          <p class="text-sm">看護師や介護福祉士が付き添うから、<br />急な体調変化にも対応できます。</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm p-6 text-center">
+          <div class="aspect-square bg-base-alt rounded-2xl flex items-center justify-center mb-4">
+            <p class="text-sm text-ink/40 px-3 text-center">スタッフがご家族と打ち合わせしている様子</p>
+          </div>
+          <h3 class="font-heading font-bold text-lg text-ink-strong mb-2">一人ひとりに合わせた計画</h3>
+          <p class="text-sm">体調やご希望を丁寧にヒアリングし、<br />無理のないプランをご提案します。</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm p-6 text-center">
+          <div class="aspect-square bg-base-alt rounded-2xl flex items-center justify-center mb-4">
+            <p class="text-sm text-ink/40 px-3 text-center">ご家族が笑顔で見守る様子</p>
+          </div>
+          <h3 class="font-heading font-bold text-lg text-ink-strong mb-2">ご家族もまるごと安心</h3>
+          <p class="text-sm">付き添い中の様子をご報告。<br />離れていても安心していただけます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Flow -->
+  <section class="py-20 md:py-28 fade-in">
+    <div class="max-w-3xl mx-auto px-4">
+      <SectionTitle class="mb-12">ご利用の流れ</SectionTitle>
+      <ol class="space-y-8">
+        {[
+          { step: '1', title: 'お問い合わせ', desc: 'お電話・LINE・メールで、お気軽にご連絡ください。' },
+          { step: '2', title: '無料ヒアリング', desc: 'ご本人の体調やご希望の行き先をお聞きします。' },
+          { step: '3', title: 'プランご提案', desc: '最適なサポート内容と料金をお見積もりします。' },
+          { step: '4', title: '関係者との連携調整', desc: '医療機関やご家族と連携し、安全な外出を準備します。' },
+          { step: '5', title: '当日サポート', desc: '医療従事者が同行し、安心のお出かけをお届けします。' },
+        ].map(({ step, title, desc }) => (
+          <li class="flex gap-6 items-start">
+            <div class="w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center font-heading font-bold text-xl shrink-0">
+              {step}
+            </div>
+            <div>
+              <h3 class="font-heading font-bold text-lg text-ink-strong">{title}</h3>
+              <p class="text-sm mt-1">{desc}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="bg-base-alt py-20 md:py-28 fade-in">
+    <div class="max-w-3xl mx-auto px-4">
+      <SectionTitle class="mb-6">料金について</SectionTitle>
+      <p class="text-center mb-10">
+        ご利用内容・時間・距離に応じてお見積もりします。<br />
+        まずはお気軽にご相談ください。
+      </p>
+
+      <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-accent/10">
+            <tr>
+              <th class="text-left px-6 py-3 font-bold text-ink-strong">サービス内容</th>
+              <th class="text-right px-6 py-3 font-bold text-ink-strong">料金目安</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 要確定 -->
+            <tr class="border-t border-base-alt">
+              <td class="px-6 py-4">付き添いサポート（2時間〜）</td>
+              <td class="px-6 py-4 text-right font-bold">¥8,000〜</td>
+            </tr>
+            <tr class="border-t border-base-alt">
+              <td class="px-6 py-4">介護タクシー（片道）</td>
+              <td class="px-6 py-4 text-right font-bold">¥3,000〜</td>
+            </tr>
+            <tr class="border-t border-base-alt">
+              <td class="px-6 py-4">付き添い＋送迎パック（半日）</td>
+              <td class="px-6 py-4 text-right font-bold">¥15,000〜</td>
+            </tr>
+            <tr class="border-t border-base-alt">
+              <td class="px-6 py-4">旅行・遠方サポート（1日）</td>
+              <td class="px-6 py-4 text-right font-bold">¥30,000〜</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ul class="mt-6 text-sm text-ink/60 space-y-1">
+        <li>※ 料金はすべて税込の目安です。正式なお見積もりは無料で承ります。</li>
+        <li>※ 距離・時間・曜日・深夜早朝により変動します。</li>
+        <li>※ キャンセル料は前日50%、当日100%です。</li>
+      </ul>
+    </div>
+  </section>
+
+  <ContactBlock />
+</Layout>

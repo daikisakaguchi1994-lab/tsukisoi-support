@@ -1,0 +1,138 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SITE } from '../config';
+import { generateLineQrSvg } from '../utils/qr';
+
+const qrSvg = await generateLineQrSvg(SITE.LINE_URL);
+const formKey = import.meta.env.PUBLIC_FORM_KEY || '{{FORM_KEY}}';
+---
+<Layout title="お問い合わせ" description={`${SITE.SERVICE_NAME}へのお問い合わせ。お電話・LINE・メールフォームからお気軽にご連絡ください。`}>
+  <section class="pt-16">
+    <div class="max-w-3xl mx-auto px-4 py-12 md:py-20">
+      <h1 class="font-heading text-3xl md:text-5xl font-bold text-ink-strong text-center mb-6">お問い合わせ</h1>
+      <p class="text-center mb-12">お電話・LINE・フォームから、お気軽にご相談ください。</p>
+
+      <!-- Quick Contact -->
+      <div class="grid md:grid-cols-2 gap-6 mb-16">
+        <div class="bg-base-alt rounded-2xl p-6 text-center">
+          <p class="text-sm mb-2">お電話でのご相談</p>
+          <a href={`tel:${SITE.TEL}`} class="block font-heading text-3xl font-bold text-accent hover:text-accent-hover transition-colors min-h-[44px]">
+            {SITE.TEL}
+          </a>
+          <p class="text-sm mt-1 text-ink/60">{SITE.TEL_HOURS}</p>
+        </div>
+        <div class="bg-base-alt rounded-2xl p-6 text-center">
+          <p class="text-sm mb-2">LINEでのご相談</p>
+          <a
+            href={SITE.LINE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="md:hidden inline-block bg-line text-white font-bold px-6 py-3 rounded-full min-h-[44px] hover:opacity-90 transition-opacity"
+          >
+            LINEで友だち追加
+          </a>
+          <div class="hidden md:block">
+            <div class="inline-block bg-white p-2 rounded-lg" set:html={qrSvg} />
+            <p class="text-xs mt-1 text-ink/50">QRコードを読み取ってください</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="bg-white rounded-2xl shadow-sm p-8 md:p-10">
+        <h2 class="font-heading text-xl font-bold text-ink-strong mb-6">メールフォーム</h2>
+
+        <form id="contact-form" action="https://api.web3forms.com/submit" method="POST" class="space-y-6">
+          <input type="hidden" name="access_key" value={formKey} />
+          <input type="hidden" name="subject" value={`${SITE.SERVICE_NAME} お問い合わせ`} />
+          <input type="hidden" name="redirect" value="/thanks" />
+
+          <div>
+            <label for="name" class="block font-bold text-sm mb-1">お名前 <span class="text-red-500">*</span></label>
+            <input type="text" id="name" name="name" required
+              class="w-full border border-base-alt rounded-lg px-4 py-3 text-base focus:border-accent focus:ring-1 focus:ring-accent min-h-[44px]"
+              placeholder="山田 太郎" />
+          </div>
+
+          <div>
+            <label for="furigana" class="block font-bold text-sm mb-1">ふりがな</label>
+            <input type="text" id="furigana" name="furigana"
+              class="w-full border border-base-alt rounded-lg px-4 py-3 text-base focus:border-accent focus:ring-1 focus:ring-accent min-h-[44px]"
+              placeholder="やまだ たろう" />
+          </div>
+
+          <div>
+            <label for="tel" class="block font-bold text-sm mb-1">お電話番号 <span class="text-red-500">*</span></label>
+            <input type="tel" id="tel" name="phone" required
+              class="w-full border border-base-alt rounded-lg px-4 py-3 text-base focus:border-accent focus:ring-1 focus:ring-accent min-h-[44px]"
+              placeholder="090-1234-5678" />
+          </div>
+
+          <div>
+            <label for="email" class="block font-bold text-sm mb-1">メールアドレス</label>
+            <input type="email" id="email" name="email"
+              class="w-full border border-base-alt rounded-lg px-4 py-3 text-base focus:border-accent focus:ring-1 focus:ring-accent min-h-[44px]"
+              placeholder="example@email.com" />
+          </div>
+
+          <fieldset>
+            <legend class="font-bold text-sm mb-2">ご希望の連絡方法</legend>
+            <div class="flex flex-wrap gap-4">
+              {['電話', 'LINE', 'メール'].map((method) => (
+                <label class="flex items-center gap-2 cursor-pointer min-h-[44px]">
+                  <input type="radio" name="contact_method" value={method}
+                    class="w-5 h-5 text-accent focus:ring-accent" />
+                  <span>{method}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <div>
+            <label for="message" class="block font-bold text-sm mb-1">ご相談内容 <span class="text-red-500">*</span></label>
+            <textarea id="message" name="message" required rows={5}
+              class="w-full border border-base-alt rounded-lg px-4 py-3 text-base focus:border-accent focus:ring-1 focus:ring-accent"
+              placeholder="ご利用を検討されている内容や、ご不明な点をお聞かせください。"></textarea>
+          </div>
+
+          <div>
+            <label class="flex items-start gap-3 cursor-pointer min-h-[44px]">
+              <input type="checkbox" name="privacy" required
+                class="w-5 h-5 mt-0.5 text-accent focus:ring-accent" />
+              <span class="text-sm">
+                <a href="#" class="text-accent underline">個人情報の取り扱い</a>に同意する
+                <span class="text-red-500">*</span>
+              </span>
+            </label>
+          </div>
+
+          <button type="submit"
+            class="w-full bg-accent text-white font-bold py-4 rounded-full hover:bg-accent-hover transition-colors text-lg min-h-[44px]">
+            送信する
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  form?.addEventListener('submit', (e) => {
+    const name = form.querySelector<HTMLInputElement>('[name="name"]');
+    const tel = form.querySelector<HTMLInputElement>('[name="phone"]');
+    const message = form.querySelector<HTMLTextAreaElement>('[name="message"]');
+    const privacy = form.querySelector<HTMLInputElement>('[name="privacy"]');
+    const errors: string[] = [];
+
+    if (!name?.value.trim()) errors.push('お名前を入力してください。');
+    if (!tel?.value.trim()) errors.push('お電話番号を入力してください。');
+    if (!message?.value.trim()) errors.push('ご相談内容を入力してください。');
+    if (!privacy?.checked) errors.push('個人情報の取り扱いに同意してください。');
+
+    if (errors.length > 0) {
+      e.preventDefault();
+      alert(errors.join('\n'));
+    }
+  });
+</script>

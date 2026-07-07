@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContactBlock from '../components/ContactBlock.astro';
+import { SITE } from '../config';
+---
+<Layout title="私たちの想い" description={`${SITE.SERVICE_NAME}の代表が語る、付き添いサポート・介護タクシー事業にかける想い。`}>
+  <!-- Hero -->
+  <section class="pt-16">
+    <div class="max-w-4xl mx-auto px-4 py-12 md:py-20">
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div class="aspect-[3/4] bg-base-alt rounded-2xl flex items-center justify-center shadow-sm">
+          <p class="text-sm text-ink/40 px-4 text-center">代表の上半身ポートレート、白い壁の前、自然光、穏やかな笑顔</p>
+        </div>
+        <div>
+          <h1 class="font-heading text-3xl md:text-4xl font-bold text-ink-strong mb-4">私たちの想い</h1>
+          <p class="text-sm text-ink/60">代表 <!-- 代表インタビュー原稿に差し替え --></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Story -->
+  <section class="bg-base-alt py-20 md:py-28 fade-in">
+    <div class="max-w-3xl mx-auto px-4 space-y-8">
+      <!-- 代表インタビュー原稿に差し替え -->
+      <h2 class="font-heading text-2xl font-bold text-ink-strong">
+        「行きたい」を、あきらめなくていい社会へ。
+      </h2>
+      <p>
+        私がこの事業を始めたきっかけは、ある高齢の方との出会いでした。
+        「孫の結婚式に行きたいけど、もう無理だろうね」。
+        そう諦めた表情で話すその方の姿が、忘れられませんでした。
+      </p>
+      <p>
+        体が不自由になったからといって、行きたい場所を諦める必要はない。
+        会いたい人に会えないのは、仕方のないことではない。
+        そう強く思ったのが、この仕事の原点です。
+      </p>
+      <p>
+        私たちのチームには、看護師や介護福祉士など、
+        医療・介護の現場で経験を積んだスタッフがいます。
+        専門知識を持ったスタッフが付き添うことで、
+        ご本人にもご家族にも安心していただけると考えています。
+      </p>
+      <p>
+        「行けてよかった」「また連れて行ってほしい」。
+        その一言が、私たちにとって一番の喜びです。
+      </p>
+      <p>
+        小さな外出でも、大きな旅行でも。
+        あなたの「行きたい」に、心を込めて寄り添います。
+      </p>
+    </div>
+  </section>
+
+  <ContactBlock />
+</Layout>

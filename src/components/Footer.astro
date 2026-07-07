@@ -1,0 +1,41 @@
+---
+import { SITE } from '../config';
+
+const navItems = [
+  { label: 'サービス', href: '/about' },
+  { label: '介護タクシー', href: '/taxi' },
+  { label: '私たちの想い', href: '/vision' },
+  { label: 'お出かけ実績', href: '/works' },
+  { label: 'お問い合わせ', href: '/contact' },
+];
+const year = new Date().getFullYear();
+---
+<footer class="bg-ink-strong text-base py-16">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="grid md:grid-cols-3 gap-10 mb-12">
+      <div>
+        <p class="font-heading text-xl font-bold tracking-widest mb-2">{SITE.SERVICE_NAME}</p>
+        <p class="text-sm opacity-70">あなたの「行きたい」に、寄り添います。</p>
+      </div>
+      <div class="text-sm space-y-1 opacity-80">
+        <p>{SITE.COMPANY_NAME}</p>
+        <p>〒 {SITE.ADDRESS}</p>
+        <p>対応エリア：{SITE.AREA}</p>
+      </div>
+      <nav aria-label="フッターナビゲーション">
+        <ul class="space-y-2">
+          {navItems.map((item) => (
+            <li>
+              <a href={item.href} class="text-sm opacity-80 hover:opacity-100 transition-opacity">
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+    <div class="border-t border-white/10 pt-6 text-center text-xs opacity-50">
+      <p>&copy; {year} {SITE.COMPANY_NAME} All rights reserved.</p>
+    </div>
+  </div>
+</footer>

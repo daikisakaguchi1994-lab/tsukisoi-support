@@ -1,0 +1,75 @@
+---
+import { SITE } from '../config';
+
+const navItems = [
+  { label: 'サービス', href: '/about' },
+  { label: '介護タクシー', href: '/taxi' },
+  { label: '私たちの想い', href: '/vision' },
+  { label: 'お出かけ実績', href: '/works' },
+];
+---
+<header class="fixed top-0 left-0 right-0 z-50 bg-base/90 backdrop-blur-sm border-b border-base-alt">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <a href="/" class="font-heading text-xl font-bold tracking-widest text-ink-strong">
+      {SITE.SERVICE_NAME}
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="hidden md:flex items-center gap-6" aria-label="メインナビゲーション">
+      {navItems.map((item) => (
+        <a href={item.href} class="text-sm text-ink hover:text-accent transition-colors">
+          {item.label}
+        </a>
+      ))}
+      <a
+        href="/contact"
+        class="bg-accent text-white text-sm font-bold px-5 py-2 rounded-full hover:bg-accent-hover transition-colors"
+      >
+        お問い合わせ
+      </a>
+    </nav>
+
+    <!-- Mobile Hamburger -->
+    <button
+      id="menu-toggle"
+      class="md:hidden p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
+      aria-label="メニューを開く"
+      aria-expanded="false"
+    >
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <nav
+    id="mobile-menu"
+    class="hidden md:hidden bg-base border-t border-base-alt"
+    aria-label="モバイルナビゲーション"
+  >
+    <div class="px-4 py-6 space-y-4">
+      {navItems.map((item) => (
+        <a href={item.href} class="block text-lg text-ink hover:text-accent transition-colors">
+          {item.label}
+        </a>
+      ))}
+      <a
+        href="/contact"
+        class="block bg-accent text-white text-center font-bold px-5 py-3 rounded-full hover:bg-accent-hover transition-colors"
+      >
+        お問い合わせ
+      </a>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  toggle?.addEventListener('click', () => {
+    const isOpen = !menu?.classList.contains('hidden');
+    menu?.classList.toggle('hidden');
+    toggle.setAttribute('aria-expanded', String(!isOpen));
+  });
+</script>

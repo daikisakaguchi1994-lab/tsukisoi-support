@@ -1,0 +1,103 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContactBlock from '../components/ContactBlock.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+---
+<Layout title="介護タクシー" description="車いす・ストレッチャー対応の福祉車両で安全に送迎。医療従事者が同乗し、通院・旅行・冠婚葬祭など幅広く対応します。">
+  <!-- Hero -->
+  <section class="pt-16">
+    <div class="max-w-6xl mx-auto px-4 py-12 md:py-20">
+      <div class="aspect-[21/9] bg-base-alt rounded-2xl flex items-center justify-center shadow-sm mb-10">
+        <p class="text-sm text-ink/40 px-4 text-center">福祉車両の全体像、リフトが降りた状態、明るい屋外</p>
+      </div>
+      <div class="text-center">
+        <h1 class="font-heading text-3xl md:text-5xl font-bold text-ink-strong mb-4">医療従事者が、安全に送迎します。</h1>
+        <p class="text-lg max-w-2xl mx-auto">車いすやストレッチャーのまま乗車できる福祉車両で、ご自宅から目的地まで。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vehicle Photos -->
+  <section class="bg-base-alt py-20 md:py-28 fade-in">
+    <div class="max-w-5xl mx-auto px-4">
+      <SectionTitle class="mb-12">車両・設備のご紹介</SectionTitle>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div class="aspect-[4/3] bg-base flex items-center justify-center">
+            <p class="text-sm text-ink/40 px-3 text-center">車両外観とリフト作動シーン</p>
+          </div>
+          <div class="p-4">
+            <h3 class="font-heading font-bold text-ink-strong">リフト付き福祉車両</h3>
+            <p class="text-sm mt-1">車いすのまま安全に乗降できます。</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div class="aspect-[4/3] bg-base flex items-center justify-center">
+            <p class="text-sm text-ink/40 px-3 text-center">広々とした車内、固定ベルト</p>
+          </div>
+          <div class="p-4">
+            <h3 class="font-heading font-bold text-ink-strong">広い車内空間</h3>
+            <p class="text-sm mt-1">ゆったりとした車内で快適に移動。</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div class="aspect-[4/3] bg-base flex items-center justify-center">
+            <p class="text-sm text-ink/40 px-3 text-center">ストレッチャーでの移動シーン</p>
+          </div>
+          <div class="p-4">
+            <h3 class="font-heading font-bold text-ink-strong">ストレッチャー対応</h3>
+            <p class="text-sm mt-1">寝たままの移動にも対応しています。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scenes -->
+  <section class="py-20 md:py-28 fade-in">
+    <div class="max-w-5xl mx-auto px-4">
+      <SectionTitle class="mb-12">こんなシーンでご利用いただけます</SectionTitle>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+        {[
+          { icon: '🏥', title: '通院・入退院', desc: '定期的な通院やリハビリに。' },
+          { icon: '🛒', title: '日常のお買い物', desc: 'スーパーやお気に入りのお店へ。' },
+          { icon: '⛩️', title: '冠婚葬祭・お墓参り', desc: '大切な行事に参加できます。' },
+          { icon: '✈️', title: '旅行・観光', desc: '遠方への旅行もサポートします。' },
+          { icon: '🏫', title: 'お子さまの通学・通院', desc: '医療的ケア児の送迎にも対応。' },
+          { icon: '🎪', title: 'レジャー・イベント', desc: 'お祭りやコンサートなどへ。' },
+        ].map(({ icon, title, desc }) => (
+          <div class="bg-base-alt rounded-2xl p-6 text-center">
+            <div class="text-3xl mb-3">{icon}</div>
+            <h3 class="font-heading font-bold text-ink-strong mb-1">{title}</h3>
+            <p class="text-sm">{desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Safety -->
+  <section class="bg-base-alt py-20 md:py-28 fade-in">
+    <div class="max-w-3xl mx-auto px-4">
+      <SectionTitle class="mb-10">安全への取り組み</SectionTitle>
+      <ul class="space-y-4">
+        {[
+          '運転手は介護職員初任者研修以上の資格を保有',
+          '乗車前に体調確認・バイタルチェックを実施',
+          '車いす・ストレッチャー固定は二重ロック方式',
+          '車内は毎回消毒・清掃を徹底',
+          '万が一に備え、緊急時の連携体制を整備',
+        ].map((item) => (
+          <li class="flex gap-3 items-start">
+            <svg class="w-6 h-6 text-accent shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <p>{item}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <ContactBlock />
+</Layout>

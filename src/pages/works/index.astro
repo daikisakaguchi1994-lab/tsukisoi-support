@@ -1,0 +1,38 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ContactBlock from '../../components/ContactBlock.astro';
+import SectionTitle from '../../components/SectionTitle.astro';
+import { getCollection } from 'astro:content';
+import { SITE } from '../../config';
+
+const allWorks = await getCollection('works');
+const sortedWorks = allWorks.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+---
+<Layout title="お出かけ実績" description={`${SITE.SERVICE_NAME}の付き添いサポート・介護タクシーのお出かけ実績をご紹介します。`}>
+  <section class="pt-16">
+    <div class="max-w-5xl mx-auto px-4 py-12 md:py-20">
+      <h1 class="font-heading text-3xl md:text-5xl font-bold text-ink-strong text-center mb-12">お出かけ実績</h1>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        {sortedWorks.map((work) => (
+          <article class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+            <a href={`/works/${work.id}`} class="block">
+              <div class="aspect-[4/3] bg-base-alt flex items-center justify-center">
+                <p class="text-sm text-ink/40 px-4 text-center">{work.data.excerpt}</p>
+              </div>
+              <div class="p-5">
+                <span class="inline-block bg-accent/10 text-accent text-xs font-bold px-3 py-1 rounded-full mb-2">{work.data.tag}</span>
+                <h2 class="font-heading font-bold text-lg text-ink-strong leading-snug">{work.data.title}</h2>
+                <time class="text-sm text-ink/50 mt-1 block">{work.data.date}</time>
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ContactBlock />
+</Layout>
