@@ -2,7 +2,13 @@
 import Layout from '../layouts/Layout.astro';
 import ContactBlock from '../components/ContactBlock.astro';
 import SectionTitle from '../components/SectionTitle.astro';
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
+
+import heroSeaside from '../assets/images/hero-seaside.png';
+import heroSakura from '../assets/images/hero-sakura.png';
+import taxiVehicle from '../assets/images/taxi-vehicle.png';
+import heroDining from '../assets/images/hero-dining.png';
 
 const allWorks = await getCollection('works');
 const latestWorks = allWorks
@@ -27,17 +33,45 @@ const latestWorks = allWorks
 
       <!-- 4-column photo gallery -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        <div class="aspect-[3/4] bg-base-alt rounded-2xl flex items-center justify-center shadow-sm">
-          <p class="text-sm text-ink/40 px-3 text-center">スタッフと利用者が海辺の展望デッキで笑顔</p>
+        <div class="rounded-2xl overflow-hidden shadow-sm">
+          <Image
+            src={heroSeaside}
+            alt="海辺の展望デッキでスタッフと一緒に海を眺める高齢女性"
+            width={400}
+            height={533}
+            class="w-full h-full object-cover aspect-[3/4]"
+            format="webp"
+          />
         </div>
-        <div class="aspect-[3/4] bg-base-alt rounded-2xl flex items-center justify-center shadow-sm">
-          <p class="text-sm text-ink/40 px-3 text-center">桜並木を車いすで散歩する様子</p>
+        <div class="rounded-2xl overflow-hidden shadow-sm">
+          <Image
+            src={heroSakura}
+            alt="桜並木を車いすで散歩する利用者とスタッフ"
+            width={400}
+            height={533}
+            class="w-full h-full object-cover aspect-[3/4]"
+            format="webp"
+          />
         </div>
-        <div class="hidden md:flex aspect-[3/4] bg-base-alt rounded-2xl items-center justify-center shadow-sm">
-          <p class="text-sm text-ink/40 px-3 text-center">福祉車両の外観とリフト</p>
+        <div class="hidden md:block rounded-2xl overflow-hidden shadow-sm">
+          <Image
+            src={taxiVehicle}
+            alt="福祉車両のリフトで車いすの利用者を乗降させるスタッフ"
+            width={400}
+            height={533}
+            class="w-full h-full object-cover aspect-[3/4]"
+            format="webp"
+          />
         </div>
-        <div class="hidden md:flex aspect-[3/4] bg-base-alt rounded-2xl items-center justify-center shadow-sm">
-          <p class="text-sm text-ink/40 px-3 text-center">家族と外食を楽しむ高齢者</p>
+        <div class="hidden md:block rounded-2xl overflow-hidden shadow-sm">
+          <Image
+            src={heroDining}
+            alt="車いすで外食を楽しむ高齢女性とスタッフ"
+            width={400}
+            height={533}
+            class="w-full h-full object-cover aspect-[3/4]"
+            format="webp"
+          />
         </div>
       </div>
     </div>
@@ -89,8 +123,15 @@ const latestWorks = allWorks
             介護タクシーについて
           </a>
         </div>
-        <div class="order-1 md:order-2 aspect-[4/3] bg-white rounded-2xl flex items-center justify-center shadow-sm">
-          <p class="text-sm text-ink/40 px-4 text-center">福祉車両のリフトが作動している様子</p>
+        <div class="order-1 md:order-2 rounded-2xl overflow-hidden shadow-sm">
+          <Image
+            src={taxiVehicle}
+            alt="福祉車両のリフトで車いすの利用者を乗降させるスタッフ"
+            width={600}
+            height={450}
+            class="w-full h-full object-cover aspect-[4/3]"
+            format="webp"
+          />
         </div>
       </div>
     </div>

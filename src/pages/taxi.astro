@@ -2,13 +2,23 @@
 import Layout from '../layouts/Layout.astro';
 import ContactBlock from '../components/ContactBlock.astro';
 import SectionTitle from '../components/SectionTitle.astro';
+import { Image } from 'astro:assets';
+
+import taxiVehicle from '../assets/images/taxi-vehicle.png';
 ---
 <Layout title="介護タクシー" description="車いす・ストレッチャー対応の福祉車両で安全に送迎。医療従事者が同乗し、通院・旅行・冠婚葬祭など幅広く対応します。">
   <!-- Hero -->
   <section class="pt-16">
     <div class="max-w-6xl mx-auto px-4 py-12 md:py-20">
-      <div class="aspect-[21/9] bg-base-alt rounded-2xl flex items-center justify-center shadow-sm mb-10">
-        <p class="text-sm text-ink/40 px-4 text-center">福祉車両の全体像、リフトが降りた状態、明るい屋外</p>
+      <div class="rounded-2xl overflow-hidden shadow-sm mb-10">
+        <Image
+          src={taxiVehicle}
+          alt="福祉車両のリフトで車いすの利用者を乗降させるスタッフ"
+          width={1200}
+          height={514}
+          class="w-full object-cover aspect-[21/9]"
+          format="webp"
+        />
       </div>
       <div class="text-center">
         <h1 class="font-heading text-3xl md:text-5xl font-bold text-ink-strong mb-4">医療従事者が、安全に送迎します。</h1>
@@ -23,9 +33,14 @@ import SectionTitle from '../components/SectionTitle.astro';
       <SectionTitle class="mb-12">車両・設備のご紹介</SectionTitle>
       <div class="grid md:grid-cols-3 gap-6">
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div class="aspect-[4/3] bg-base flex items-center justify-center">
-            <p class="text-sm text-ink/40 px-3 text-center">車両外観とリフト作動シーン</p>
-          </div>
+          <Image
+            src={taxiVehicle}
+            alt="リフト付き福祉車両の外観"
+            width={400}
+            height={300}
+            class="w-full object-cover aspect-[4/3]"
+            format="webp"
+          />
           <div class="p-4">
             <h3 class="font-heading font-bold text-ink-strong">リフト付き福祉車両</h3>
             <p class="text-sm mt-1">車いすのまま安全に乗降できます。</p>
