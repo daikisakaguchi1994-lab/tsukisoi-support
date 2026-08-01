@@ -4,22 +4,31 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+// テキストが焼き込み済みの画像はここに列挙し、表示中はテキストオーバーレイを非表示にする。
+const NO_OVERLAY_IMAGES = new Set(['hero-02-beach.jpg']);
+
 const heroDir = path.join(process.cwd(), 'public', 'images', 'hero');
 const heroImages = fs.existsSync(heroDir)
   ? fs
       .readdirSync(heroDir)
       .filter((file) => /\.(jpe?g|png|webp)$/i.test(file))
       .sort((a, b) => a.localeCompare(b, 'ja'))
-      .map((file) => `/images/hero/${file}`)
+      .map((file) => ({
+        src: `/images/hero/${file}`,
+        hasOverlay: !NO_OVERLAY_IMAGES.has(file),
+      }))
   : [];
+
+const firstHasOverlay = heroImages[0]?.hasOverlay ?? true;
 ---
 
 <section class="relative w-full min-h-[100dvh] overflow-hidden bg-ink-strong">
   <div class="absolute inset-0" aria-hidden="true">
-    {heroImages.map((src, i) => (
+    {heroImages.map((img, i) => (
       <img
-        src={src}
+        src={img.src}
         alt=""
+        data-has-overlay={img.hasOverlay ? 'true' : 'false'}
         class:list={['hero-slide absolute inset-0 h-full w-full object-cover', { 'is-active': i === 0 }]}
         loading={i === 0 ? 'eager' : 'lazy'}
         fetchpriority={i === 0 ? 'high' : 'low'}
@@ -31,7 +40,13 @@ const heroImages = fs.existsSync(heroDir)
   <!-- 可読性確保のための暗幕グラデーション -->
   <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
 
-  <div class="absolute inset-0 z-10 flex flex-col items-center justify-center px-4 pt-16 text-center text-white">
+  <div
+    id="hero-overlay-text"
+    class:list={[
+      'absolute inset-0 z-10 flex flex-col items-center justify-center px-4 pt-16 text-center text-white transition-opacity duration-[1500ms] ease',
+      { 'opacity-0 pointer-events-none': !firstHasOverlay },
+    ]}
+  >
     <h1 class="font-heading text-3xl md:text-6xl font-bold leading-tight mb-6 text-white">
       その願い、<br class="md:hidden" />あきらめない。
     </h1>
@@ -72,7 +87,8 @@ const heroImages = fs.existsSync(heroDir)
 </style>
 
 <script>
-  const slides = document.querySelectorAll('.hero-slide');
+  const slides = document.querySelectorAll<HTMLImageElement>('.hero-slide');
+  const overlay = document.getElementById('hero-overlay-text');
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (slides.length > 1 && !prefersReducedMotion) {
@@ -85,6 +101,14 @@ const heroImages = fs.existsSync(heroDir)
       slides[next].style.animation = 'none';
       void slides[next].offsetHeight;
       slides[next].style.animation = '';
+
+      // 画像にテキストが焼き込まれている場合はオーバーレイを非表示にする
+      if (overlay) {
+        const nextHasOverlay = slides[next].dataset.hasOverlay !== 'false';
+        overlay.classList.toggle('opacity-0', !nextHasOverlay);
+        overlay.classList.toggle('pointer-events-none', !nextHasOverlay);
+      }
+
       current = next;
     }, 6000);
   }
