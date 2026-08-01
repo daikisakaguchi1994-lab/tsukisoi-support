@@ -3,7 +3,7 @@
 
 export const SITE = {
   COMPANY_NAME: '{{COMPANY_NAME}}',
-  SERVICE_NAME: 'ウェルネスFukuoka',
+  SERVICE_NAME: 'ウェルネスFUKUOKA',
   TEL: '{{TEL}}',
   TEL_HOURS: '{{TEL_HOURS}}',
   LINE_URL: '{{LINE_URL}}',
