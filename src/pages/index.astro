@@ -2,13 +2,11 @@
 import Layout from '../layouts/Layout.astro';
 import ContactBlock from '../components/ContactBlock.astro';
 import SectionTitle from '../components/SectionTitle.astro';
+import Hero from '../components/Hero.astro';
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 
-import heroSeaside from '../assets/images/hero-seaside.png';
-import heroSakura from '../assets/images/hero-sakura.png';
 import taxiVehicle from '../assets/images/taxi-vehicle.png';
-import heroDining from '../assets/images/hero-dining.png';
 
 const allWorks = await getCollection('works');
 const latestWorks = allWorks
@@ -16,66 +14,7 @@ const latestWorks = allWorks
   .slice(0, 3);
 ---
 <Layout title="トップ">
-  <!-- Hero -->
-  <section class="relative pt-16 overflow-hidden">
-    <div class="max-w-6xl mx-auto px-4 py-12 md:py-20">
-      <div class="text-center mb-10 md:mb-16">
-        <h1 class="font-heading text-4xl md:text-6xl font-bold text-ink-strong leading-tight mb-6">
-          その願い、あきらめない。
-        </h1>
-        <!-- 代替案：「行けない」を、「行けた」に。 -->
-        <!-- 代替案：外出をあきらめない毎日を、ここから。 -->
-        <p class="text-lg md:text-xl leading-relaxed max-w-xl mx-auto">
-          医療のプロが、あなたの外出に寄り添います。<br />
-          行きたい場所へ、会いたい人のもとへ、もう一度。
-        </p>
-      </div>
-
-      <!-- 4-column photo gallery -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        <div class="rounded-2xl overflow-hidden shadow-sm">
-          <Image
-            src={heroSeaside}
-            alt="海辺の展望デッキでスタッフと一緒に海を眺める高齢女性"
-            width={400}
-            height={533}
-            class="w-full h-full object-cover aspect-[3/4]"
-            format="webp"
-          />
-        </div>
-        <div class="rounded-2xl overflow-hidden shadow-sm">
-          <Image
-            src={heroSakura}
-            alt="桜並木を車いすで散歩する利用者とスタッフ"
-            width={400}
-            height={533}
-            class="w-full h-full object-cover aspect-[3/4]"
-            format="webp"
-          />
-        </div>
-        <div class="hidden md:block rounded-2xl overflow-hidden shadow-sm">
-          <Image
-            src={taxiVehicle}
-            alt="福祉車両のリフトで車いすの利用者を乗降させるスタッフ"
-            width={400}
-            height={533}
-            class="w-full h-full object-cover aspect-[3/4]"
-            format="webp"
-          />
-        </div>
-        <div class="hidden md:block rounded-2xl overflow-hidden shadow-sm">
-          <Image
-            src={heroDining}
-            alt="車いすで外食を楽しむ高齢女性とスタッフ"
-            width={400}
-            height={533}
-            class="w-full h-full object-cover aspect-[3/4]"
-            format="webp"
-          />
-        </div>
-      </div>
-    </div>
-  </section>
+  <Hero />
 
   <!-- Mission -->
   <section class="py-20 md:py-28 fade-in">

@@ -1,0 +1,91 @@
+---
+// public/images/hero/ 内の画像をビルド時に自動検出し、配列として読み込む。
+// 画像を追加/削除するだけでクロスフェードのローテーション枚数が自動的に変わる。
+import fs from 'node:fs';
+import path from 'node:path';
+
+const heroDir = path.join(process.cwd(), 'public', 'images', 'hero');
+const heroImages = fs.existsSync(heroDir)
+  ? fs
+      .readdirSync(heroDir)
+      .filter((file) => /\.(jpe?g|png|webp)$/i.test(file))
+      .sort((a, b) => a.localeCompare(b, 'ja'))
+      .map((file) => `/images/hero/${file}`)
+  : [];
+---
+
+<section class="relative w-full min-h-[100dvh] overflow-hidden bg-ink-strong">
+  <div class="absolute inset-0" aria-hidden="true">
+    {heroImages.map((src, i) => (
+      <img
+        src={src}
+        alt=""
+        class:list={['hero-slide absolute inset-0 h-full w-full object-cover', { 'is-active': i === 0 }]}
+        loading={i === 0 ? 'eager' : 'lazy'}
+        fetchpriority={i === 0 ? 'high' : 'low'}
+        decoding={i === 0 ? 'sync' : 'async'}
+      />
+    ))}
+  </div>
+
+  <!-- 可読性確保のための暗幕グラデーション -->
+  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+
+  <div class="absolute inset-0 z-10 flex flex-col items-center justify-center px-4 pt-16 text-center text-white">
+    <h1 class="font-heading text-3xl md:text-6xl font-bold leading-tight mb-6 text-white">
+      その願い、<br class="md:hidden" />あきらめない。
+    </h1>
+    <p class="text-base md:text-xl leading-relaxed max-w-xl mx-auto">
+      医療のプロが、<br class="md:hidden" />あなたの外出に<br class="md:hidden" />寄り添います。<br />
+      行きたい場所へ、<br class="md:hidden" />会いたい人のもとへ、<br class="md:hidden" />もう一度。
+    </p>
+  </div>
+</section>
+
+<style>
+  .hero-slide {
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    animation: hero-kenburns 7.5s ease-out forwards;
+    will-change: opacity, transform;
+  }
+  .hero-slide.is-active {
+    opacity: 1;
+    z-index: 1;
+  }
+
+  @keyframes hero-kenburns {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.08);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-slide {
+      animation: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const slides = document.querySelectorAll('.hero-slide');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (slides.length > 1 && !prefersReducedMotion) {
+    let current = 0;
+    setInterval(() => {
+      const next = (current + 1) % slides.length;
+      slides[current].classList.remove('is-active');
+      slides[next].classList.add('is-active');
+      // Ken Burnsアニメーションを再スタートさせるためのリフロー
+      slides[next].style.animation = 'none';
+      void slides[next].offsetHeight;
+      slides[next].style.animation = '';
+      current = next;
+    }, 6000);
+  }
+</script>
