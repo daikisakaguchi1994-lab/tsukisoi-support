@@ -31,16 +31,16 @@ const heroImages = fs.existsSync(heroDir)
   <!-- 可読性確保のための暗幕グラデーション: モバイルは下から上、デスクトップは左から右 -->
   <div
     class="absolute inset-0 md:hidden"
-    style="background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.35) 30%, transparent 55%);"
+    style="background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.4) 30%, transparent 55%);"
   ></div>
   <div
     class="absolute inset-0 hidden md:block"
-    style="background: linear-gradient(105deg, rgba(0,0,0,0.55) 0%, transparent 75%);"
+    style="background: linear-gradient(105deg, rgba(0,0,0,0.62) 0%, transparent 75%);"
   ></div>
 
   <!-- モバイル: 下部・左寄せ -->
   <div class="absolute inset-x-0 bottom-0 z-10 flex md:hidden flex-col items-start px-6 pb-24 text-left text-white">
-    <h1 class="font-heading text-2xl font-bold leading-snug mb-3 text-white">
+    <h1 class="font-heading text-2xl font-bold leading-snug mb-3 text-white tracking-[0.5px]">
       その願い、<br />あきらめない。
     </h1>
     <p class="font-heading text-base font-semibold leading-relaxed text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.6)]">
@@ -51,7 +51,7 @@ const heroImages = fs.existsSync(heroDir)
 
   <!-- デスクトップ: 左側・垂直中央 -->
   <div class="absolute inset-y-0 left-0 z-10 hidden md:flex flex-col items-start justify-center max-w-[58%] px-12 pt-20 lg:px-20 text-left text-white">
-    <h1 class="font-heading text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight mb-6 text-white">
+    <h1 class="font-heading text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight mb-6 text-white tracking-[0.5px]">
       その願い、<br />あきらめない。
     </h1>
     <p class="font-heading text-lg lg:text-xl font-semibold leading-relaxed text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.5)]">
