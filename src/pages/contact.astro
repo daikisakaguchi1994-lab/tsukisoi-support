@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { SITE } from '../config';
-import { generateLineQrSvg } from '../utils/qr';
+import { generateLineQrSvg, isLineUrlConfigured } from '../utils/qr';
 
 const qrSvg = await generateLineQrSvg(SITE.LINE_URL);
+const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
 const formKey = import.meta.env.PUBLIC_FORM_KEY || '{{FORM_KEY}}';
 ---
 <Layout title="お問い合わせ" description={`${SITE.SERVICE_NAME}へのお問い合わせ。お電話・LINE・メールフォームからお気軽にご連絡ください。`}>
@@ -23,17 +24,23 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY || '{{FORM_KEY}}';
         </div>
         <div class="bg-base-alt rounded-2xl p-6 text-center">
           <p class="text-sm mb-2">LINEでのご相談</p>
-          <a
-            href={SITE.LINE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="md:hidden inline-block bg-line text-white font-bold px-6 py-3 rounded-full min-h-[44px] hover:opacity-90 transition-opacity"
-          >
-            LINEで友だち追加
-          </a>
+          {lineConfigured ? (
+            <a
+              href={SITE.LINE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="md:hidden inline-block bg-line text-white font-bold px-6 py-3 rounded-full min-h-[44px] hover:opacity-90 transition-opacity"
+            >
+              LINEで友だち追加
+            </a>
+          ) : (
+            <span class="md:hidden inline-flex items-center justify-center bg-base-alt text-ink/50 font-bold px-6 py-3 rounded-full min-h-[44px]" aria-disabled="true">
+              LINE公式アカウント 準備中
+            </span>
+          )}
           <div class="hidden md:block">
             <div class="inline-block bg-white p-2 rounded-lg" set:html={qrSvg} />
-            <p class="text-xs mt-1 text-ink/50">QRコードを読み取ってください</p>
+            <p class="text-xs mt-1 text-ink/50">{lineConfigured ? 'QRコードを読み取ってください' : 'LINE公式アカウント 準備中'}</p>
           </div>
         </div>
       </div>

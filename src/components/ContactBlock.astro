@@ -1,8 +1,9 @@
 ---
 import { SITE } from '../config';
-import { generateLineQrSvg } from '../utils/qr';
+import { generateLineQrSvg, isLineUrlConfigured } from '../utils/qr';
 
 const qrSvg = await generateLineQrSvg(SITE.LINE_URL);
+const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
 ---
 <section class="bg-base-alt py-20 md:py-28" id="contact-block">
   <div class="max-w-5xl mx-auto px-4">
@@ -37,19 +38,25 @@ const qrSvg = await generateLineQrSvg(SITE.LINE_URL);
         </div>
         <p class="text-sm mb-3">LINEでのご相談</p>
 
-        <a
-          href={SITE.LINE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="md:hidden inline-block bg-line text-white font-bold px-8 py-3 rounded-full hover:opacity-90 transition-opacity min-h-[44px]"
-        >
-          LINEで友だち追加
-        </a>
-        <p class="md:hidden text-xs mt-2 text-ink/50">スマホの方はタップしてください</p>
+        {lineConfigured ? (
+          <a
+            href={SITE.LINE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="md:hidden inline-block bg-line text-white font-bold px-8 py-3 rounded-full hover:opacity-90 transition-opacity min-h-[44px]"
+          >
+            LINEで友だち追加
+          </a>
+        ) : (
+          <span class="md:hidden inline-flex items-center justify-center bg-base-alt text-ink/50 font-bold px-8 py-3 rounded-full min-h-[44px]" aria-disabled="true">
+            LINE公式アカウント 準備中
+          </span>
+        )}
+        <p class="md:hidden text-xs mt-2 text-ink/50">{lineConfigured ? 'スマホの方はタップしてください' : '公開までしばらくお待ちください'}</p>
 
         <div class="hidden md:block">
           <div class="inline-block bg-white p-2 rounded-lg" set:html={qrSvg} />
-          <p class="text-xs mt-2 text-ink/50">パソコンの方はQRコードを読み取り</p>
+          <p class="text-xs mt-2 text-ink/50">{lineConfigured ? 'パソコンの方はQRコードを読み取り' : 'LINE公式アカウント 準備中'}</p>
         </div>
       </div>
 

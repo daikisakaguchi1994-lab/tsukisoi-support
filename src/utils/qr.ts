@@ -1,7 +1,11 @@
 import QRCode from 'qrcode';
 
+export function isLineUrlConfigured(url: string): boolean {
+  return Boolean(url) && !url.startsWith('{{');
+}
+
 export async function generateLineQrSvg(url: string): Promise<string> {
-  if (!url || url.startsWith('{{')) {
+  if (!isLineUrlConfigured(url)) {
     // Return a placeholder SVG when the URL is not yet configured
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
       <rect width="200" height="200" fill="#f0f0f0" rx="8"/>

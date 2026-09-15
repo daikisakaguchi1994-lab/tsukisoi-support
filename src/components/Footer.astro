@@ -9,6 +9,7 @@ const navItems = [
   { label: 'お問い合わせ', href: '/contact' },
 ];
 const year = new Date().getFullYear();
+const addressConfigured = Boolean(SITE.ADDRESS) && !SITE.ADDRESS.startsWith('{{');
 ---
 <footer class="bg-ink-strong text-base py-16">
   <div class="max-w-6xl mx-auto px-4">
@@ -19,7 +20,7 @@ const year = new Date().getFullYear();
       </div>
       <div class="text-sm space-y-1 opacity-80">
         <p>{SITE.COMPANY_NAME}</p>
-        <p>〒 {SITE.ADDRESS}</p>
+        {addressConfigured && <p>〒 {SITE.ADDRESS}</p>}
         <p>対応エリア：{SITE.AREA}</p>
       </div>
       <nav aria-label="フッターナビゲーション">
