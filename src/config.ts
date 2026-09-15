@@ -4,7 +4,7 @@
 export const SITE = {
   COMPANY_NAME: 'ウェルネスFUKUOKA',
   SERVICE_NAME: 'ウェルネスFUKUOKA',
-  TEL: '090-7388-2316',
+  TEL: '090-1234-5678', // ダミー番号、本番公開前に差し替え
   TEL_HOURS: '9:00〜18:00',
   LINE_URL: '{{LINE_URL}}',
   EMAIL: 'wellness.fuk@gmail.com',
