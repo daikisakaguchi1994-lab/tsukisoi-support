@@ -4,6 +4,7 @@ date: "2026-06-10"
 tag: "お墓参り"
 photo: "/placeholders/grave-visit.jpg"
 excerpt: "足腰が弱り一人では行けなくなったお墓参り。介護タクシーと付き添いスタッフで、C様の大切な時間をお手伝いしました。"
+isImage: true
 ---
 
 ## ご利用者さまについて

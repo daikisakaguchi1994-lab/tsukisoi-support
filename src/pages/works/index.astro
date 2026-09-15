@@ -19,8 +19,11 @@ const sortedWorks = allWorks.sort(
         {sortedWorks.map((work) => (
           <article class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
             <a href={`/works/${work.id}`} class="block">
-              <div class="aspect-[4/3] bg-base-alt flex items-center justify-center">
+              <div class="aspect-[4/3] bg-base-alt flex items-center justify-center relative">
                 <p class="text-sm text-ink/40 px-4 text-center">{work.data.excerpt}</p>
+                {work.data.isImage && (
+                  <span class="absolute top-2 right-2 bg-ink-strong/70 text-white text-xs px-2 py-0.5 rounded-full">利用イメージ</span>
+                )}
               </div>
               <div class="p-5">
                 <span class="inline-block bg-accent/10 text-accent text-xs font-bold px-3 py-1 rounded-full mb-2">{work.data.tag}</span>

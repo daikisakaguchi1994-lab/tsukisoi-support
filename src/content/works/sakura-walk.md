@@ -4,6 +4,7 @@ date: "2026-03-28"
 tag: "お散歩"
 photo: "/placeholders/sakura-walk.jpg"
 excerpt: "車いすでの外出に不安を感じていたA様。スタッフが付き添い、地元の桜並木を3年ぶりに歩くことができました。"
+isImage: true
 ---
 
 ## ご利用者さまについて

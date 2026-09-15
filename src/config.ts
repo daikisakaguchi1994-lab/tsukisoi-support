@@ -4,10 +4,10 @@
 export const SITE = {
   COMPANY_NAME: '{{COMPANY_NAME}}',
   SERVICE_NAME: 'ウェルネスFUKUOKA',
-  TEL: '{{TEL}}',
+  TEL: '090-7388-2316',
   TEL_HOURS: '{{TEL_HOURS}}',
   LINE_URL: '{{LINE_URL}}',
-  EMAIL: '{{EMAIL}}',
+  EMAIL: 'wellness.fuk@gmail.com',
   ADDRESS: '{{ADDRESS}}',
   AREA: '{{AREA}}',
 } as const;

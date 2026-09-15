@@ -58,6 +58,59 @@ import heroSeaside from '../assets/images/hero-seaside.png';
     </div>
   </section>
 
+  <!-- Services -->
+  <section class="py-20 md:py-28 fade-in">
+    <div class="max-w-5xl mx-auto px-4">
+      <SectionTitle class="mb-12">サービス一覧</SectionTitle>
+      <div class="grid md:grid-cols-3 gap-6">
+        {[
+          { icon: '🚗', title: '日常送迎', desc: '通院・お買い物など、日々の外出をサポートします。' },
+          { icon: '🎉', title: '特別な日の付き添い', desc: '結婚式・お墓参り・旅行など、大切な日にも同行します。' },
+          { icon: '🏥', title: '診察付き添い', desc: '通院・入退院時の付き添い、医師とのやり取りもサポート。' },
+          { icon: '🩺', title: '健康相談（鍼灸・東洋医学）', desc: '理学療法士・鍼灸師の資格を活かし、身体の悩みもご相談いただけます。' },
+          { icon: '💬', title: '話し相手', desc: '道中の何気ないおしゃべりも大切に。気軽に頼っていただけます。' },
+        ].map(({ icon, title, desc }) => (
+          <div class="bg-white rounded-2xl shadow-sm p-6">
+            <div class="text-2xl mb-3">{icon}</div>
+            <h3 class="font-heading font-bold text-ink-strong mb-1">{title}</h3>
+            <p class="text-sm">{desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Qualifications -->
+  <section class="bg-base-alt py-20 md:py-28 fade-in">
+    <div class="max-w-3xl mx-auto px-4">
+      <SectionTitle class="mb-6">保有資格</SectionTitle>
+      <p class="text-center mb-10">確かな知識と資格を持ったスタッフが、安全なお出かけをサポートします。</p>
+      <div class="bg-white rounded-2xl shadow-sm p-8">
+        <ul class="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+          {[
+            '普通自動車二種免許',
+            '理学療法士',
+            '鍼灸師',
+            '柔道整復師',
+            '介護支援専門員（ケアマネジャー）',
+            '旅行介助士',
+            '介護職員初任者研修 修了',
+          ].map((q) => (
+            <li class="flex gap-3 items-start">
+              <svg class="w-5 h-5 text-accent shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <p class="font-bold text-ink-strong">{q}</p>
+            </li>
+          ))}
+        </ul>
+        <p class="text-sm text-ink/60 mt-6 pt-6 border-t border-base-alt">
+          ※ 普通自動車二種免許は、有償で旅客を運送するために法律で定められた資格です。介護タクシー事業者を選ぶ際の信頼性の目安としてもご確認ください。
+        </p>
+      </div>
+    </div>
+  </section>
+
   <!-- Flow -->
   <section class="py-20 md:py-28 fade-in">
     <div class="max-w-3xl mx-auto px-4">
@@ -128,6 +181,11 @@ import heroSeaside from '../assets/images/hero-seaside.png';
         <li>※ 距離・時間・曜日・深夜早朝により変動します。</li>
         <li>※ キャンセル料は前日50%、当日100%です。</li>
       </ul>
+
+      <div class="bg-accent/10 rounded-2xl p-6 mt-10">
+        <h3 class="font-heading font-bold text-ink-strong mb-2">福祉タクシー利用券について</h3>
+        <p class="text-sm">お住まいの自治体が発行する福祉タクシー利用券がご利用いただけます。お手続きの方法など、お気軽にお問い合わせください。</p>
+      </div>
     </div>
   </section>
 

@@ -5,6 +5,7 @@ import SectionTitle from '../components/SectionTitle.astro';
 import { Image } from 'astro:assets';
 
 import taxiVehicle from '../assets/images/taxi-vehicle.png';
+import heroSakura from '../assets/images/hero-sakura.png';
 ---
 <Layout title="介護タクシー" description="車いす・ストレッチャー対応の福祉車両で安全に送迎。医療従事者が同乗し、通院・旅行・冠婚葬祭など幅広く対応します。">
   <!-- Hero -->
@@ -47,9 +48,14 @@ import taxiVehicle from '../assets/images/taxi-vehicle.png';
           </div>
         </div>
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div class="aspect-[4/3] bg-base flex items-center justify-center">
-            <p class="text-sm text-ink/40 px-3 text-center">広々とした車内、固定ベルト</p>
-          </div>
+          <Image
+            src={heroSakura}
+            alt="福祉車両のリフトで車いすを乗せている様子"
+            width={400}
+            height={300}
+            class="w-full object-cover aspect-[4/3]"
+            format="webp"
+          />
           <div class="p-4">
             <h3 class="font-heading font-bold text-ink-strong">広い車内空間</h3>
             <p class="text-sm mt-1">ゆったりとした車内で快適に移動。</p>
@@ -87,6 +93,16 @@ import taxiVehicle from '../assets/images/taxi-vehicle.png';
             <p class="text-sm">{desc}</p>
           </div>
         ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Ticket -->
+  <section class="py-20 md:py-28 fade-in">
+    <div class="max-w-3xl mx-auto px-4">
+      <div class="bg-accent/10 rounded-2xl p-8 text-center">
+        <h2 class="font-heading text-xl font-bold text-ink-strong mb-2">福祉タクシー利用券がご利用いただけます</h2>
+        <p class="text-sm">お住まいの自治体が発行する福祉タクシー利用券に対応しています。お手続きの方法など、お気軽にお問い合わせください。</p>
       </div>
     </div>
   </section>

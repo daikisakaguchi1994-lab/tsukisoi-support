@@ -4,6 +4,7 @@ date: "2026-05-15"
 tag: "旅行"
 photo: "/placeholders/airport-trip.jpg"
 excerpt: "医療的ケアが必要なお子さまと、ご家族4人での沖縄旅行。空港での移動から搭乗まで、看護師が同行しました。"
+isImage: true
 ---
 
 ## ご利用者さまについて

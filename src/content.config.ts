@@ -10,6 +10,7 @@ const works = defineCollection({
     tag: z.string(),
     photo: z.string(),
     excerpt: z.string(),
+    isImage: z.boolean().default(true),
   }),
 });
 
