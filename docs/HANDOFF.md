@@ -20,6 +20,7 @@
 - Codex 監査（A）: `c3de7b9..7cf8c06` は重大 0 / 中 0 / 軽微 0、マージ可。
 - `SITE.PUBLISHED = false`（全ページ noindex）のまま。
 - **バッチ A 実装済み**（8ea26b6 + 監査の修正）。ふりがな削除、返信方法（電話/メール。LINE は出さない）で必須切替、エラーは欄ごと、準備中の電話・LINE は文章、受付前は送信ボタン無効（灰色）。受付開始は `PUBLIC_FORM_KEY` + `PUBLIC_FORM_OPEN=1`（キーだけでは開かない）。検証: astro check 0 errors、Playwright 153件成功（Windows ではローカルの `./node_modules/.bin/playwright` を使う。`npm ci` → `playwright install chromium`。`npx` だと別版を拾う）。
+- トップ写真のスマホ切り取りを修正（2026-10-11、ブランチ `claude/cloudflare-migration`）: 写真ごとの `pos` で人物の位置に寄せ、縦長画面では文字を上寄せ。スクリーンショットは `docs/review-screenshots/hero-20261011-mobile-*.png`。バッチ E の ⑨ のうち「スマホの写真の切り取り」は済。
 - Codex 監査（段階 2、gpt-5.6-sol）: 重大1・中2・軽微1 → 全件採用して修正済み（重大=キーだけで受付開始、中=準備中の文言と無効ボタン／LINE 返信先、軽微=privacy に「お問い合わせの種類」）。**再監査済み**（重大0、中1=キーありOPENなしの結合テスト不足、軽微1=LINE準備中文言への依存 → どちらもテストで解消。通常ビルドは送信キーありで実行、サンプルのビルドは キー+OPEN=1 で実行、isFormOpen の単体テスト。テストのみの変更なので3回目の監査はしない）。Codex は読み取り専用の制約で build/test を完走できない（Playwright 実行は検証不要と指示するとよい。所要は約20分）。
 
 ## 進行中

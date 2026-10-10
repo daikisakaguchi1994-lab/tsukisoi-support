@@ -31,5 +31,13 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
       env: { ASTRO_TELEMETRY_DISABLED: '1', PUBLIC_SAMPLE_PREVIEW: '1', PUBLIC_DEPLOY_TARGET: 'preview', ASTRO_OUT_DIR: 'dist-sample', PUBLIC_FORM_KEY: 'test-key-not-real', PUBLIC_FORM_OPEN: '1' },
     },
+    {
+      // 本番相当の誤設定: PUBLIC_SAMPLE_PREVIEW=1 だけがあり、プレビューの明示（PUBLIC_DEPLOY_TARGET）が無いビルド。サンプルは一切出ないこと
+      command: 'npm run build && npm run preview -- --host 127.0.0.1 --port 4333',
+      timeout: 180_000,
+      url: 'http://127.0.0.1:4333',
+      reuseExistingServer: !process.env.CI,
+      env: { ASTRO_TELEMETRY_DISABLED: '1', PUBLIC_SAMPLE_PREVIEW: '1', ASTRO_OUT_DIR: 'dist-flagonly' },
+    },
   ],
 });

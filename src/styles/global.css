@@ -62,6 +62,12 @@ html {
 }
 #hero *:focus-visible { box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6); }
 
+/* トップの写真: 縦長の画面（スマホ）では左右が大きく切り取られる。人物が残る位置に寄せ、文字は上寄せにして人物と重ねない */
+@media (max-aspect-ratio: 1/1) {
+  #hero .hero-img { object-position: var(--hero-pos, 50% 50%); }
+  #hero .hero-slide { align-items: flex-start; padding-top: 12svh; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

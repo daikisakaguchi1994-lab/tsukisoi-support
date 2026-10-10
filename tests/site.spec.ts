@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { NAV_ITEMS, SITE, SAMPLE_PREVIEW, isFormOpen, isTelConfigured } from '../src/config';
 import { SAMPLE_VALUES } from '../src/config.sample';
 
@@ -552,4 +552,32 @@ test('contact form text is not white on white', async ({ page }) => {
     const color = await page.locator(sel).first().evaluate((el) => getComputedStyle(el).color);
     expect(color, sel).not.toBe('rgb(255, 255, 255)');
   }
+});
+
+// 存在しない URL は 404 で、404 ページも noindex。wrangler.jsonc が 404 ページを返す設定であること（Cloudflare では未設定だと空のページになる）
+test('unknown URL returns 404 with a noindex page', async ({ page }) => {
+  const res = await page.goto('/this-page-does-not-exist');
+  expect(res?.status()).toBe(404);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+});
+
+test('wrangler.jsonc serves the 404 page for unknown URLs', () => {
+  const text = readFileSync('wrangler.jsonc', 'utf8');
+  expect(text).toMatch(/"not_found_handling"\s*:\s*"404-page"/);
+  expect(text).toMatch(/"directory"\s*:\s*"\.\/dist"/);
+});
+
+// スマホ（縦長）では写真の左右が大きく切り取られる。人物が写る位置に寄せ、文字は上寄せにして人物と重ねない
+test('hero keeps the people in frame on phones: image is shifted to the subject and copy sits high', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const pos = await page.locator('#hero [data-slide] img').evaluateAll((imgs) => imgs.map((i) => getComputedStyle(i).objectPosition));
+  expect(pos[0]).not.toBe('50% 50%'); // 1枚目（人物2人）は中央のままだと人物が切れる
+  expect(parseFloat(pos[0])).toBeLessThan(30);
+  const copy = (await page.locator('#hero [data-slide] [data-copy]').first().boundingBox())!;
+  expect(copy.y + copy.height).toBeLessThan(844 * 0.4); // 人物の頭（高さの約4割）より上に収める
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.reload();
+  const desktop = await page.locator('#hero [data-slide] img').first().evaluate((i) => getComputedStyle(i).objectPosition);
+  expect(desktop).toBe('50% 50%');
 });
