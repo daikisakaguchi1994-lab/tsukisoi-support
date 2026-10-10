@@ -18,6 +18,16 @@
   --font-body: 'Noto Serif JP', serif;
 }
 
+/* ボタン・カードの動き（2026-10-11）。落ち着いて安心できる反応にする:
+   ・色の変化は 180ms の ease-out（遅すぎて反応がないと感じず、急に変わって驚かせない長さ）
+   ・押した瞬間は 70ms で沈む（押せたことがすぐ分かる）
+   ・跳ねる・大きく動く・点滅する動きは使わない。`prefers-reduced-motion` では止める */
+:root {
+  --motion-color: 180ms;
+  --motion-press: 70ms;
+  --motion-ease: ease-out;
+}
+
 html {
   font-family: var(--font-body);
   font-size: 16px;
@@ -69,6 +79,8 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .btn-solid, .btn-outline, .chip, .chip-link, .case-card { transition: none !important; }
+  .btn-solid:active { transform: none; }
   html {
     scroll-behavior: auto;
   }
@@ -150,7 +162,7 @@ html {
     font-size: 0.9rem;
     font-weight: 700;
     letter-spacing: 0.12em;
-    transition: background-color 0.2s, color 0.2s;
+    transition: background-color var(--motion-color) var(--motion-ease), color var(--motion-color) var(--motion-ease);
   }
   .btn-outline::before {
     content: '';
@@ -158,7 +170,10 @@ html {
     border-top: 0.32em solid transparent;
     border-bottom: 0.32em solid transparent;
   }
-  .btn-outline:hover { background: var(--color-accent); color: #fff; }
+  .btn-outline:active { background: var(--color-accent-hover); color: #fff; transition-duration: var(--motion-press); }
+  @media (hover: hover) {
+    .btn-outline:hover { background: var(--color-accent); color: #fff; }
+  }
   .btn-outline[aria-disabled='true'] {
     border-color: var(--color-rule);
     color: var(--color-ink-muted);
@@ -180,16 +195,25 @@ html {
     font-weight: 700;
     letter-spacing: 0.14em;
     box-shadow: 0 3px 0 rgba(38, 35, 31, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.25);
-    transition: transform 0.15s, box-shadow 0.15s, background-color 0.2s;
+    transition: background-color var(--motion-color) var(--motion-ease), box-shadow var(--motion-color) var(--motion-ease), transform var(--motion-press) var(--motion-ease);
   }
-  .btn-solid:hover {
-    background: var(--color-accent-hover);
+  /* 触れたときは色が少し濃くなるだけ（動かない）。押した瞬間にだけ沈む。タッチでは hover が残らないよう、hover はマウスのときだけ */
+  @media (hover: hover) {
+    .btn-solid:hover {
+      background: var(--color-accent-hover);
+      box-shadow: 0 3px 0 rgba(38, 35, 31, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    }
+  }
+  .btn-solid:active {
+    background: var(--color-deep);
     transform: translateY(2px);
     box-shadow: 0 1px 0 rgba(38, 35, 31, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.25);
   }
 
   /* 受付前などで押せないとき。緑の押せるボタンに見せない */
-  .btn-solid:disabled {
+  .btn-solid:disabled,
+  .btn-solid:disabled:hover,
+  .btn-solid:disabled:active {
     background: var(--color-ink-muted);
     box-shadow: none;
     cursor: not-allowed;
@@ -255,17 +279,74 @@ html {
   .step-badge small { font-size: 0.5rem; letter-spacing: 0.08em; }
   .step-badge b { font-size: 1.15rem; font-weight: 500; }
 
-  /* ご利用例のチップ（濃い・薄いを交互に） */
+  /* ご利用例のチップ（リンク）。ふだんは薄い緑、触れると濃い緑に変わる */
   .chip {
-    display: inline-block;
-    padding: 0.55rem 1.4rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.5rem 1.4rem;
     border-radius: 999px;
     font-weight: 700;
     letter-spacing: 0.08em;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    background: var(--color-mist-strong);
+    color: var(--color-deep);
+    transition: background-color var(--motion-color) var(--motion-ease), color var(--motion-color) var(--motion-ease);
   }
-  .chip:nth-child(odd) { background: var(--color-mist-strong); color: var(--color-deep); }
-  .chip:nth-child(even) { background: var(--color-deep); color: #fff; }
+  .chip::after { content: '›'; font-weight: 400; }
+  .chip:active { background: var(--color-deep); color: #fff; transition-duration: var(--motion-press); }
+  @media (hover: hover) {
+    .chip:hover { background: var(--color-deep); color: #fff; }
+  }
+
+  /* ジャンルの目次（ご利用例の一覧）。件数つき */
+  .chip-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 44px;
+    padding: 0.4rem 1.2rem;
+    border: 1px solid var(--color-deep);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--color-deep);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    transition: background-color var(--motion-color) var(--motion-ease), color var(--motion-color) var(--motion-ease);
+  }
+  .chip-count { font-size: 0.8125rem; background: var(--color-mist-strong); color: var(--color-deep); border-radius: 999px; padding: 0 0.6rem; min-width: 1.6rem; text-align: center; }
+  .chip-link:active { background: var(--color-deep); color: #fff; transition-duration: var(--motion-press); }
+  @media (hover: hover) {
+    .chip-link:hover { background: var(--color-deep); color: #fff; }
+  }
+
+  /* ご利用例のカード（写真・ジャンル・題名・要約）。四角い枠。触れると枠が緑に、影が少し出るだけ（動かさない） */
+  .case-card {
+    display: block;
+    height: 100%;
+    background: #fff;
+    border: 1px solid var(--color-rule);
+    transition: border-color var(--motion-color) var(--motion-ease), box-shadow var(--motion-color) var(--motion-ease), background-color var(--motion-press) var(--motion-ease);
+  }
+  .case-card-media { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; }
+  .case-card-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 1rem; text-align: center; color: #fff; font-family: var(--font-heading); font-weight: 700; font-size: 1.25rem; text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35); }
+  .case-card-genre { position: absolute; left: 0.6rem; top: 0.6rem; background: var(--color-deep); color: #fff; font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.06em; padding: 0.1rem 0.8rem; border-radius: 999px; }
+  .case-card-more { display: inline-block; margin-top: 0.9rem; color: var(--color-accent); font-weight: 700; letter-spacing: 0.08em; }
+  .case-card-more::after { content: ' ›'; }
+  .case-card:active { background: var(--color-base-alt); }
+  @media (hover: hover) {
+    .case-card:hover { border-color: var(--color-accent); box-shadow: 0 6px 18px rgba(46, 74, 53, 0.14); }
+    .case-card:hover .case-card-more { text-decoration: underline; }
+  }
+
+  /* 相談への誘導（薄い緑の帯。四角） */
+  .cta-panel {
+    background: var(--color-mist);
+    border: 1px solid var(--color-mist-strong);
+    padding: 2rem 1.25rem;
+    text-align: center;
+  }
 
   /* 入力欄: 角の立った細い枠 */
   .field {

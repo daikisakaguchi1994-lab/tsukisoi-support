@@ -2,26 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import SectionTitle from '../components/SectionTitle.astro';
 import { SITE } from '../config';
-
-// 金額はすべて税込。参考サイトの価格帯に合わせた初期値。独自の価格設定にする際はここだけ書き換える。
-// 公開できるのは、許可・登録が不要な「付き添い」の料金だけ（CLAUDE.md 1.）。
-const prices = [
-  {
-    head: '1時間のご利用料金',
-    lines: [{ label: '', price: '3,300円（税込）〜' }],
-    note: '半日や1日のご利用には割引を用意します（詳細は準備中）。',
-  },
-  {
-    head: '国内・宿泊旅行の付き添い　基本料金',
-    lines: [{ label: '1泊2日', price: '49,500円（税込）〜' }],
-    note: '付き添いの料金です。交通・宿泊の手配は含みません。',
-  },
-  {
-    head: '海外旅行の付き添い　基本料金',
-    lines: [{ label: '1日あたり', price: '33,000円（税込）〜' }],
-    note: '付き添いの料金です。交通・宿泊の手配は含みません。',
-  },
-];
+import { prices } from '../utils/prices';
+import { getCasesByGenre } from '../utils/cases';
 
 // 許可・登録の確認が済むまで、料金は載せず「準備中」とだけ案内する。確認できたら prices に移す。
 // 公開時に揃える価格帯の目安: 福祉タクシー 初乗り(30分) 3,550円・加算(15分ごと) 1,770円
@@ -36,7 +18,7 @@ const flow = [
   { title: '当日', text: 'お約束した日時に、打ち合わせた内容に沿ってスタッフが付き添います。', note: 'お支払いを後日にしたい方は、ご依頼の前にお知らせください。' },
 ];
 
-const examples = ['通院', 'お買い物', '外食', '日帰りのお出かけ', '旅行への付き添い', '結婚式', 'お引越し'];
+const caseGroups = await getCasesByGenre();
 ---
 <Layout title="サービス" description={`${SITE.SERVICE_NAME}のサービス内容、料金、ご利用の流れのご案内です。`} crumbs={[{ label: 'サービス' }]}>
   <div class="max-w-3xl mx-auto px-4 py-14 md:py-20">
@@ -44,7 +26,7 @@ const examples = ['通院', 'お買い物', '外食', '日帰りのお出かけ'
 
     <!-- Flow -->
     <h2 class="font-heading text-xl md:text-2xl font-bold text-center border-[3px] border-base-alt outline outline-1 outline-rule py-5 mb-12 tracking-[0.12em]">ご利用の流れ</h2>
-    <ol class="mb-16">
+    <ol class="mb-16 scroll-mt-24" id="flow">
       {flow.map((f, i) => (
         <li class="step">
           <span class="step-badge" aria-hidden="true"><small>STEP</small><b>{i + 1}</b></span>
@@ -56,6 +38,7 @@ const examples = ['通院', 'お買い物', '外食', '日帰りのお出かけ'
     </ol>
 
     <!-- Price -->
+    <div id="prices" class="scroll-mt-24"></div>
     <SectionTitle class="mb-10">基本料金</SectionTitle>
     <div class="mb-16" data-testid="price-list">
       {prices.map((p) => (
@@ -85,10 +68,19 @@ const examples = ['通院', 'お買い物', '外食', '日帰りのお出かけ'
     </div>
 
     <!-- Examples -->
-    <SectionTitle class="mb-8">ご利用例</SectionTitle>
-    <ul class="flex flex-wrap gap-3 mb-16">
-      {examples.map((e) => <li class="chip">{e}</li>)}
-    </ul>
+    <SectionTitle class="mb-4">ご利用例</SectionTitle>
+    <p class="text-sm text-ink-muted mb-6">気になる場面を選ぶと、写真とくわしい内容が見られます（想定の場面で、実際のお客様の事例ではありません）。</p>
+    <div class="mb-8 space-y-5" data-testid="case-groups">
+      {caseGroups.map((g) => (
+        <div>
+          <p class="font-heading font-bold text-ink-strong mb-2">{g.genre}</p>
+          <ul class="flex flex-wrap gap-3">
+            {g.cases.map((c) => <li><a href={`/cases/${c.id}`} class="chip">{c.data.title}</a></li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+    <p class="mb-12"><a href="/cases" class="btn-outline">ご利用例をすべて見る</a></p>
 
     <div class="text-center">
       <a href="/contact" class="btn-solid">お問い合わせはこちら</a>

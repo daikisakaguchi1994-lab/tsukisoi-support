@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import SectionTitle from '../components/SectionTitle.astro';
 import { SITE, isTelConfigured, isTelSample, isFormOpen } from '../config';
 import { generateLineQrSvg, isLineUrlConfigured } from '../utils/qr';
+import { getCases } from '../utils/cases';
 
 const qrSvg = await generateLineQrSvg(SITE.LINE_URL);
 const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
@@ -11,6 +12,8 @@ const telSample = isTelSample(SITE.TEL);
 // 受付前は、送信キーがあっても受付中に見せない。受付開始は PUBLIC_FORM_OPEN=1（利用者の判断）で切り替える
 const formKey = import.meta.env.PUBLIC_FORM_KEY || '';
 const formReady = isFormOpen(formKey, import.meta.env.PUBLIC_FORM_OPEN);
+// ご利用例（/cases/<スラッグ>）の「この内容で相談する」から来たとき、種類と冒頭の一文を自動で入れる
+const caseMap = Object.fromEntries((await getCases()).map((c) => [c.id, { title: c.data.title, kind: c.data.kind }]));
 const kinds = ['通院・お買い物などの付き添い', '旅行の付き添い', 'その他・まだ決まっていない'];
 // 返信方法に LINE は出さない。LINE の識別子の受け取り方・返信手順が決まるまで（確定後も、その手順を決めてから足す）
 const methods = ['電話', 'メール'];
@@ -70,6 +73,8 @@ const methods = ['電話', 'メール'];
         <p class="[word-break:auto-phrase]">相談フォームは公開準備中です。受付を始めるまで、しばらくお待ちください。</p>
       </div>
     )}
+    <p id="case-from" data-testid="case-from" class="mb-6 border-l-4 border-deep bg-base-alt px-5 py-3 leading-loose" hidden></p>
+    <script type="application/json" id="case-map" set:html={JSON.stringify(caseMap)} />
     <form id="contact-form" action="https://api.web3forms.com/submit" method="POST" novalidate>
       {formReady && <input type="hidden" name="access_key" value={formKey} />}
       <input type="hidden" name="subject" value={`${SITE.SERVICE_NAME} お問い合わせ`} />
@@ -164,6 +169,23 @@ const methods = ['電話', 'メール'];
   };
   form?.addEventListener('change', syncRequired);
   syncRequired();
+
+  // ご利用例から来たとき: 種類を選び、冒頭の一文を入れる（すでに書いてあれば上書きしない）
+  const slug = new URLSearchParams(location.search).get('case');
+  const mapText = document.getElementById('case-map')?.textContent;
+  const picked = slug && mapText ? (JSON.parse(mapText) as Record<string, { title: string; kind: string }>)[slug] : undefined;
+  if (picked && form) {
+    const radio = [...form.querySelectorAll<HTMLInputElement>('[name="inquiry_kind"]')].find((r) => r.value === picked.kind);
+    if (radio) radio.checked = true;
+    const msg = field('message');
+    if (msg && !msg.value.trim()) msg.value = `【ご利用例「${picked.title}」について】
+`;
+    const note = document.getElementById('case-from');
+    if (note) {
+      note.textContent = `ご利用例「${picked.title}」からのご相談です。内容は、わかる範囲でご記入ください。`;
+      note.hidden = false;
+    }
+  }
 
   const show = (id: string, text: string) => {
     const el = document.getElementById(id);

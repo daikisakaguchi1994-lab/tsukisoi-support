@@ -1,0 +1,96 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageTitle from '../../components/PageTitle.astro';
+import SectionTitle from '../../components/SectionTitle.astro';
+import CaseCard from '../../components/CaseCard.astro';
+import { prices, CASE_PRICE_INDEX } from '../../utils/prices';
+import { getCases, caseImage, GENRE_BG } from '../../utils/cases';
+
+export async function getStaticPaths() {
+  const all = await getCases();
+  return all.map((c) => {
+    const same = all.filter((o) => o.data.genre === c.data.genre && o.id !== c.id);
+    const others = all.filter((o) => o.data.genre !== c.data.genre && o.id !== c.id);
+    // 同じジャンルを先に、足りなければほかのジャンルから。最大2件
+    return { params: { slug: c.id }, props: { item: c, related: [...same, ...others].slice(0, 2) } };
+  });
+}
+
+const { item, related } = Astro.props;
+const d = item.data;
+const img = caseImage(item.id);
+const price = prices[CASE_PRICE_INDEX[d.price]];
+const consult = `/contact?case=${item.id}#contact-form`;
+---
+<Layout title={d.title} description={d.summary} crumbs={[{ label: 'ご利用例', href: '/cases' }, { label: d.title }]}>
+  <article class="max-w-3xl mx-auto px-4 py-14 md:py-20">
+    <header class="mb-8">
+      <a href="/cases" class="inline-block bg-deep text-white text-[0.8125rem] font-bold tracking-wider px-3 py-0.5 rounded-full mb-3">{d.genre}</a>
+      <PageTitle>{d.title}</PageTitle>
+    </header>
+
+    <figure class="mb-3">
+      <div class="relative aspect-[16/9] overflow-hidden" style={`background:${GENRE_BG[d.genre]};`} data-case-media>
+        {img
+          ? <img src={img} alt="" class="absolute inset-0 w-full h-full object-cover" />
+          : <span class="absolute inset-0 flex items-center justify-center px-6 text-center font-heading font-bold text-white text-2xl md:text-3xl [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]" aria-hidden="true">{d.title}</span>}
+      </div>
+      <figcaption class="text-sm text-ink-muted mt-2">{img ? '画像はイメージです。' : '写真は準備中です。'}想定のご利用例で、実際のお客様の事例ではありません。</figcaption>
+    </figure>
+
+    <p class="text-[1.0625rem] leading-loose [word-break:auto-phrase] my-8">{d.summary}</p>
+
+    <SectionTitle class="is-left mb-6">こんな場面で</SectionTitle>
+    <p class="leading-loose [word-break:auto-phrase] mb-12">{d.scene}</p>
+
+    <SectionTitle class="is-left mb-6">お手伝いすること</SectionTitle>
+    <ul class="mb-12 space-y-3" data-testid="case-help">
+      {d.help.map((h) => (
+        <li class="flex gap-3 leading-loose [word-break:auto-phrase]"><span class="text-accent font-bold" aria-hidden="true">●</span><span>{h}</span></li>
+      ))}
+    </ul>
+
+    <div class="bg-base-alt border-l-4 border-deep px-5 py-4 mb-12" data-testid="case-point">
+      <p class="font-heading font-bold text-ink-strong mb-1">安心のポイント</p>
+      <p class="leading-loose [word-break:auto-phrase]">{d.point}</p>
+    </div>
+
+    <!-- 1つ目の相談ボタン: 読み終えた直後に、すぐ押せる位置 -->
+    <div class="cta-panel mb-14" data-testid="case-cta">
+      <p class="font-heading font-bold text-ink-strong text-lg mb-4">このような付き添いをご希望ですか</p>
+      <a href={consult} class="btn-solid" data-case-cta>この内容で相談する</a>
+      <p class="text-sm text-ink-muted mt-4 [word-break:auto-phrase]">行き先や日時が決まっていなくても大丈夫です。フォームには、この場面の名前が自動で入ります。</p>
+    </div>
+
+    <SectionTitle class="is-left mb-6">料金の目安</SectionTitle>
+    <div class="mb-3">
+      <h3 class="price-head text-[1rem]">▼ {price.head}</h3>
+      <div class="price-body">
+        {price.lines.map((l) => (
+          <p class="font-bold text-ink-strong">{l.label && <span class="mr-3">{l.label}</span>}{l.price}</p>
+        ))}
+        <p class="text-sm text-ink-muted mt-1">※{price.note}</p>
+      </div>
+    </div>
+    <p class="text-sm text-ink-muted leading-loose [word-break:auto-phrase] mb-2">正確な金額は、ご相談のあとの見積りでお知らせします。ご了承いただいてから日程を確定します。</p>
+    <p class="text-sm mb-12"><a href="/service#prices" class="text-accent underline">料金の一覧を見る</a>　<a href="/service#flow" class="text-accent underline">ご利用の流れを見る</a></p>
+
+    {related.length > 0 && (
+      <section class="mb-14">
+        <SectionTitle class="is-left mb-6">ほかのご利用例</SectionTitle>
+        <ul class="grid sm:grid-cols-2 gap-6">
+          {related.map((r) => (
+            <li><CaseCard id={r.id} title={r.data.title} genre={r.data.genre} summary={r.data.summary} /></li>
+          ))}
+        </ul>
+        <p class="mt-6 text-center"><a href="/cases" class="btn-outline">ご利用例の一覧へ</a></p>
+      </section>
+    )}
+
+    <!-- 2つ目の相談ボタン: 最後まで読んだ方が迷わず進める -->
+    <div class="cta-panel" data-testid="case-cta-bottom">
+      <p class="font-heading font-bold text-ink-strong text-lg mb-4">まずは、お気軽にご相談ください</p>
+      <a href={consult} class="btn-solid">この内容で相談する</a>
+    </div>
+  </article>
+</Layout>

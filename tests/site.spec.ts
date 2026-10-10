@@ -217,7 +217,7 @@ test('service page marks taxi and travel arrangement as preparing, without price
   for (const price of ['3,550', '1,770', 'オプション']) expect(text, price).not.toContain(price);
 });
 
-// 参考サイトに合わせた作り: ご利用の流れは3つの STEP、ご利用例は7つのチップ
+// 参考サイトに合わせた作り: ご利用の流れは3つの STEP、ご利用例はチップ（各詳細へのリンク）
 test('service page follows the reference layout: 3 steps, price blocks, usage chips', async ({ page }) => {
   await page.goto('/service');
   await expect(page.getByRole('heading', { level: 2, name: 'ご利用の流れ' })).toBeVisible();
@@ -225,7 +225,8 @@ test('service page follows the reference layout: 3 steps, price blocks, usage ch
   await expect(page.locator('.step-badge').first()).toContainText('STEP');
   await expect(page.getByRole('heading', { level: 2, name: '基本料金' })).toBeVisible();
   await expect(page.getByRole('heading', { level: 2, name: 'ご利用例' })).toBeVisible();
-  await expect(page.locator('.chip')).toHaveCount(7);
+  await expect(page.locator('.chip')).toHaveCount(11); // ご利用例11件（src/content/cases）
+  await expect(page.locator('.chip').first()).toHaveAttribute('href', /^\/cases\//);
   await expect(page.getByRole('navigation', { name: 'パンくずリスト' })).toContainText('サービス');
 });
 

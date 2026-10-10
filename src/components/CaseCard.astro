@@ -1,0 +1,25 @@
+---
+import { GENRE_BG, caseImage } from '../utils/cases';
+
+interface Props {
+  id: string;
+  title: string;
+  genre: keyof typeof GENRE_BG;
+  summary: string;
+}
+const { id, title, genre, summary } = Astro.props;
+const img = caseImage(id);
+---
+<a href={`/cases/${id}`} class="case-card group" data-case-card>
+  <span class="case-card-media" style={`background:${GENRE_BG[genre]};`} aria-hidden="true">
+    {img
+      ? <img src={img} alt="" loading="lazy" class="absolute inset-0 w-full h-full object-cover" />
+      : <span class="case-card-fallback">{title}</span>}
+    <span class="case-card-genre">{genre}</span>
+  </span>
+  <span class="block px-4 pt-4 pb-5">
+    <span class="block font-heading font-bold text-[1.125rem] text-ink-strong leading-snug [word-break:auto-phrase]">{title}</span>
+    <span class="block text-[1rem] leading-relaxed mt-2 text-ink [word-break:auto-phrase]">{summary}</span>
+    <span class="case-card-more" aria-hidden="true">くわしく見る</span>
+  </span>
+</a>
