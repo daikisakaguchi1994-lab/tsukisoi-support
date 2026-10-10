@@ -1,6 +1,6 @@
 # つきそいサポート ホームページ — 作業の約束事
 
-Astro 7 + Tailwind 4 の静的サイト。Vercel にデプロイ（Git 連携）。
+Astro 7 + Tailwind 4 の静的サイト。ホスティングは Cloudflare Workers（静的アセット）へ移行中（`docs/CLOUDFLARE.md`。`wrangler.jsonc`、`npx wrangler deploy`）。Git 連携の切り替えが済むまで Vercel も残る。
 このファイルは新しいセッションが最初に読む前提。ここに書いた方針はセッションをまたいで守る。
 
 ## 0. セッション開始時（利用者の説明がなくても、ここから始める）
@@ -16,6 +16,7 @@ Astro 7 + Tailwind 4 の静的サイト。Vercel にデプロイ（Git 連携）
 - **サンプル表示（完成イメージ確認用）**: `PUBLIC_SAMPLE_PREVIEW=1` でビルドしたときだけ、未確定の連絡先を `src/config.sample.ts` の架空の値（電話 `03-0000-0000`、`example.com` など）で補い、全ページ上部に「サンプル表示中（連絡先は仮のものです）」の帯を出す。
   - `src/config.ts` の本来の値は書き換えない。確定した値は `config.ts` に入れる（サンプルは確定済みの値を上書きしない）。
   - サンプルの電話は文字で見せるだけで `tel:` リンクにしない（`isTelConfigured` は偽のまま）。`noindex, nofollow` と `SITE.PUBLISHED = false` は維持。JSON-LD にもサンプルの住所・受付時間は入れない。
+  - **安全装置は既定拒否**（2026-10-11）: `PUBLIC_SAMPLE_PREVIEW=1` だけでは有効にならず、`PUBLIC_DEPLOY_TARGET=preview`（または Vercel の Preview / Development）も必要。Cloudflare の本番ビルドには `PUBLIC_SAMPLE_PREVIEW` も `PUBLIC_DEPLOY_TARGET` も設定しない。サンプルを見せるときは、本番とは別の Worker（別名）にだけ設定する。
   - Vercel では **Preview 環境にだけ**環境変数を設定する（Settings → Environment Variables → 環境で Preview のみにチェック）。Production には設定しない。誤って入れても、`VERCEL_ENV=production` のビルドでは無効になる（`isSamplePreview`）。
 - 福祉タクシー（道路運送法の許可）や旅行手配（旅行業・旅行サービス手配業の登録）は、取得を確認するまで「取得済み」と読める書き方をしない。通常の提供メニュー・料金としても載せず、`service.astro` の「準備中のメニュー」に料金なしで置く。確認できたら `prices` へ移す。
 - 旅行の「付き添い」と「手配」は別物として書く。手配（交通・宿泊の予約など）は準備中。

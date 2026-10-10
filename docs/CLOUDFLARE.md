@@ -3,6 +3,13 @@
 状態: **実施する（2026-10-10 利用者の決定）。時期はバッチ A の後。**（利用者の希望「今後は Cloudflare を使いこなしたい。可能なら移したい」）。バッチ A が終わったら、この文書の計画を HANDOFF の「次にやること」に移し（バッチ B の前に置く）、`docs/DECISIONS.md` に決定を書く。段階の目安: 安全装置の作り直しを含むので Codex 監査は段階 2。
 「未確認」と書いた項目は、公式資料で裏が取れていない。実施前に確かめる。
 
+## 進捗（2026-10-11、ブランチ `claude/cloudflare-migration`）
+
+- 済: Wrangler にログイン済みの既存アカウント（利用者のもの）を確認 / `wrangler` を devDependency に追加 / `wrangler.jsonc`（`assets.directory: ./dist`、`not_found_handling: 404-page`）/ 安全装置を既定拒否に作り直しテストで固定 / `npx wrangler deploy` で **https://tsukisoi-support.tsukisoi-support.workers.dev** に出し、全11ページ・404・画像・フォント（Noto Serif JP）を確認（全ページ noindex、サンプル値・tel リンク・access_key なし）。
+- 初回は証明書の発行に数分かかり、その間は TLS エラーになる。
+- **未了（利用者の操作が要る）**: ①Cloudflare ダッシュボードで Workers Builds に GitHub リポジトリをつなぐ（ビルド `npm run build`、デプロイ `npx wrangler deploy`。非本番ブランチのプレビューの出方も確認）②`PUBLIC_FORM_KEY` を Cloudflare 側の変数に設定（コードには書かない）③切り替えを確認してから Vercel 側を止める ④公開時に独自ドメインと `astro.config.mjs` の `site`。
+- 未確認のまま: Workers Builds の設定項目、ブランチ別プレビュー URL、ビルド変数の環境別設定、無料枠。
+
 ## 結論（要約）
 
 - このサイトは静的な Astro（アダプタ不要）なので、移行は小さい。Cloudflare の公式ガイドでは、静的サイトは Workers に `wrangler.jsonc`（`assets.directory: ./dist`）を置いて `npx wrangler deploy` するだけ。
