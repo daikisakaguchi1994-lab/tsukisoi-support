@@ -1,11 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { SITE, isTelConfigured } from '../config';
+import { SITE, isTelConfigured, isTelSample } from '../config';
 import { generateLineQrSvg, isLineUrlConfigured } from '../utils/qr';
 
 const qrSvg = await generateLineQrSvg(SITE.LINE_URL);
 const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
 const telConfigured = isTelConfigured(SITE.TEL);
+const telSample = isTelSample(SITE.TEL);
 const formKey = import.meta.env.PUBLIC_FORM_KEY || '{{FORM_KEY}}';
 ---
 <Layout title="お問い合わせ" description={`${SITE.SERVICE_NAME}へのお問い合わせ。お電話・LINE・メールフォームからお気軽にご連絡ください。`}>
@@ -24,6 +25,12 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY || '{{FORM_KEY}}';
                 {SITE.TEL}
               </a>
               <p class="text-sm mt-1 text-ink-muted">{SITE.TEL_HOURS}</p>
+            </>
+          ) : telSample ? (
+            <>
+              <p class="font-heading text-3xl font-bold text-accent min-h-[44px]">{SITE.TEL}</p>
+              <p class="text-sm mt-1 text-ink-muted">{SITE.TEL_HOURS}</p>
+              <p class="text-xs mt-1 text-ink-muted">（サンプル。実際の番号は準備中です）</p>
             </>
           ) : (
             <>
@@ -117,7 +124,7 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY || '{{FORM_KEY}}';
               <input type="checkbox" name="privacy" required
                 class="w-5 h-5 mt-0.5 text-accent focus:ring-accent" />
               <span class="text-sm">
-                <a href="#" class="text-accent underline">個人情報の取り扱い</a>に同意する
+                <a href="/privacy" class="text-accent underline">個人情報の取り扱い</a>に同意する
                 <span class="text-red-500">*</span>
               </span>
             </label>

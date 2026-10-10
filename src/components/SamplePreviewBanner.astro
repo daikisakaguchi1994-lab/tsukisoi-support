@@ -1,0 +1,12 @@
+---
+import { SAMPLE_PREVIEW } from '../config';
+---
+{SAMPLE_PREVIEW && (
+  <div
+    data-testid="sample-banner"
+    role="note"
+    class="fixed top-0 left-0 right-0 z-[60] h-7 flex items-center justify-center bg-ink-strong text-white text-xs font-bold px-2 text-center"
+  >
+    サンプル表示中（連絡先は仮のものです）
+  </div>
+)}

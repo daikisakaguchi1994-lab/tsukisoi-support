@@ -1,6 +1,7 @@
 // Placeholder values are written as {{VAR}}. Use `grep -r "{{"` to find what is still unset.
+import { SAMPLE_VALUES, isSamplePreview } from './config.sample';
 
-export const SITE = {
+const BASE = {
   // 公開判断が出るまで false。false の間は全ページ noindex, nofollow
   PUBLISHED: false,
   COMPANY_NAME: 'つきそいサポート',
@@ -12,13 +13,37 @@ export const SITE = {
   INSTAGRAM_URL: '{{INSTAGRAM_URL}}',
   EMAIL: '{{EMAIL}}',
   ADDRESS: '{{ADDRESS}}',
-} as const;
+};
+
+type Site = { [K in keyof typeof BASE]: (typeof BASE)[K] extends boolean ? boolean : string };
 
 export const isConfigured = (value: string): boolean => Boolean(value) && !value.startsWith('{{');
 
+// サンプル表示（完成イメージ確認用）。PUBLIC_SAMPLE_PREVIEW=1 かつ Vercel の Production 以外のときだけ有効
+const env = (import.meta as { env?: Record<string, string | undefined> }).env;
+const readEnv = (key: string): string | undefined =>
+  env?.[key] ?? (typeof process !== 'undefined' ? process.env[key] : undefined);
+export const SAMPLE_PREVIEW = isSamplePreview(readEnv('PUBLIC_SAMPLE_PREVIEW'), readEnv('VERCEL_ENV'));
+
 // 仮番号（000-0000-0000 のような 0 だけの並び）や未設定は「未確定」とみなす。発信リンクは確定後だけ出す
+// サンプルの番号も「確定」ではない（発信リンクを出さない）
 export const isTelConfigured = (value: string): boolean =>
-  isConfigured(value) && /[1-9]/.test(value.replace(/\D/g, ''));
+  isConfigured(value) && value !== SAMPLE_VALUES.TEL && /[1-9]/.test(value.replace(/\D/g, ''));
+
+// サンプル表示中の仮番号。文字としては見せるが、リンクにはしない
+export const isTelSample = (value: string): boolean => SAMPLE_PREVIEW && value === SAMPLE_VALUES.TEL;
+
+// 未確定の値だけをサンプルで補う。確定済みの値と PUBLISHED は上書きしない
+const withSamples = (base: Site): Site => {
+  const out: Site = { ...base };
+  for (const key of Object.keys(SAMPLE_VALUES) as (keyof typeof SAMPLE_VALUES)[]) {
+    const unset = key === 'TEL' ? !isTelConfigured(base.TEL) : !isConfigured(base[key]);
+    if (unset) out[key] = SAMPLE_VALUES[key];
+  }
+  return out;
+};
+
+export const SITE: Site = SAMPLE_PREVIEW ? withSamples(BASE) : BASE;
 
 // ヘッダー/フッター共通のナビゲーション
 export const NAV_ITEMS = [
