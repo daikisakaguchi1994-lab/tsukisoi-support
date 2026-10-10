@@ -1,5 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { SITE, isTelConfigured } from '../config';
+import { isLineUrlConfigured } from '../utils/qr';
+
+const otherChannels = [isTelConfigured(SITE.TEL) && 'お電話', isLineUrlConfigured(SITE.LINE_URL) && 'LINE'].filter(Boolean);
 ---
 <Layout title="送信完了">
   <section class="pt-16">
@@ -12,9 +16,11 @@ import Layout from '../layouts/Layout.astro';
         メッセージを受け付けました。<br />
         内容を確認のうえ、2営業日以内にご連絡いたします。
       </p>
-      <p class="text-sm text-ink/60 mb-10">
-        お急ぎの方は、お電話またはLINEでもご連絡いただけます。
-      </p>
+      {otherChannels.length > 0 && (
+        <p class="text-sm text-ink-muted mb-10">
+          お急ぎの方は、{otherChannels.join('または')}でもご連絡いただけます。
+        </p>
+      )}
       <a href="/" class="bg-accent text-white font-bold px-8 py-3 rounded-full hover:bg-accent-hover transition-colors min-h-[44px] inline-block">
         トップページに戻る
       </a>

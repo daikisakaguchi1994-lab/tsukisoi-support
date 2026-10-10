@@ -3,32 +3,23 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import MobileFixedBar from '../components/MobileFixedBar.astro';
-import { SITE } from '../config';
+import { SITE, isConfigured } from '../config';
 
 interface Props {
   title: string;
   description?: string;
 }
 
-const { title, description = `${SITE.SERVICE_NAME} — 医療従事者が付き添う外出サポート・介護タクシー。${SITE.AREA}で、行きたい場所へ安心してお出かけいただけます。` } = Astro.props;
-const fullTitle = title === 'トップ' ? `${SITE.SERVICE_NAME} | 付き添いサポート・介護タクシー` : `${title} | ${SITE.SERVICE_NAME}`;
+const { title, description = `${SITE.SERVICE_NAME} — 病院への通院、お買い物、旅行まで。ひとりでは不安なお出かけに、スタッフが寄り添います。` } = Astro.props;
+const fullTitle = title === 'トップ' ? `${SITE.SERVICE_NAME} | 外出・旅行の付き添い` : `${title} | ${SITE.SERVICE_NAME}`;
 
-const addressConfigured = Boolean(SITE.ADDRESS) && !SITE.ADDRESS.startsWith('{{');
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
   "name": SITE.SERVICE_NAME,
-  "description": "医療従事者が付き添う外出サポート・介護タクシー",
-  "telephone": SITE.TEL,
-  "email": SITE.EMAIL,
-  ...(addressConfigured ? {
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": SITE.ADDRESS
-    }
-  } : {}),
-  "areaServed": SITE.AREA,
-  "openingHours": SITE.TEL_HOURS
+  "description": "お出かけ・旅行の付き添いサポート",
+  ...(isConfigured(SITE.ADDRESS) ? { "address": { "@type": "PostalAddress", "streetAddress": SITE.ADDRESS } } : {}),
+  ...(isConfigured(SITE.TEL_HOURS) ? { "openingHours": SITE.TEL_HOURS } : {}),
 };
 ---
 <!DOCTYPE html>
@@ -38,6 +29,7 @@ const jsonLd = {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
+  {!SITE.PUBLISHED && <meta name="robots" content="noindex, nofollow" />}
 
   <!-- OGP -->
   <meta property="og:title" content={fullTitle} />

@@ -2,16 +2,15 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-const works = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/works' }),
+// お知らせ・読み物。src/content/news/<スラッグ>.md を足すだけで一覧と記事ページが増える
+const news = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/news' }),
   schema: z.object({
     title: z.string(),
-    date: z.string(),
-    tag: z.string(),
-    photo: z.string(),
-    excerpt: z.string(),
-    isImage: z.boolean().default(true),
+    date: z.coerce.date(),
+    category: z.enum(['お知らせ', '読み物']),
+    summary: z.string(),
   }),
 });
 
-export const collections = { works };
+export const collections = { news };
