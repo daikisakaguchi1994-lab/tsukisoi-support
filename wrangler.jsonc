@@ -3,6 +3,8 @@
   "name": "tsukisoi-support",
   "compatibility_date": "2026-10-01",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    // 存在しない URL では dist/404.html を 404 で返す（無いと空のページになる）
+    "not_found_handling": "404-page"
   }
 }
