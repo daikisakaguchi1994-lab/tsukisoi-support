@@ -27,3 +27,6 @@ pnpm-debug.log*
 # playwright
 test-results/
 playwright-report/
+
+# Codex の実行結果（作業用）
+.codex-out/

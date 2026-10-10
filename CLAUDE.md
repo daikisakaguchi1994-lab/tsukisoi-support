@@ -73,7 +73,8 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/opt/pw-browsers/chromium CI=1 npx playwrigh
 - 作業は指定の作業ブランチで行い、commit & push。`master` へのマージは PR を作ってから。公開（`SITE.PUBLISHED`、Production）は利用者の判断で、Claude Code は行わない。
 - Codex の監査は変更の重さで段階を分ける（0 不要 / 1 監査 / 2 必須・観点絞り / 公開前ゲートで全体）。段階の基準は `docs/WORKFLOW.md` 3。段階 1 以上の結果が出るまで「マージ可」と言わない。
 - 大きな作業（新ページ・デザインの大幅変更・新機能）は、実装の前に変更方針を3〜5行で `docs/HANDOFF.md` に書き、`docs/PROJECT.md` の成果の定義に合うか確かめてから始める。
-- 毎回の最後に、`docs/HANDOFF.md` と `docs/DECISIONS.md` を更新して push し、利用者に次の3つを出す。
+- **`codex` コマンドが使える環境（利用者のターミナル／デスクトップアプリ）では、Codex を自分で呼ぶ**（`docs/WORKFLOW.md` 9。読み取り専用、結果は `.codex-out/` に書かせて読む）。利用者に依頼文を貼ってもらう必要はない。使えない環境（クラウドのチャットなど）では、下の3つを出す従来の方法にする。初回は WORKFLOW 9 の動作確認を行う。
+- 毎回の最後に、`docs/HANDOFF.md` と `docs/DECISIONS.md` を更新して push し、利用者に次の3つを出す（Codex を自分で呼んだ回は 1 を省き、結果の要点と取捨選択を示す）。
   1. Codex 用の依頼文（コードブロック。段階 0 は「監査不要」と理由）。
      ```
      AGENTS.md の A（監査）の手順で独立監査してください。コードは変更しないでください。

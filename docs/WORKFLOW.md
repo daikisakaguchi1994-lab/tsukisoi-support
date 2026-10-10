@@ -88,3 +88,35 @@ Claude Code は `CLAUDE.md` から、Codex は `AGENTS.md` から、ここに来
 | `docs/WORKFLOW.md` | この文書 | Claude Code |
 | `docs/HANDOFF.md` | 現在地と次にやること | Claude Code（毎回） |
 | `docs/DECISIONS.md` | 決めたことと理由（1行ずつ） | Claude Code（毎回） |
+
+## 9. Codex の呼び出し方（`codex` が使える環境：利用者のターミナル／デスクトップアプリ）
+
+利用者の環境には `codex-cli`（0.154.0 で確認）が入っていて、ChatGPT のログインで動く。この環境の Claude Code は、依頼文を利用者に貼ってもらわず、**自分で Codex を呼んで結果を読む**。`codex` が使えない環境（クラウドのチャットなど）では、従来どおり依頼文を出して利用者が貼る（`CLAUDE.md` 5）。
+
+### 呼び方（監査・提案とも読み取り専用）
+
+依頼文は `CLAUDE.md` 5 の形で作り、`.codex-out/<テーマ>-prompt.txt` に保存して渡す。結果は `.codex-out/<テーマ>-result.md` に書かせる（`.codex-out/` は git に入れない）。
+
+```
+Get-Content -Raw .codex-out\<テーマ>-prompt.txt | codex exec -s read-only -C . -o .codex-out\<テーマ>-result.md -
+```
+
+- 実行は PowerShell の形。Git Bash なら `cat ... | codex exec -s read-only -C . -o ... -`。
+- `-s read-only`: 読み取り専用（コードを変更させない）。Codex を実装（B）で使うときだけ `-s workspace-write` とし、必ず `codex/<テーマ>` ブランチ上で行う。
+- 同じテーマの修正確認は、前回の会話を続ける: `codex exec resume --last "<追加の依頼>"`。
+- 監査は3分前後かかる。バックグラウンドで実行し、終わったら `-o` のファイルを読む。
+- 認証は保存済みのログインを使う。API キーは使わず、環境変数 `OPENAI_API_KEY` / `CODEX_API_KEY` も設定しない。
+- 読み取り専用の制限を信用しすぎない。実行の前後に `git status` で、作業ツリーが変わっていないことを確かめる。変わっていたら元に戻し、利用者に報告する。
+
+### 初回の動作確認（最初の1回だけ。結果を `docs/HANDOFF.md` に書く）
+
+1. `codex exec -s read-only "このリポジトリの README.md の1行目を答えてください。ファイルは変更しないでください。"` が動くか。
+2. `-s read-only` がこの環境（Windows ネイティブ）で効くか（`git status` が変わらない）。
+3. `-o` のファイルが作られ、日本語が文字化けしていないか。
+4. 動かない場合は、利用者に貼ってもらう従来の方法に戻す。
+
+### Codex の結果の扱い
+
+- Claude Code は結果の要点（指摘・提案の一覧）を利用者に短く見せ、採用・保留・却下を理由つきで示す。結果が出る前に「マージ可」と言わない。
+- 長い結果は全文を会話に貼らない。要点だけを `docs/HANDOFF.md` に残す。
+- Codex の推論の強さは、Codex 側の設定（`~/.codex/config.toml`）の既定を使う。変える必要があれば利用者に聞く（指定の仕方は未確認）。
