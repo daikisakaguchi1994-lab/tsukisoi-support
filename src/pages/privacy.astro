@@ -1,0 +1,81 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { SITE, isConfigured } from '../config';
+
+// 雛形。事業者の実態（取得する情報・委託先・窓口）が確定したら、内容を確認して書き換える。
+const sections = [
+  {
+    title: '1. 取得する情報',
+    body: [
+      'お問い合わせフォームでは、お名前、ふりがな、お電話番号、メールアドレス、ご希望の連絡方法、ご相談内容をお預かりします。',
+      'ご相談内容に、通院先やお体の状態など健康に関わる情報が含まれる場合があります。ご相談に必要な範囲でのみお伺いします。',
+    ],
+  },
+  {
+    title: '2. 利用目的',
+    body: [
+      'お預かりした情報は、ご相談への返信・ご連絡、日程や内容の調整、サービスの提供、およびその記録のためにのみ利用します。',
+    ],
+  },
+  {
+    title: '3. 第三者への提供',
+    body: [
+      'ご本人の同意がある場合や、法令に基づく場合を除き、お預かりした情報を第三者へ提供しません。',
+    ],
+  },
+  {
+    title: '4. 外部サービスの利用',
+    body: [
+      'お問い合わせフォームの送信には、外部のフォーム送信サービス（Web3Forms）を利用しています。送信された内容は、このサービスを経由して当方に届きます。',
+    ],
+  },
+  {
+    title: '5. 安全管理',
+    body: [
+      'お預かりした情報は、漏えい・滅失・不正なアクセスを防ぐよう、必要な範囲の担当者だけが取り扱います。',
+    ],
+  },
+  {
+    title: '6. 開示・訂正・削除のご請求',
+    body: [
+      'ご自身の情報の開示、訂正、削除をご希望の場合は、下記の窓口までご連絡ください。ご本人であることを確認のうえ、対応します。',
+    ],
+  },
+  {
+    title: '7. 改定',
+    body: ['この内容は、必要に応じて見直し、変更することがあります。'],
+  },
+];
+---
+<Layout title="個人情報の取り扱い" description={`${SITE.SERVICE_NAME}の個人情報の取り扱いについて（雛形・要確認）。`}>
+  <section class="pt-16">
+    <div class="max-w-3xl mx-auto px-4 py-12 md:py-20">
+      <Breadcrumb items={[{ label: '個人情報の取り扱い' }]} />
+      <p class="font-heading text-accent tracking-[0.3em] text-sm text-center mb-3">PRIVACY</p>
+      <h1 class="font-heading text-3xl md:text-5xl font-bold text-ink-strong text-center mb-8">個人情報の取り扱い</h1>
+
+      <div data-testid="privacy-draft-notice" class="bg-base-alt rounded-2xl p-6 mb-12 text-sm leading-relaxed">
+        <p class="font-bold text-ink-strong mb-1">雛形・要確認</p>
+        <p>このページは雛形です。正式な文面は公開前に確認が必要です。</p>
+      </div>
+
+      <div class="space-y-10">
+        {sections.map((s) => (
+          <section>
+            <h2 class="font-heading text-xl font-bold text-ink-strong mb-3">{s.title}</h2>
+            {s.body.map((t) => <p class="leading-loose [word-break:auto-phrase] mb-2">{t}</p>)}
+          </section>
+        ))}
+
+        <section>
+          <h2 class="font-heading text-xl font-bold text-ink-strong mb-3">8. 窓口</h2>
+          <p class="leading-loose">{SITE.COMPANY_NAME}</p>
+          {isConfigured(SITE.EMAIL)
+            ? <p class="leading-loose">メール: <a href={`mailto:${SITE.EMAIL}`} class="text-accent underline">{SITE.EMAIL}</a></p>
+            : <p class="leading-loose text-ink-muted">窓口の連絡先は準備中です。当面は<a href="/contact" class="text-accent underline">お問い合わせフォーム</a>からご連絡ください。</p>}
+        </section>
+      </div>
+    </div>
+  </section>
+</Layout>

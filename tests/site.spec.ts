@@ -1,12 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { readdirSync } from 'node:fs';
-import { NAV_ITEMS, SITE, isTelConfigured } from '../src/config';
+import { NAV_ITEMS, SITE, SAMPLE_PREVIEW, isTelConfigured } from '../src/config';
+import { SAMPLE_VALUES } from '../src/config.sample';
 
 // お知らせ・読み物の記事は src/content/news/*.md から自動で拾う
 const ARTICLES = readdirSync('src/content/news')
   .filter((f) => f.endsWith('.md'))
   .map((f) => `/news/${f.replace(/\.md$/, '')}`);
-const PAGES = ['/', '/service', '/contact', '/thanks', '/news', '/about', '/links', ...ARTICLES];
+const PAGES = ['/', '/service', '/contact', '/thanks', '/news', '/about', '/links', '/privacy', ...ARTICLES];
 
 // 公開前の方針: 公開判断が出るまで全ページ noindex
 for (const path of PAGES) {
@@ -134,7 +135,7 @@ test('scroll cue pulses when motion is allowed', async ({ page }) => {
 });
 
 for (const width of [1440, 390, 320]) {
-  for (const path of ['/', '/service', '/contact', '/news', '/about', '/links', ARTICLES[0]]) {
+  for (const path of ['/', '/service', '/contact', '/news', '/about', '/links', '/privacy', ARTICLES[0]]) {
     test(`no horizontal overflow at ${width}px: ${path}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(path);
@@ -194,4 +195,32 @@ test('about and links show preparing notices while details are unset', async ({ 
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('関連リンク');
   await expect(page.locator('main a[target="_blank"]')).toHaveCount(0);
   await expect(page.locator('main').getByText('準備中です', { exact: true })).toHaveCount(2);
+});
+
+// サンプル表示は、環境変数がない通常のビルドには一切出ない（本番に偽の連絡先を出さない）
+test('normal build never contains sample contact values', async () => {
+  expect(SAMPLE_PREVIEW).toBe(false);
+});
+for (const path of PAGES) {
+  test(`shows no sample values or banner in the normal build: ${path}`, async ({ page }) => {
+    await page.goto(path);
+    await expect(page.getByTestId('sample-banner')).toHaveCount(0);
+    const html = await page.content();
+    for (const value of [SAMPLE_VALUES.TEL, SAMPLE_VALUES.LINE_URL, SAMPLE_VALUES.INSTAGRAM_URL, SAMPLE_VALUES.EMAIL, SAMPLE_VALUES.ADDRESS, 'サンプル表示中']) {
+      expect(html, value).not.toContain(value);
+    }
+    await expect(page.locator('body')).not.toHaveAttribute('data-sample-preview', /.*/);
+  });
+}
+
+// 個人情報の取り扱いページは雛形。「雛形・要確認」と「公開前の確認が必要」を必ず明記し、フォームからリンクする
+test('privacy page is marked as a draft and the contact form links to it', async ({ page }) => {
+  await page.goto('/privacy');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('個人情報の取り扱い');
+  const notice = page.getByTestId('privacy-draft-notice');
+  await expect(notice).toContainText('雛形・要確認');
+  await expect(notice).toContainText('正式な文面は公開前に確認が必要です');
+  await page.goto('/contact');
+  await expect(page.getByRole('link', { name: '個人情報の取り扱い' }).first()).toHaveAttribute('href', '/privacy');
+  await expect(page.locator('a[href="#"]')).toHaveCount(0);
 });

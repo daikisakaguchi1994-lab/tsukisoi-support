@@ -1,10 +1,11 @@
 ---
-import { SITE, isTelConfigured } from '../config';
+import { SITE, isTelConfigured, isTelSample } from '../config';
 import { generateLineQrSvg, isLineUrlConfigured } from '../utils/qr';
 
 const qrSvg = await generateLineQrSvg(SITE.LINE_URL);
 const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
 const telConfigured = isTelConfigured(SITE.TEL);
+const telSample = isTelSample(SITE.TEL);
 ---
 <section class="bg-base-alt py-20 md:py-28" id="contact-block">
   <div class="max-w-5xl mx-auto px-4">
@@ -30,6 +31,12 @@ const telConfigured = isTelConfigured(SITE.TEL);
               {SITE.TEL}
             </a>
             <p class="text-sm mt-2 text-ink-muted">{SITE.TEL_HOURS}</p>
+          </>
+        ) : telSample ? (
+          <>
+            <p class="font-heading text-3xl md:text-4xl font-bold text-accent min-h-[44px] leading-tight">{SITE.TEL}</p>
+            <p class="text-sm mt-2 text-ink-muted">{SITE.TEL_HOURS}</p>
+            <p class="text-xs mt-1 text-ink-muted">（サンプル。実際の番号は準備中です）</p>
           </>
         ) : (
           <>

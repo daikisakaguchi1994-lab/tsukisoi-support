@@ -1,9 +1,10 @@
 ---
-import { SITE, isTelConfigured } from '../config';
+import { SITE, isTelConfigured, isTelSample } from '../config';
 import { isLineUrlConfigured } from '../utils/qr';
 
 const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
 const telConfigured = isTelConfigured(SITE.TEL);
+const telSample = isTelSample(SITE.TEL);
 ---
 <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-base-alt shadow-lg">
   <div class="grid grid-cols-2 h-16">
@@ -23,7 +24,7 @@ const telConfigured = isTelConfigured(SITE.TEL);
         class="flex items-center justify-center gap-2 bg-base-alt text-ink-muted font-bold text-sm min-h-[44px]"
         aria-disabled="true"
       >
-        電話相談は準備中
+        {telSample ? '電話（サンプル）' : '電話相談は準備中'}
       </span>
     )}
     {lineConfigured ? (

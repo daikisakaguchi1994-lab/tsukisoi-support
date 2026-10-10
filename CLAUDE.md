@@ -7,6 +7,10 @@ Astro 7 + Tailwind 4 の静的サイト。Vercel にデプロイ（Git 連携）
 
 - `src/config.ts` の `SITE.PUBLISHED` が `false` の間は、全ページ `noindex, nofollow`。外すのは利用者の公開判断が出てから。
 - 屋号・連絡先は `src/config.ts` に集約する。未確定の値は `{{VAR}}` にして `isConfigured()` で画面から隠す。電話番号は仮の `000-0000-0000`（公開前に差し替え）。`isTelConfigured()` が偽の間は `tel:` リンクを出さず「電話相談は準備中」と表示する（テストで固定）。
+- **サンプル表示（完成イメージ確認用）**: `PUBLIC_SAMPLE_PREVIEW=1` でビルドしたときだけ、未確定の連絡先を `src/config.sample.ts` の架空の値（電話 `03-0000-0000`、`example.com` など）で補い、全ページ上部に「サンプル表示中（連絡先は仮のものです）」の帯を出す。
+  - `src/config.ts` の本来の値は書き換えない。確定した値は `config.ts` に入れる（サンプルは確定済みの値を上書きしない）。
+  - サンプルの電話は文字で見せるだけで `tel:` リンクにしない（`isTelConfigured` は偽のまま）。`noindex, nofollow` と `SITE.PUBLISHED = false` は維持。JSON-LD にもサンプルの住所・受付時間は入れない。
+  - Vercel では **Preview 環境にだけ**環境変数を設定する（Settings → Environment Variables → 環境で Preview のみにチェック）。Production には設定しない。誤って入れても、`VERCEL_ENV=production` のビルドでは無効になる（`isSamplePreview`）。
 - 福祉タクシー（道路運送法の許可）や旅行手配（旅行業・旅行サービス手配業の登録）は、取得を確認するまで「取得済み」と読める書き方をしない。通常の提供メニュー・料金としても載せず、`service.astro` の「準備中のメニュー」に料金なしで置く。確認できたら `prices` へ移す。
 - 旅行の「付き添い」と「手配」は別物として書く。手配（交通・宿泊の予約など）は準備中。
 - 未確定の人名・資格・経歴・連携団体は仮の値で埋めず「準備中」にする（`about.astro` `links.astro`）。
@@ -31,8 +35,9 @@ Astro 7 + Tailwind 4 の静的サイト。Vercel にデプロイ（Git 連携）
 
 ## 3-2. 公開前に残る確認事項
 
-- 電話番号・住所・LINE・Instagram・メールの確定（`src/config.ts`）。
-- お問い合わせフォームの送信キー `PUBLIC_FORM_KEY`（未設定のままでは送信できない）と、個人情報の取り扱いページ（`contact.astro` のリンクは `#` のまま）。
+- 電話番号・住所・LINE・Instagram・メール・受付時間の**実際の値の確定**（`src/config.ts`）。サンプル表示（`config.sample.ts`）は確認用で、公開用の値ではない。
+- お問い合わせフォームの送信キー `PUBLIC_FORM_KEY`（未設定のままでは送信できない。Vercel の環境変数に設定し、コードには書かない）。
+- 個人情報の取り扱いページ（`/privacy`）は雛形。「雛形・要確認」の表示を、正式な文面に差し替えるまで外さない（取得する情報・委託先・窓口を実態に合わせて確認）。
 - 福祉タクシーの許可・旅行手配の登録の取得状況。
 - 参考サイトとの本文照合は 2026-10-10 に実施済み（`scripts/compare-reference.py`）。料金表下の注記とご利用の流れが言い換え程度だったため書き直した。文章を足したら再実行する。
 - 写真・画像の権利、代表者プロフィール、連携団体の掲載承諾。
@@ -45,7 +50,7 @@ npx astro check        # 0 errors
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/opt/pw-browsers/chromium CI=1 npx playwright test
 ```
 
-- テストはビルド結果を `astro preview`（ポート 4331）で配信して行う。Astro 7 の `astro dev` は二重起動を拒否するため使わない。
+- テストはビルド結果を `astro preview`（ポート 4331）で配信して行う。サンプル表示は別の出力先 `dist-sample`・ポート 4332（`ASTRO_OUT_DIR=dist-sample PUBLIC_SAMPLE_PREVIEW=1`）でビルドして `tests/sample-preview.spec.ts` が確認する。Astro 7 の `astro dev` は二重起動を拒否するため使わない。
 - 見た目を変えたら 1440px / 390px のスクリーンショットを `docs/review-screenshots/` に保存する（ファイル名は `<テーマ>-<YYYYMMDD>-<desktop|mobile>-<ページ>.png`）。
 - 新しい方針や不具合の修正には、再発を防ぐテストを `tests/` に足す。
 

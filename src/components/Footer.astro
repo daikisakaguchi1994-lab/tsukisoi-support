@@ -1,5 +1,5 @@
 ---
-import { SITE, NAV_ITEMS, isConfigured, isTelConfigured } from '../config';
+import { SITE, NAV_ITEMS, isConfigured, isTelConfigured, isTelSample } from '../config';
 
 const year = new Date().getFullYear();
 ---
@@ -15,7 +15,13 @@ const year = new Date().getFullYear();
         {isConfigured(SITE.ADDRESS) && <p>{SITE.ADDRESS}</p>}
         {isTelConfigured(SITE.TEL)
           ? <p>TEL: <a href={`tel:${SITE.TEL}`} class="hover:underline">{SITE.TEL}</a></p>
-          : <p>電話相談は準備中です</p>}
+          : isTelSample(SITE.TEL)
+            ? <p>TEL: {SITE.TEL}（サンプル）</p>
+            : <p>電話相談は準備中です</p>}
+        {isConfigured(SITE.EMAIL) && (
+          <p>Mail: <a href={`mailto:${SITE.EMAIL}`} class="hover:underline">{SITE.EMAIL}</a></p>
+        )}
+        <p><a href="/privacy" class="hover:underline">個人情報の取り扱い</a></p>
         {isConfigured(SITE.INSTAGRAM_URL) && (
           <p><a href={SITE.INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" class="hover:underline">Instagram</a></p>
         )}

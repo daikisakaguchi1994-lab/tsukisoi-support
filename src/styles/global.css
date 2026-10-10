@@ -8,7 +8,7 @@
   --color-ink-muted: #655F59; /* 補足文字。どの地色でも 5:1 以上 */
   --color-accent: #4A7042; /* 白文字 5.69:1、生成り地 5.33:1 */
   --color-accent-hover: #3D5E37;
-  --color-line: #06C755;
+  --color-line: #067A38; /* LINE の緑を暗くした色。白文字 5.46:1（公式色 #06C755 は 2.26:1 で不足） */
 
   --font-heading: 'Zen Maru Gothic', sans-serif;
   --font-body: 'Noto Sans JP', sans-serif;
@@ -73,3 +73,8 @@ html {
 .article-body ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; }
 .article-body li { margin-bottom: 0.5rem; }
 .article-body strong { color: var(--color-ink-strong); }
+
+/* サンプル表示中は、上部の帯（h-7 = 1.75rem）の分だけ固定ヘッダーと本文を下げる */
+body[data-sample-preview] { padding-top: 1.75rem; }
+body[data-sample-preview] #site-header { top: 1.75rem; }
+body[data-sample-preview] section[id] { scroll-margin-top: 5.75rem; }
