@@ -1,22 +1,65 @@
-## Development
+# Codex 作業の手順
 
-When starting the dev server, use background mode:
+このファイルは、Codex がこのリポジトリで作業するときの常設の手順。
+司令塔は Claude Code。Codex への依頼文は Claude Code が書き、利用者がそのまま貼る。
+依頼文には「監査」か「実装」かと、対象・要約だけが書かれる。守る方針・観点・検証・出力形式はここに従う。
+
+## 最初に読むもの
+
+1. `CLAUDE.md`（特に 1. 公開前の安全方針、2. 参考サイトの扱い、3. デザインの約束、4. 検証）。ここに書かれた方針が判断の基準。
+2. 依頼文に書かれた差分範囲（`git diff <前>..<後>`）。ローカルにコミットが無ければ `git fetch origin <ブランチ>` してから見る。
+
+## A. 監査を頼まれたとき（基本）
+
+- 監査のみ。リポジトリのコードは変更しない。検証で試す変更は別のコピー上で行う。
+- 指摘は根拠つきで出す。再現できないものは「未再現」と書き、断定しない。
+- 前回の指摘がある場合は、直っているかを最初に確認する。
+
+### 観点（変更に関係するものを必ず見る）
+
+- 公開前の方針: 全ページ `noindex, nofollow` を維持しているか（`SITE.PUBLISHED` が `false`）。未確定の電話・住所・LINE・Instagram などを、仮値のまま本物らしく見せていないか。`{{...}}` が画面に出ていないか。
+- 参考サイトの扱い: travelbuddy.jp の文章・写真・ロゴ・屋号・電話番号・受賞歴・事業者固有の事実を転載していないか。構成・価格帯を揃えるのは可。
+- 許認可に関わる表記: 福祉タクシー・旅行手配などを、許可や登録を取得済みのように断定していないか。
+- デザイン: 色は `src/styles/global.css` のトークン（`accent` / `accent-hover` / `ink` / `ink-strong` / `ink-muted` / `base` / `base-alt`）を使い、`text-ink/50` のような透過で薄くした文字を新たに足していないか。
+- アクセシビリティ: 文字 4.5:1、非文字 3:1。フォーカスの見え方、見出し構造、装飾の `aria-hidden`、`prefers-reduced-motion`。
+- 幅・折り返し: 1440px / 390px / 320px で横はみ出しや、見出しの不自然な折り返しがないか。
+- 既存動作の退行: ナビ・モバイルメニュー（`aria-expanded`）、お問い合わせフォーム、JSON-LD、リンク先。
+- テスト: 新しい方針や不具合の修正に、再発を防ぐテストが `tests/` にあるか。
+
+### 出力形式
+
+重大 / 中 / 軽微 に分ける。各指摘に次を書く。
+
+- ファイル:行番号
+- 問題
+- 再現手順・根拠
+- 修正案
+
+最後に次を書く。
+
+- 実行した検証と結果（コマンドごと）
+- 問題なしと判断した観点
+- 未検証の観点（ブラウザ・環境の制約など）
+- マージ可否の判断
+
+指摘が0件のときも、確認した観点と未検証の観点は省略しない。
+
+## B. 実装を頼まれたとき（並行作業）
+
+- 依頼文で指定されたブランチ（`codex/<テーマ>`）だけで作業し、commit & push する。`master` や Claude Code の作業ブランチには push しない。
+- 依頼文で指定されたファイル以外は変更しない。共通部品（`src/layouts/` `src/components/` `src/styles/global.css` `src/config.ts`）に手を入れる必要が出たら、変更せずに報告する。
+- `CLAUDE.md` の方針と下の検証を守り、検証がすべて通ってから push する。
+- 最後に次を書く: ブランチ名とコミット、変更ファイル、検証結果、判断に迷った点。
+
+## 検証手順（監査・実装とも）
 
 ```
-astro dev --background
+npm run build
+npx astro check        # 0 errors
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=<chromium のパス> CI=1 npx playwright test
 ```
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
-
-## Documentation
-
-Full documentation: https://docs.astro.build
-
-Consult these guides before working on related tasks:
-
-- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
-- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
-- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
-- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
-- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
-- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+- `node_modules` が無ければ先に `npm ci`。
+- Chromium のパスは環境によって違う（`/opt/pw-browsers/chromium` が無ければ `/usr/bin/chromium` など）。使ったパスを報告に書く。
+- Playwright の成功件数は、依頼文に期待値があればそれと照合する。
+- 見た目の指摘は、実際にブラウザで再現してから出す（コードを読んだだけで断定しない）。

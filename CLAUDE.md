@@ -1,22 +1,78 @@
-## Development
+# つきそいサポート ホームページ — 作業の約束事
 
-When starting the dev server, use background mode:
+Astro 7 + Tailwind 4 の静的サイト。Vercel にデプロイ（Git 連携）。
+このファイルは新しいセッションが最初に読む前提。ここに書いた方針はセッションをまたいで守る。
+
+## 1. 公開前の安全方針（崩したら重大）
+
+- `src/config.ts` の `SITE.PUBLISHED` が `false` の間は、全ページ `noindex, nofollow`。外すのは利用者の公開判断が出てから。
+- 屋号・連絡先は `src/config.ts` に集約する。未確定の値は `{{VAR}}` にして `isConfigured()` で画面から隠す。電話番号は仮の `000-0000-0000`（公開前に差し替え）。
+- 福祉タクシー（道路運送法の許可）や旅行手配（旅行業・旅行サービス手配業の登録）は、取得を確認するまで「取得済み」と読める書き方をしない。
+
+## 2. 参考サイトの扱い
+
+- 参考は https://travelbuddy.jp/ 。まず構成・導線・価格帯を揃え、そこに自社の色を足していく方針。
+- 揃えてよいもの: ページ構成、セクションの順番、ナビ項目、料金の価格帯、ご利用の流れの段数。
+- 転載しないもの: 文章、写真、ロゴ、屋号、電話番号、受賞歴・掲載歴などその事業者固有の事実。文章は自前で書き起こす。
+- `tests/site.spec.ts` の `FORBIDDEN_TEXT` に、画面に出してはいけない語を入れて再発を防ぐ。
+
+## 3. デザインの約束
+
+- 色は `src/styles/global.css` のトークンを使う。
+  - `accent`（#4A7042）= ボタン・強調・小見出し。白文字で 5.69:1。
+  - `ink-muted` = 補足文字。`text-ink/50` のような透過で薄くした文字は使わない（コントラスト不足になる）。
+- 日本語の見出しは文節で折り返す（`global.css` で `word-break: auto-phrase`）。本文で必要な所は `[word-break:auto-phrase]`。
+- アクセシビリティ: 文字は WCAG AA 4.5:1、非文字は 3:1 以上。装飾は `aria-hidden`。`prefers-reduced-motion` で動きを止める。
+- 料金は `src/pages/service.astro` の `prices` に集約。変えたら `tests/site.spec.ts` も合わせる。
+
+## 4. 検証（push 前に必ず実行）
+
+```
+npm run build
+npx astro check        # 0 errors
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/opt/pw-browsers/chromium CI=1 npx playwright test
+```
+
+- テストはビルド結果を `astro preview`（ポート 4331）で配信して行う。Astro 7 の `astro dev` は二重起動を拒否するため使わない。
+- 見た目を変えたら 1440px / 390px のスクリーンショットを `docs/review-screenshots/` に保存する（ファイル名は `<テーマ>-<YYYYMMDD>-<desktop|mobile>-<ページ>.png`）。
+- 新しい方針や不具合の修正には、再発を防ぐテストを `tests/` に足す。
+
+## 5. 運用（Claude Code が司令塔 × Codex × GitHub）
+
+- Claude Code が実装・検証・push まで行い、Codex には依頼文で指示を出す。Codex の常設手順は `AGENTS.md`。
+- 作業は指定の作業ブランチで行い、commit & push。`master` へのマージは PR を作ってから。
+- Codex の使い方は2通り。
+  - **監査（毎回）**: 変更ごとに Codex で独立監査する（読み取り専用）。
+  - **並行実装（必要なときだけ）**: 共通部品に触れない独立したページ（例: 読み物・関連リンク）を Codex に任せると早いときは、`codex/<テーマ>` ブランチ・変更してよいファイルを依頼文で限定して渡す。上がってきたブランチは Claude Code がレビュー・検証してから取り込む。
+- Claude Code は毎回の最後に次の3つを出す。
+  1. Codex 用の依頼文（コードブロック）。手順・観点・出力形式は `AGENTS.md` にあるので、依頼文は短くする。
+     ```
+     AGENTS.md の A（監査）の手順で独立監査してください。コードは変更しないでください。
+     対象: daikisakaguchi1994-lab/tsukisoi-support / ブランチ <名前> / コミット <sha> / 差分 <前>..<後>
+     変更の要約: <1〜3行>
+     前回の指摘と修正: <なければ「なし」>
+     とくに見てほしい観点: <なければ「AGENTS.md の観点すべて」>
+     期待値: Playwright <N>件成功、astro check 0 errors
+     ```
+     並行実装を頼むときは「AGENTS.md の B（実装）の手順で」とし、ブランチ名・変更してよいファイル・作るものを書く。
+     同じテーマの修正確認は前回の Codex チャットに続けて貼ってよい。テーマが変わる・チャットが長くなったときは新しいチャットにする。
+  2. 次の Claude Code に貼るプロンプト（そのまま貼れば通じる完全な文。Codex の結果は利用者が画像で添付するので、「監査結果は添付画像のとおり」と書いておく）。
+  3. 次に使うモデルと強度（例: Opus 5.5 / 中、Sonnet 5.5 / 高）。
+- Codex の指摘は、妥当なものは直し、却下するものは理由を書く。
+- モデルを替えるときや、マージで一区切りついたときは、新しいチャットに引き継ぐ。
+
+## 6. Astro
+
+開発サーバーはバックグラウンドで起動する。
 
 ```
 astro dev --background
 ```
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+`astro dev stop` / `astro dev status` / `astro dev logs` で管理する。
 
-## Documentation
+ドキュメント: https://docs.astro.build
 
-Full documentation: https://docs.astro.build
-
-Consult these guides before working on related tasks:
-
-- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
-- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
-- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
-- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
-- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
-- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+- [ページ・ルーティング](https://docs.astro.build/en/guides/routing/)
+- [Astro コンポーネント](https://docs.astro.build/en/basics/astro-components/)
+- [スタイル・Tailwind](https://docs.astro.build/en/guides/styling/)
