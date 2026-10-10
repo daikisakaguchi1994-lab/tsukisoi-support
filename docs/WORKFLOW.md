@@ -105,11 +105,12 @@ Get-Content -Raw .codex-out\<テーマ>-prompt.txt | codex exec -s read-only -C 
 - `-s read-only`: 読み取り専用（コードを変更させない）。Codex を実装（B）で使うときだけ `-s workspace-write` とし、必ず `codex/<テーマ>` ブランチ上で行う。
 - 同じテーマの修正確認は、前回の会話を続ける: `codex exec resume --last "<追加の依頼>"`。
 - 監査は3分前後かかる。バックグラウンドで実行し、終わったら `-o` のファイルを読む。
-- 認証は保存済みのログインを使う。API キーは使わず、環境変数 `OPENAI_API_KEY` / `CODEX_API_KEY` も設定しない。
+- 認証は保存済みのログイン（ChatGPT のサブスク）を使う。**API キーは使わない**（環境変数 `OPENAI_API_KEY` / `CODEX_API_KEY` も設定しない）。クラウドのチャット環境に Codex を入れる方法は、API キーが要るため採用しない。サブスクの利用枠は Claude Code の監査・提案でも消費されるので、段階 0 では呼ばず、段階の基準（3）を守る。
 - 読み取り専用の制限を信用しすぎない。実行の前後に `git status` で、作業ツリーが変わっていないことを確かめる。変わっていたら元に戻し、利用者に報告する。
 
 ### 初回の動作確認（最初の1回だけ。結果を `docs/HANDOFF.md` に書く）
 
+0. 認証がサブスク（ChatGPT のログイン）か確かめる: `codex login status`（無ければ `codex --help` で確認）。API キーでのログインなら、利用者に伝えて `codex login` で ChatGPT のログインに切り替えてもらう。
 1. `codex exec -s read-only "このリポジトリの README.md の1行目を答えてください。ファイルは変更しないでください。"` が動くか。
 2. `-s read-only` がこの環境（Windows ネイティブ）で効くか（`git status` が変わらない）。
 3. `-o` のファイルが作られ、日本語が文字化けしていないか。
