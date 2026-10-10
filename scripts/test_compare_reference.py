@@ -44,6 +44,15 @@ class CompareReference(unittest.TestCase):
         self.assertNotIn('甲乙丙丁戊己庚辛壬癸子丑', out)
         self.assertIn('甲乙丙丁戊己庚辛壬癸子', out)
 
+    def test_rejects_non_positive_min(self):
+        write(self.ref, 'a.html', A)
+        write(self.dist, 'index.html', A)
+        for v in ('0', '-1'):
+            r = subprocess.run([sys.executable, '-I', SCRIPT, '--ref-dir', self.ref, '--dist', self.dist, '--min', v],
+                               capture_output=True, text=True, timeout=10)
+            self.assertEqual(r.returncode, 2)
+            self.assertIn('1 以上', r.stderr)
+
     def test_reports_origin(self):
         write(self.ref, 'a.html', 'あ' + A)
         write(self.dist, 'index.html', A)

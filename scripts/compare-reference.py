@@ -77,9 +77,16 @@ def find_runs(s, ref_text, grams, n):
     return runs
 
 
+def positive_int(value):
+    n = int(value)
+    if n < 1:
+        raise argparse.ArgumentTypeError('1 以上の整数を指定してください')
+    return n
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--min', type=int, default=8)
+    ap.add_argument('--min', type=positive_int, default=8)
     ap.add_argument('--ref-dir')
     ap.add_argument('--dist', default='dist')
     args = ap.parse_args()
