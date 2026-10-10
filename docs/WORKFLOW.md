@@ -98,10 +98,11 @@ Claude Code は `CLAUDE.md` から、Codex は `AGENTS.md` から、ここに来
 依頼文は `CLAUDE.md` 5 の形で作り、`.codex-out/<テーマ>-prompt.txt` に保存して渡す。結果は `.codex-out/<テーマ>-result.md` に書かせる（`.codex-out/` は git に入れない）。
 
 ```
-Get-Content -Raw .codex-out\<テーマ>-prompt.txt | codex exec -s read-only -C . -o .codex-out\<テーマ>-result.md -
+Get-Content -Raw .codex-out\<テーマ>-prompt.txt | codex exec -m gpt-5.6-sol -s read-only -C . -o .codex-out\<テーマ>-result.md -
 ```
 
-- 実行は PowerShell の形。Git Bash なら `cat ... | codex exec -s read-only -C . -o ... -`。
+- 実行は PowerShell の形。Git Bash なら `cat ... | codex exec -m gpt-5.6-sol -s read-only -C . -o ... -`。
+- `-m gpt-5.6-sol` は毎回付ける。`~/.codex/config.toml` の既定モデル（gpt-6-sol）は ChatGPT アカウントでは使えず 400 エラーになるため（2026-10-10 に確認）。使えるモデルが変わったら `docs/HANDOFF.md` の環境欄と合わせて直す。
 - `-s read-only`: 読み取り専用（コードを変更させない）。Codex を実装（B）で使うときだけ `-s workspace-write` とし、必ず `codex/<テーマ>` ブランチ上で行う。
 - 同じテーマの修正確認は、前回の会話を続ける: `codex exec resume --last "<追加の依頼>"`。
 - 監査は3分前後かかる。バックグラウンドで実行し、終わったら `-o` のファイルを読む。
