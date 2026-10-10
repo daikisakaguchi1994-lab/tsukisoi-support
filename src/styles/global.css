@@ -55,6 +55,13 @@ html {
   outline-offset: 2px;
 }
 
+/* 濃い緑・写真の上（ヘッダー・フッター・トップのスライド）では、フォーカスの枠を白にする（3:1 以上） */
+:is(#site-header, footer, #hero) *:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+#hero *:focus-visible { box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6); }
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

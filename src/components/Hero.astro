@@ -5,11 +5,11 @@ import { SITE } from '../config';
 
 // 画像は public/images/hero/hero-N.jpg に置くと反映される。無い間は色のグラデーションで代替（public/images/README.md）
 const slides = [
-  { title: SITE.TAGLINE, sub: 'お出かけに、安心の付き添いを', en: 'Beside you, always', bg: 'linear-gradient(180deg,#5C7899 0%,#A9A6C2 52%,#F0C9A2 100%)' },
-  { title: '通院も、お買い物も', sub: 'ひとりでは不安なお出かけに', en: 'Hospital visits & shopping', bg: 'linear-gradient(180deg,#3F6B4A 0%,#8DB387 55%,#D8E4B8 100%)' },
-  { title: '「ひとりでは心配」を「一緒なら大丈夫」に', sub: '', en: 'Together, you can go', bg: 'linear-gradient(180deg,#6B7F8F 0%,#B6C9CE 60%,#EFE6D0 100%)' },
-  { title: '旅の道中も、そばに', sub: '駅や空港での移動に付き添います', en: 'On the way, by your side', bg: 'linear-gradient(180deg,#8A6F5A 0%,#D1A988 55%,#F4E2C4 100%)' },
-  { title: 'まずは、お気軽にご相談ください', sub: '', en: 'We are here to help', bg: 'linear-gradient(180deg,#5E5A7A 0%,#B9A3B8 55%,#F2CDB4 100%)' },
+  { title: SITE.TAGLINE, sub: ['お出かけに、', '安心の付き添いを'], en: 'Beside you, always', bg: 'linear-gradient(180deg,#5C7899 0%,#A9A6C2 52%,#F0C9A2 100%)' },
+  { title: '通院も、お買い物も', sub: ['ひとりでは不安な', 'お出かけに'], en: 'Hospital visits & shopping', bg: 'linear-gradient(180deg,#3F6B4A 0%,#8DB387 55%,#D8E4B8 100%)' },
+  { title: '「ひとりでは心配」を「一緒なら大丈夫」に', sub: [] as string[], en: 'Together, you can go', bg: 'linear-gradient(180deg,#6B7F8F 0%,#B6C9CE 60%,#EFE6D0 100%)' },
+  { title: '旅の道中も、そばに', sub: ['駅や空港での', '移動に付き添います'], en: 'On the way, by your side', bg: 'linear-gradient(180deg,#8A6F5A 0%,#D1A988 55%,#F4E2C4 100%)' },
+  { title: 'まずは、お気軽にご相談ください', sub: [] as string[], en: 'We are here to help', bg: 'linear-gradient(180deg,#5E5A7A 0%,#B9A3B8 55%,#F2CDB4 100%)' },
 ].map((s, i) => {
   const file = `/images/hero/hero-${i + 1}.jpg`;
   return { ...s, img: existsSync(join(process.cwd(), 'public', file)) ? file : null };
@@ -32,14 +32,20 @@ const slides = [
       <div class="relative px-6 max-w-4xl" data-copy>
         <p class="text-base md:text-lg tracking-[0.2em] mb-4 italic" data-copy-en>{s.en}</p>
         <p class="font-heading text-3xl md:text-6xl font-bold leading-tight tracking-widest [text-wrap:balance] [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]" data-copy-title>{s.title}</p>
-        {s.sub && <p class="mt-5 text-base md:text-xl tracking-[0.15em]" data-copy-sub>— {s.sub} —</p>}
+        {s.sub.length > 0 && (
+          <p class="mt-5 text-base md:text-xl tracking-[0.15em] [text-wrap:balance]" data-copy-sub>
+            {s.sub.map((phrase, k) => (
+              <span class="inline-block" data-sub-phrase>{k === 0 ? '— ' : ''}{phrase}{k === s.sub.length - 1 ? ' —' : ''}</span>
+            ))}
+          </p>
+        )}
       </div>
     </div>
   ))}
 
   <a href="#intro" class="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center text-sm tracking-[0.3em] text-white" aria-label="下へスクロール" data-scroll-cue>
-    <svg class="w-4 h-4 mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 7l6 6 6-6M6 13l6 6 6-6" /></svg>
-    <span class="block motion-safe:animate-pulse">Scroll</span>
+    <svg class="w-4 h-4 mb-1 motion-safe:animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-scroll-chevron><path d="M6 7l6 6 6-6M6 13l6 6 6-6" /></svg>
+    <span class="block">Scroll</span>
   </a>
 
   <div class="absolute bottom-4 left-0 right-0 z-10 flex justify-center" role="group" aria-label="スライドの切り替え">

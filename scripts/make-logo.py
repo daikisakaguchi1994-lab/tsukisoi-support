@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
-"""public/images/logo-mark.png（白い背景に濃い緑の線画）から、透過のロゴ2種を作る。
+"""public/images/logo-mark.png から、余白を切り落とした透過のロゴ2種を作る。
 
   python3 scripts/make-logo.py
 
-出力（余白は切り落とす）:
-  public/images/logo-dark.png   濃い緑の線画。白い地の上（導入部など）に使う
-  public/images/logo-white.png  白の線画。濃い緑の見出し帯や写真の上（ヘッダー）に使う
+元画像は次のどちらでもよい。
+  - 背景が透明な PNG（線の色はそのまま使う）
+  - 白い背景に濃い線の画像（背景を透明にする）
+
+出力:
+  public/images/logo-dark.png   元の色（濃い緑）の線画。白い地の上（導入部など）に使う
+  public/images/logo-white.png  白の線画。濃い緑の帯や写真の上（ヘッダー）に使う
 """
 import os
 import sys
@@ -13,24 +17,29 @@ import sys
 from PIL import Image
 
 SRC = 'public/images/logo-mark.png'
-STROKE = (46, 74, 53)  # --color-deep
 PAD = 12
 
 if not os.path.exists(SRC):
     sys.exit(f'{SRC} がありません。')
 
 im = Image.open(SRC).convert('RGBA')
-# 背景（白）を透明にし、線の濃さをそのまま透明度にする
-rgb = im.convert('L')
-low = rgb.getextrema()[0]
-alpha = rgb.point(lambda v: 0 if v >= 238 else min(255, int((255 - v) * 255 / max(1, 255 - low))))
-bbox = alpha.getbbox()
+alpha = im.getchannel('A')
+if alpha.getextrema()[0] == 255:
+    # 不透明な画像: 白い背景を透明にし、線の濃さを透明度にする
+    gray = im.convert('L')
+    low = gray.getextrema()[0]
+    alpha = gray.point(lambda v: 0 if v >= 238 else min(255, int((255 - v) * 255 / max(1, 255 - low))))
+    im.putalpha(alpha)
+# ごく薄いにじみ（ノイズ）は無視して、線の範囲を求める
+bbox = alpha.point(lambda v: 255 if v > 40 else 0).getbbox()
 if bbox is None:
-    sys.exit('線が見つかりません。白い背景に濃い線のロゴを置いてください。')
+    sys.exit('線が見つかりません。')
 box = (max(0, bbox[0] - PAD), max(0, bbox[1] - PAD), min(im.width, bbox[2] + PAD), min(im.height, bbox[3] + PAD))
 
-for name, color in (('logo-dark.png', STROKE), ('logo-white.png', (255, 255, 255))):
-    out = Image.new('RGBA', im.size, color + (0,))
-    out.putalpha(alpha)
-    out.crop(box).save(f'public/images/{name}', optimize=True)
-    print('wrote', name, out.crop(box).size)
+im.putalpha(alpha.point(lambda v: 0 if v < 12 else v))  # 薄いにじみを消す
+dark = im.crop(box)
+dark.save('public/images/logo-dark.png', optimize=True)
+white = Image.new('RGBA', dark.size, (255, 255, 255, 0))
+white.putalpha(dark.getchannel('A'))
+white.save('public/images/logo-white.png', optimize=True)
+print('wrote logo-dark.png / logo-white.png', dark.size)

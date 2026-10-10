@@ -121,18 +121,60 @@ test('mobile menu resets its name after choosing a link', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'メニューを開く' })).toHaveAttribute('aria-expanded', 'false');
 });
 
-// 動きを減らす設定では、Scroll の点滅を止める（設定なしのときは動く）
-test('scroll cue stops pulsing under reduced motion', async ({ page }) => {
+// 動きを減らす設定では、Scroll の矢印の動きを止める（設定なしのときは動く）。文字は点滅させない（濃さが変わるとコントラストが落ちる）
+test('scroll cue stops moving under reduced motion', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
-  const cue = page.locator('a[aria-label="下へスクロール"] span');
-  expect(await cue.evaluate((el) => getComputedStyle(el).animationName)).toBe('none');
+  const chevron = page.locator('[data-scroll-chevron]');
+  expect(await chevron.evaluate((el) => getComputedStyle(el).animationName)).toBe('none');
 });
-test('scroll cue pulses when motion is allowed', async ({ page }) => {
+test('scroll cue moves when motion is allowed, but its text never blinks', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/');
-  const cue = page.locator('a[aria-label="下へスクロール"] span');
-  expect(await cue.evaluate((el) => getComputedStyle(el).animationName)).toBe('pulse');
+  expect(await page.locator('[data-scroll-chevron]').evaluate((el) => getComputedStyle(el).animationName)).toBe('bounce');
+  const text = await page.locator('[data-scroll-cue] span').evaluate((el) => {
+    const names: string[] = [];
+    for (let n: Element | null = el; n && n.id !== 'hero'; n = n.parentElement) names.push(getComputedStyle(n).animationName);
+    return names;
+  });
+  expect(text.every((n) => n === 'none'), text.join(',')).toBe(true);
+});
+
+// 濃い背景のコントロールは、キーボードで移動したときの枠が白で、3px 以上ある（非文字 3:1 以上）
+test('hero controls show a white focus ring', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  for (const sel of ['[data-dot="4"]', '#hero-toggle', '[data-scroll-cue]']) {
+    const target = page.locator(sel);
+    await page.keyboard.press('Tab');
+    for (let i = 0; i < 30 && !(await target.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press('Tab');
+    const ring = await target.evaluate((el) => {
+      const s = getComputedStyle(el);
+      return { color: s.outlineColor, width: parseFloat(s.outlineWidth), style: s.outlineStyle };
+    });
+    expect(ring, sel).toEqual({ color: 'rgb(255, 255, 255)', width: 3, style: 'solid' });
+  }
+});
+
+// 320px でも、サブコピーの最後の行が「を —」のように孤立しない（最終行が文字の幅の 4 倍以上ある）
+test('hero sub copy has no orphaned last line at 320px', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 700 });
+  await page.goto('/');
+  for (let i = 0; i < 5; i++) {
+    await page.locator(`[data-dot="${i}"]`).click();
+    const sub = page.locator('[data-slide][aria-hidden="false"] [data-copy-sub]');
+    if ((await sub.count()) === 0) continue;
+    const m = await sub.evaluate((el) => {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const rects = [...range.getClientRects()].filter((r) => r.width > 1);
+      const tops = [...new Set(rects.map((r) => Math.round(r.top)))].sort((x, y) => x - y);
+      const last = rects.filter((r) => Math.round(r.top) === tops[tops.length - 1]);
+      const width = Math.max(...last.map((r) => r.right)) - Math.min(...last.map((r) => r.left));
+      return { lines: tops.length, lastWidth: width, font: parseFloat(getComputedStyle(el).fontSize) };
+    });
+    if (m.lines > 1) expect(m.lastWidth, `slide ${i + 1}: ${JSON.stringify(m)}`).toBeGreaterThanOrEqual(m.font * 4);
+  }
 });
 
 for (const width of [1440, 390, 320]) {

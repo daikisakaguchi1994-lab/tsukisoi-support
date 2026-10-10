@@ -5,7 +5,7 @@
 | ファイル | 使われる場所 | 目安 |
 |---|---|---|
 | `hero/hero-1.jpg` 〜 `hero/hero-5.jpg` | トップの全面スライド（5枚） | 横長 16:9、1600px 以上、1枚 400KB 以下。文字が重なるので、全体を暗く（55%）している |
-| `logo-mark.png` | ロゴの元画像（白い背景に濃い緑の線画） | 正方形でも横長でもよい。置いたら `python3 scripts/make-logo.py` で下の2つを作る |
+| `logo-mark.png` | ロゴの元画像（背景が透明な PNG、または白い背景に濃い緑の線画。配置済み） | 置き換えたら `python3 scripts/make-logo.py` で下の2つを作る |
 | `logo-dark.png` | トップの導入部（白い地の上） | `make-logo.py` が作る透過 PNG（余白は切り落とす） |
 | `logo-white.png` | ヘッダー（濃い緑の帯・写真の上） | `make-logo.py` が作る透過 PNG（白の線画） |
 
