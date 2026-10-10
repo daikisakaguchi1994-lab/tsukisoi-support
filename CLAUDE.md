@@ -6,7 +6,7 @@ Astro 7 + Tailwind 4 の静的サイト。Vercel にデプロイ（Git 連携）
 ## 0. セッション開始時（利用者の説明がなくても、ここから始める）
 
 1. `docs/HANDOFF.md`（現在地・次にやること）を読み、`git log -5` / `git status` と合っているか確かめる。
-2. 目的・成果の基準は `docs/PROJECT.md`、進め方・Codex の使い分け・完了の定義は `docs/WORKFLOW.md`、決定の履歴は `docs/DECISIONS.md`。必要なときだけ読む（毎回全部は読まない）。
+2. 目的・成果の基準は `docs/PROJECT.md`、進め方・Codex の使い分け・完了の定義は `docs/WORKFLOW.md`、決定の履歴は `docs/DECISIONS.md`。必要なときだけ読む（毎回全部は読まない）。ホスティングを Cloudflare に移す検討は `docs/CLOUDFLARE.md`（検討中。移行する場合、サンプル表示の安全装置が `VERCEL_ENV` に依存している点に注意）。
 3. HANDOFF の「次にやること」から着手する。Codex の結果が画像で添付されていたら先に読む。目的や方針が決まらないときだけ利用者に聞く。
 
 ## 1. 公開前の安全方針（崩したら重大）
