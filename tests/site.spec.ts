@@ -43,6 +43,19 @@ test('every navigation item leads to an existing page or section', async ({ page
   }
 });
 
+// 参考サイトの本文と照合して見つかった言い回し（2026-10-10 照合）。自前の文章に書き換えたので再発させない
+// 照合は scripts/compare-reference.py で行う
+const BORROWED_PHRASES = [
+  'お支払いのご案内', '後日払いをご希望', 'ご希望の場所・内容', '対面でのお打ち合わせは有料', 'ご希望の日時とサポート内容',
+];
+for (const path of PAGES) {
+  test(`does not reuse reference-site wording: ${path}`, async ({ page }) => {
+    await page.goto(path);
+    const text = await page.locator('body').innerText();
+    for (const phrase of BORROWED_PHRASES) expect(text, phrase).not.toContain(phrase);
+  });
+}
+
 // 許可・登録が未確認の間は、取得済みと読める表記や、通常の提供メニューとしての表示をしない
 const LICENSE_CLAIMS = ['取得済み', '許可済み', '許可を取得', '登録済み', '登録を取得', '認可'];
 for (const path of PAGES) {

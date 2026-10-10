@@ -17,9 +17,9 @@ const upcoming = [
 ];
 
 const flow = [
-  { title: 'お問い合わせ', text: 'フォームまたはお電話で、ご希望の日時とサポート内容をお知らせください。' },
-  { title: 'お見積り・お支払いのご案内', text: '内容に合わせてお見積りを作成します。ご納得いただけたら、最終のご確認をいたします。' },
-  { title: '当日のサポート', text: 'ご希望の場所・内容に合わせて、スタッフが付き添います。' },
+  { title: 'ご相談', text: 'まずはフォームかお電話でご連絡ください。行き先や日時、手伝ってほしいことを伺います。' },
+  { title: 'お見積り', text: '伺った内容から費用をお出しします。金額にご了承いただいてから、日程を確定します。' },
+  { title: '当日', text: 'お約束した日時に、打ち合わせた内容に沿ってスタッフが付き添います。' },
 ];
 
 const examples = ['通院', 'お買い物', '外食', '日帰りのお出かけ', '旅行への付き添い', '結婚式', 'お引越し'];
@@ -41,7 +41,7 @@ const examples = ['通院', 'お買い物', '外食', '日帰りのお出かけ'
           <li class="bg-white rounded-2xl shadow-sm p-8 text-center">
             <span class="inline-flex w-10 h-10 items-center justify-center rounded-full bg-accent text-white font-heading font-bold mb-4">{i + 1}</span>
             <h3 class="font-heading font-bold text-lg text-ink-strong mb-2">{f.title}</h3>
-            <p class="text-sm leading-relaxed">{f.text}</p>
+            <p class="text-sm leading-relaxed [word-break:auto-phrase]">{f.text}</p>
           </li>
         ))}
       </ol>
@@ -75,8 +75,8 @@ const examples = ['通院', 'お買い物', '外食', '日帰りのお出かけ'
         </table>
       </div>
       <ul class="text-sm text-ink-muted space-y-1 mb-16 list-disc pl-5">
-        <li>対面でのお打ち合わせは有料です。</li>
-        <li>後日払いをご希望の場合は、事前にご相談ください。</li>
+        <li>お会いしての事前打ち合わせには、別途料金がかかります。</li>
+        <li>お支払いを後日にしたい方は、ご依頼の前にお知らせください。</li>
       </ul>
 
       <!-- Upcoming -->
