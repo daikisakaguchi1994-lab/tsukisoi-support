@@ -19,11 +19,11 @@ type Site = { [K in keyof typeof BASE]: (typeof BASE)[K] extends boolean ? boole
 
 export const isConfigured = (value: string): boolean => Boolean(value) && !value.startsWith('{{');
 
-// サンプル表示（完成イメージ確認用）。PUBLIC_SAMPLE_PREVIEW=1 かつ Vercel の Production 以外のときだけ有効
+// サンプル表示（完成イメージ確認用）。PUBLIC_SAMPLE_PREVIEW=1 かつプレビューと明示されたときだけ有効（既定は拒否。config.sample.ts）
 const env = (import.meta as { env?: Record<string, string | undefined> }).env;
 const readEnv = (key: string): string | undefined =>
   env?.[key] ?? (typeof process !== 'undefined' ? process.env[key] : undefined);
-export const SAMPLE_PREVIEW = isSamplePreview(readEnv('PUBLIC_SAMPLE_PREVIEW'), readEnv('VERCEL_ENV'));
+export const SAMPLE_PREVIEW = isSamplePreview(readEnv('PUBLIC_SAMPLE_PREVIEW'), readEnv('VERCEL_ENV'), readEnv('PUBLIC_DEPLOY_TARGET'));
 
 // 仮番号（000-0000-0000 のような 0 だけの並び）や未設定は「未確定」とみなす。発信リンクは確定後だけ出す
 // サンプルの番号も「確定」ではない（発信リンクを出さない）

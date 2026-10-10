@@ -11,15 +11,24 @@ const ARTICLES = readdirSync('src/content/news')
   .map((f) => `/news/${f.replace(/\.md$/, '')}`);
 const PAGES = ['/', '/service', '/contact', '/thanks', '/news', '/about', '/links', '/privacy', ...ARTICLES];
 
-// 有効にする条件。Vercel の Production では、環境変数が誤って入っていても無効
-test('sample preview switches on only for the flag outside production', () => {
-  expect(isSamplePreview('1', undefined)).toBe(true);
+// 有効にする条件。既定は拒否: フラグがあっても「プレビューだ」と明示されない限り、本番扱い（Cloudflare には VERCEL_ENV が無い）
+test('sample preview needs the flag AND an explicit preview target (default deny)', () => {
+  // 本番相当（Cloudflare の本番ビルドを想定: VERCEL_ENV も PUBLIC_DEPLOY_TARGET も無い）で、フラグだけ誤って入っていても無効
+  expect(isSamplePreview('1', undefined)).toBe(false);
+  expect(isSamplePreview('1', undefined, undefined)).toBe(false);
+  expect(isSamplePreview('1', undefined, '')).toBe(false);
+  expect(isSamplePreview('1', undefined, 'production')).toBe(false);
+  // 明示されたプレビューだけ有効
+  expect(isSamplePreview('1', undefined, 'preview')).toBe(true);
   expect(isSamplePreview('1', 'preview')).toBe(true);
   expect(isSamplePreview('1', 'development')).toBe(true);
+  // Vercel の Production は、他の変数があっても必ず無効
   expect(isSamplePreview('1', 'production')).toBe(false);
-  expect(isSamplePreview(undefined, undefined)).toBe(false);
-  expect(isSamplePreview('', 'preview')).toBe(false);
-  expect(isSamplePreview('true', 'preview')).toBe(false);
+  expect(isSamplePreview('1', 'production', 'preview')).toBe(false);
+  // フラグが正確に '1' でなければ無効
+  expect(isSamplePreview(undefined, 'preview', 'preview')).toBe(false);
+  expect(isSamplePreview('', 'preview', 'preview')).toBe(false);
+  expect(isSamplePreview('true', 'preview', 'preview')).toBe(false);
 });
 
 // サンプルの値は、実在しない形であること
