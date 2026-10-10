@@ -1,110 +1,28 @@
 ---
-// public/images/hero/ 内の画像をビルド時に自動検出し、配列として読み込む。
-// 画像を追加/削除するだけでクロスフェードのローテーション枚数が自動的に変わる。
-import fs from 'node:fs';
-import path from 'node:path';
-
-const heroDir = path.join(process.cwd(), 'public', 'images', 'hero');
-const heroImages = fs.existsSync(heroDir)
-  ? fs
-      .readdirSync(heroDir)
-      .filter((file) => /\.(jpe?g|png|webp)$/i.test(file))
-      .sort((a, b) => a.localeCompare(b, 'ja'))
-      .map((file) => `/images/hero/${file}`)
-  : [];
+import { SITE } from '../config';
 ---
 
-<section class="relative w-full min-h-[100dvh] overflow-hidden bg-ink-strong">
-  <div class="absolute inset-0" aria-hidden="true">
-    {heroImages.map((src, i) => (
-      <img
-        src={src}
-        alt=""
-        class:list={['hero-slide absolute inset-0 h-full w-full object-cover', { 'is-active': i === 0 }]}
-        loading={i === 0 ? 'eager' : 'lazy'}
-        fetchpriority={i === 0 ? 'high' : 'low'}
-        decoding={i === 0 ? 'sync' : 'async'}
-      />
-    ))}
-  </div>
+<!-- 写真素材が決まるまでは配色グラデーションで代替。差し替え時は背景の div に <img> を入れる -->
+<section class="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center text-center text-white bg-gradient-to-br from-accent via-[#4f7a47] to-ink-strong">
+  <div class="absolute inset-0 opacity-20" aria-hidden="true" style="background: radial-gradient(circle at 20% 20%, #fff 0, transparent 40%), radial-gradient(circle at 80% 80%, #fff 0, transparent 35%);"></div>
 
-  <!-- 可読性確保のための暗幕グラデーション: モバイルは下から上、デスクトップは左から右 -->
-  <div
-    class="absolute inset-0 md:hidden"
-    style="background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.4) 30%, transparent 55%);"
-  ></div>
-  <div
-    class="absolute inset-0 hidden md:block"
-    style="background: linear-gradient(105deg, rgba(0,0,0,0.62) 0%, transparent 75%);"
-  ></div>
-
-  <!-- モバイル: 下部・左寄せ -->
-  <div class="absolute inset-x-0 bottom-0 z-10 flex md:hidden flex-col items-start px-6 pb-24 text-left text-white">
-    <h1 class="font-heading text-2xl font-bold leading-snug mb-3 text-white tracking-[0.5px]">
-      その願い、<br />あきらめない。
+  <div class="relative z-10 px-6 pt-16">
+    <p class="font-heading text-sm md:text-base tracking-[0.3em] mb-4 opacity-90">ACCOMPANY SUPPORT</p>
+    <h1 class="font-heading text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 text-white tracking-wide">
+      {SITE.TAGLINE}
     </h1>
-    <p class="font-heading text-base font-semibold leading-relaxed text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.6)]">
-      医療のプロが、あなたの外出に寄り添います。<br />
-      行きたい場所へ、会いたい人のもとへ、もう一度。
+    <p class="font-heading text-base md:text-xl font-semibold leading-relaxed mb-10 text-white">
+      — お出かけに、安心の付き添いを —
     </p>
+    <div class="font-heading text-sm md:text-lg leading-loose opacity-95">
+      <p>通院も、お買い物も、旅行も。</p>
+      <p>ひとりでは不安なお出かけに、</p>
+      <p>{SITE.SERVICE_NAME}が寄り添います。</p>
+    </div>
   </div>
 
-  <!-- デスクトップ: 左側・垂直中央 -->
-  <div class="absolute inset-y-0 left-0 z-10 hidden md:flex flex-col items-start justify-center max-w-[58%] px-12 pt-20 lg:px-20 text-left text-white">
-    <h1 class="font-heading text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight mb-6 text-white tracking-[0.5px]">
-      その願い、<br />あきらめない。
-    </h1>
-    <p class="font-heading text-lg lg:text-xl font-semibold leading-relaxed text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.5)]">
-      医療のプロが、あなたの外出に寄り添います。<br />
-      行きたい場所へ、会いたい人のもとへ、もう一度。
-    </p>
-  </div>
+  <a href="#concept" class="absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center text-xs tracking-[0.3em] text-white/80 hover:text-white" aria-label="下へスクロール">
+    Scroll
+    <span class="block w-px h-10 bg-white/60 mt-2 animate-pulse"></span>
+  </a>
 </section>
-
-<style>
-  .hero-slide {
-    opacity: 0;
-    transition: opacity 1.5s ease;
-    animation: hero-kenburns 7.5s ease-out forwards;
-    will-change: opacity, transform;
-  }
-  .hero-slide.is-active {
-    opacity: 1;
-    z-index: 1;
-  }
-
-  @keyframes hero-kenburns {
-    from {
-      transform: scale(1);
-    }
-    to {
-      transform: scale(1.08);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-slide {
-      animation: none;
-      transition: none;
-    }
-  }
-</style>
-
-<script>
-  const slides = document.querySelectorAll('.hero-slide');
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (slides.length > 1 && !prefersReducedMotion) {
-    let current = 0;
-    setInterval(() => {
-      const next = (current + 1) % slides.length;
-      slides[current].classList.remove('is-active');
-      slides[next].classList.add('is-active');
-      // Ken Burnsアニメーションを再スタートさせるためのリフロー
-      slides[next].style.animation = 'none';
-      void slides[next].offsetHeight;
-      slides[next].style.animation = '';
-      current = next;
-    }, 6000);
-  }
-</script>

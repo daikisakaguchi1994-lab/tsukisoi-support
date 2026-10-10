@@ -1,13 +1,25 @@
-// All variables use {{VAR}} format placeholders.
-// Replace values below when finalized. Use `grep -r "{{"` to find all occurrences.
+// Placeholder values are written as {{VAR}}. Use `grep -r "{{"` to find what is still unset.
 
 export const SITE = {
-  COMPANY_NAME: 'ウェルネスFUKUOKA',
-  SERVICE_NAME: 'ウェルネスFUKUOKA',
-  TEL: '090-1234-5678', // ダミー番号、本番公開前に差し替え
-  TEL_HOURS: '9:00〜18:00',
+  COMPANY_NAME: 'つきそいサポート',
+  SERVICE_NAME: 'つきそいサポート',
+  TAGLINE: 'いつでも、そばに。',
+  TEL: '000-0000-0000', // ダミー番号、公開前に差し替え
+  TEL_HOURS: '', // 受付時間（未定のため空）
   LINE_URL: '{{LINE_URL}}',
-  EMAIL: 'wellness.fuk@gmail.com',
+  INSTAGRAM_URL: '{{INSTAGRAM_URL}}',
+  EMAIL: '{{EMAIL}}',
   ADDRESS: '{{ADDRESS}}',
-  AREA: '福岡市全域・福岡都市圏（春日市・大野城市・太宰府市・筑紫野市・那珂川市・古賀市・糸島市・宗像市・福津市、糟屋郡〈宇美町・篠栗町・志免町・須恵町・新宮町・久山町・粕屋町〉）',
 } as const;
+
+export const isConfigured = (value: string): boolean => Boolean(value) && !value.startsWith('{{');
+
+// ヘッダー/フッター共通のナビゲーション
+export const NAV_ITEMS = [
+  { label: 'ホーム', en: 'Home', href: '/' },
+  { label: 'サービス', en: 'Service', href: '/service' },
+  { label: 'お知らせ', en: 'News', href: '/#news' },
+  { label: '私たちについて', en: 'About', href: '/#about' },
+  { label: '関連リンク', en: 'Links', href: '/#links' },
+  { label: 'お問合せ', en: 'Contact', href: '/contact' },
+] as const;

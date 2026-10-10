@@ -1,0 +1,94 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import { SITE } from '../config';
+
+// 金額はすべて税込。参考サイトの価格帯に合わせた初期値。独自の価格設定にする際はここだけ書き換える。
+const prices = [
+  { group: '基本料金', name: '1時間あたりの利用料', price: '3,300円〜', note: '半日・1日ご利用の場合は割引があります（詳細は準備中）。' },
+  { group: '旅行', name: '国内・宿泊旅行（1泊2日）', price: '49,500円〜', note: '行き先・内容に応じてお見積りします。' },
+  { group: '旅行', name: '海外旅行（1日あたり）', price: '33,000円〜', note: '渡航先・日数に応じてお見積りします。' },
+  { group: '福祉タクシー', name: '初乗り（30分まで）', price: '3,550円', note: '' },
+  { group: '福祉タクシー', name: '加算（15分ごと）', price: '1,770円', note: '' },
+];
+
+const flow = [
+  { title: 'お問い合わせ', text: 'フォームまたはお電話で、ご希望の日時とサポート内容をお知らせください。' },
+  { title: 'お見積り・お支払いのご案内', text: '内容に合わせてお見積りを作成します。ご納得いただけたら、最終のご確認をいたします。' },
+  { title: '当日のサポート', text: 'ご希望の場所・内容に合わせて、スタッフが付き添います。' },
+];
+
+const examples = ['日帰り旅行', '国内旅行', '海外旅行', 'お買い物', '外食', '結婚式', 'お引越し'];
+---
+<Layout title="サービス" description={`${SITE.SERVICE_NAME}のサービス内容、料金、ご利用の流れのご案内です。`}>
+  <section class="pt-16">
+    <div class="max-w-4xl mx-auto px-4 py-12 md:py-20">
+      <p class="font-heading text-accent tracking-[0.3em] text-sm text-center mb-3">SERVICE</p>
+      <h1 class="font-heading text-3xl md:text-5xl font-bold text-ink-strong text-center mb-6">サービス</h1>
+      <p class="text-center leading-loose mb-16">
+        ご利用の流れと料金のご案内です。<br />
+        ご不明な点は、お気軽にご相談ください。
+      </p>
+
+      <!-- Flow -->
+      <SectionTitle class="mb-10">ご利用の流れ</SectionTitle>
+      <ol class="grid md:grid-cols-3 gap-6 mb-20">
+        {flow.map((f, i) => (
+          <li class="bg-white rounded-2xl shadow-sm p-8 text-center">
+            <span class="inline-flex w-10 h-10 items-center justify-center rounded-full bg-accent text-white font-heading font-bold mb-4">{i + 1}</span>
+            <h3 class="font-heading font-bold text-lg text-ink-strong mb-2">{f.title}</h3>
+            <p class="text-sm leading-relaxed">{f.text}</p>
+          </li>
+        ))}
+      </ol>
+
+      <!-- Price -->
+      <SectionTitle class="mb-3">基本料金</SectionTitle>
+      <p class="text-center text-sm text-ink/60 mb-10">表示はすべて税込です。</p>
+      <div class="bg-white rounded-2xl shadow-sm overflow-hidden mb-6">
+        <table class="w-full text-left">
+          <caption class="sr-only">{SITE.SERVICE_NAME}の料金表</caption>
+          <thead class="bg-base-alt text-sm">
+            <tr>
+              <th scope="col" class="px-5 py-3">区分</th>
+              <th scope="col" class="px-5 py-3">項目</th>
+              <th scope="col" class="px-5 py-3 text-right">料金</th>
+            </tr>
+          </thead>
+          <tbody>
+            {prices.map((p) => (
+              <tr class="border-t border-ink/10 align-top">
+                <td class="px-5 py-4 text-sm text-ink/60 whitespace-nowrap">{p.group}</td>
+                <td class="px-5 py-4">
+                  {p.name}
+                  {p.note && <span class="block text-xs text-ink/50 mt-1">{p.note}</span>}
+                </td>
+                <td class="px-5 py-4 text-right font-heading font-bold text-accent whitespace-nowrap">{p.price}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <ul class="text-sm text-ink/70 space-y-1 mb-20 list-disc pl-5">
+        <li>旅行の各種手配はオプション（有料）です。内容によって金額が変わります。</li>
+        <li>対面でのお打ち合わせは有料です。</li>
+        <li>福祉タクシーは、おひとりでの移動が難しい方が対象です。</li>
+        <li>後日払いをご希望の場合は、事前にご相談ください。</li>
+      </ul>
+
+      <!-- Examples -->
+      <SectionTitle class="mb-10">ご利用例</SectionTitle>
+      <ul class="flex flex-wrap justify-center gap-3 mb-20">
+        {examples.map((e) => (
+          <li class="bg-accent/10 text-accent font-bold px-5 py-2 rounded-full">{e}</li>
+        ))}
+      </ul>
+
+      <div class="text-center">
+        <a href="/contact" class="inline-block bg-accent text-white font-bold px-10 py-4 rounded-full hover:bg-accent-hover transition-colors min-h-[44px]">
+          お問い合わせはこちら
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -3,151 +3,114 @@ import Layout from '../layouts/Layout.astro';
 import ContactBlock from '../components/ContactBlock.astro';
 import SectionTitle from '../components/SectionTitle.astro';
 import Hero from '../components/Hero.astro';
-import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
+import { SITE, isConfigured } from '../config';
 
-import taxiVehicle from '../assets/images/taxi-vehicle.png';
-import heroDining from '../assets/images/hero-dining.png';
-import kidsSupportScenes from '../assets/images/kids-support-scenes.png';
+// 以下の文面は仮のコピーです。サービス内容が確定したら差し替えてください。
+const services = [
+  { icon: '🏥', title: '通院の付き添い', text: '受付から診察、会計、お薬の受け取りまで、院内でもそばに寄り添います。' },
+  { icon: '🛍️', title: 'お買い物・外食', text: '歩くのが不安な方も、荷物の持ち運びや移動のお手伝いで、気兼ねなくお出かけいただけます。' },
+  { icon: '🧳', title: '旅行・観光', text: '駅や空港での移動から宿泊先まで、旅の道中をトータルでサポートします。' },
+  { icon: '🌸', title: '行事・お墓参り', text: '冠婚葬祭やお墓参りなど、大切な場面への外出もお手伝いします。' },
+  { icon: '👨‍👩‍👧', title: 'ご家族への報告', text: '当日の様子をご家族にお伝えします。離れて暮らす方も安心です。' },
+  { icon: '💬', title: 'まずはご相談を', text: 'こんなこともできる？というお悩みも、お気軽にお問い合わせください。' },
+];
 
-const allWorks = await getCollection('works');
-const latestWorks = allWorks
-  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
-  .slice(0, 3);
+const news = [
+  { date: '2026.10.10', text: 'ホームページを公開しました' },
+];
+
+const links = [
+  { label: 'Instagram', href: SITE.INSTAGRAM_URL },
+  { label: 'LINE公式アカウント', href: SITE.LINE_URL },
+].filter((l) => isConfigured(l.href));
 ---
 <Layout title="トップ">
   <Hero />
 
-  <!-- Mission -->
-  <section class="py-20 md:py-28 fade-in">
+  <!-- Concept -->
+  <section id="concept" class="py-20 md:py-28 fade-in scroll-mt-16">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <p class="font-heading text-accent tracking-[0.3em] text-sm mb-3">CONCEPT</p>
+      <h2 class="font-heading text-2xl md:text-3xl font-bold text-ink-strong mb-8">
+        行きたい気持ちに、付き添います。
+      </h2>
+      <p class="leading-loose">
+        {SITE.SERVICE_NAME}は、お出かけに付き添うサービスです。<br />
+        年齢や体調、お住まいに関わらず、<br class="hidden md:inline" />
+        「ひとりでは心配」を「一緒なら大丈夫」に変えていきます。
+      </p>
+    </div>
+  </section>
+
+  <!-- Service -->
+  <section id="service" class="bg-base-alt py-20 md:py-28 fade-in scroll-mt-16">
     <div class="max-w-5xl mx-auto px-4">
-      <div class="grid md:grid-cols-2 gap-10 items-center">
-        <div class="rounded-2xl overflow-hidden shadow-sm">
-          <Image
-            src={heroDining}
-            alt="車いすの利用者とスタッフが蕎麦屋で談笑する様子"
-            width={600}
-            height={450}
-            class="w-full h-full object-cover aspect-[4/3]"
-            format="webp"
-          />
-        </div>
-        <div>
-          <h2 class="font-heading text-2xl md:text-3xl font-bold text-ink-strong mb-4">
-            あなたの「行きたい」を、かなえる。
-          </h2>
-          <p class="mb-6 leading-relaxed">
-            看護師や介護福祉士が、お出かけに付き添います。<br />
-            通院も、旅行も、お買い物も。<br />
-            ご本人もご家族も、安心できるサポートを。
-          </p>
-          <div class="flex flex-wrap gap-3">
-            <a href="/about" class="bg-accent text-white font-bold px-6 py-3 rounded-full hover:bg-accent-hover transition-colors min-h-[44px]">
-              サービスについて
-            </a>
-            <a href="/vision" class="border-2 border-accent text-accent font-bold px-6 py-3 rounded-full hover:bg-accent hover:text-white transition-colors min-h-[44px]">
-              私たちの想い
-            </a>
+      <p class="font-heading text-accent tracking-[0.3em] text-sm text-center mb-3">SERVICE</p>
+      <SectionTitle class="mb-12">{SITE.SERVICE_NAME}のサービス</SectionTitle>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        {services.map((s) => (
+          <div class="bg-white rounded-2xl shadow-sm p-8 text-center">
+            <div class="text-4xl mb-4" aria-hidden="true">{s.icon}</div>
+            <h3 class="font-heading font-bold text-lg text-ink-strong mb-2">{s.title}</h3>
+            <p class="text-sm leading-relaxed">{s.text}</p>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Taxi -->
-  <section class="bg-base-alt py-20 md:py-28 fade-in">
-    <div class="max-w-5xl mx-auto px-4">
-      <div class="grid md:grid-cols-2 gap-10 items-center">
-        <div class="order-2 md:order-1">
-          <h2 class="font-heading text-2xl md:text-3xl font-bold text-ink-strong mb-4">
-            医療従事者と、安全なお出かけを。
-          </h2>
-          <p class="mb-6 leading-relaxed">
-            車いすやストレッチャーに対応した福祉車両で、<br />
-            ご自宅から目的地まで安全に送迎します。<br />
-            乗り降りのお手伝いも、おまかせください。
-          </p>
-          <a href="/taxi" class="bg-accent text-white font-bold px-6 py-3 rounded-full hover:bg-accent-hover transition-colors min-h-[44px] inline-block">
-            介護タクシーについて
-          </a>
-        </div>
-        <div class="order-1 md:order-2 rounded-2xl overflow-hidden shadow-sm">
-          <Image
-            src={taxiVehicle}
-            alt="福祉車両のリフトで車いすの利用者を乗降させるスタッフ"
-            width={600}
-            height={450}
-            class="w-full h-full object-cover aspect-[4/3]"
-            format="webp"
-          />
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Works -->
-  <section class="py-20 md:py-28 fade-in">
-    <div class="max-w-5xl mx-auto px-4">
-      <SectionTitle class="mb-12">お出かけ実績</SectionTitle>
-      <div class="grid md:grid-cols-3 gap-6 mb-8">
-        {latestWorks.map((work) => (
-          <article class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-            <a href={`/works/${work.id}`} class="block">
-              {work.id === 'kids-support-scenes' ? (
-                <div class="aspect-[16/9] overflow-hidden relative">
-                  <Image
-                    src={kidsSupportScenes}
-                    alt={work.data.excerpt}
-                    width={800}
-                    height={450}
-                    class="w-full h-full object-cover"
-                    format="webp"
-                  />
-                  <span class="absolute top-2 right-2 bg-ink-strong/70 text-white text-xs px-2 py-0.5 rounded-full">利用イメージ</span>
-                </div>
-              ) : (
-                <div class="aspect-[4/3] bg-base-alt flex items-center justify-center relative">
-                  <p class="text-sm text-ink/40 px-4 text-center">{work.data.excerpt}</p>
-                  {work.data.isImage && (
-                    <span class="absolute top-2 right-2 bg-ink-strong/70 text-white text-xs px-2 py-0.5 rounded-full">利用イメージ</span>
-                  )}
-                </div>
-              )}
-              <div class="p-5">
-                <span class="inline-block bg-accent/10 text-accent text-xs font-bold px-3 py-1 rounded-full mb-2">{work.data.tag}</span>
-                <h3 class="font-heading font-bold text-lg text-ink-strong leading-snug">{work.data.title}</h3>
-                <time class="text-sm text-ink/50 mt-1 block">{work.data.date}</time>
-              </div>
-            </a>
-          </article>
         ))}
       </div>
       <div class="text-center">
-        <a href="/works" class="text-accent font-bold hover:text-accent-hover transition-colors underline underline-offset-4">
-          一覧をみる →
+        <a href="/service" class="inline-block bg-accent text-white font-bold px-8 py-3 rounded-full hover:bg-accent-hover transition-colors min-h-[44px]">
+          料金・ご利用の流れを見る
         </a>
       </div>
     </div>
   </section>
 
   <!-- News -->
-  <section class="bg-base-alt py-20 md:py-28 fade-in">
+  <section id="news" class="py-20 md:py-28 fade-in scroll-mt-16">
     <div class="max-w-3xl mx-auto px-4">
+      <p class="font-heading text-accent tracking-[0.3em] text-sm text-center mb-3">NEWS</p>
       <SectionTitle class="mb-10">お知らせ</SectionTitle>
       <ul class="space-y-4">
-        <li class="flex gap-4 items-baseline border-b border-ink/10 pb-4">
-          <time class="text-sm text-ink/50 shrink-0">2026.07.01</time>
-          <p>ホームページを公開しました</p>
-        </li>
-        <li class="flex gap-4 items-baseline border-b border-ink/10 pb-4">
-          <time class="text-sm text-ink/50 shrink-0">2026.06.15</time>
-          <p>夏季の外出サポート予約を受付中です</p>
-        </li>
-        <li class="flex gap-4 items-baseline">
-          <time class="text-sm text-ink/50 shrink-0">2026.06.01</time>
-          <p>LINE公式アカウントを開設しました</p>
-        </li>
+        {news.map((n) => (
+          <li class="flex gap-4 items-baseline border-b border-ink/10 pb-4">
+            <time class="text-sm text-ink/50 shrink-0">{n.date}</time>
+            <p>{n.text}</p>
+          </li>
+        ))}
       </ul>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="bg-base-alt py-20 md:py-28 fade-in scroll-mt-16">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <p class="font-heading text-accent tracking-[0.3em] text-sm mb-3">ABOUT</p>
+      <SectionTitle class="mb-8">私たちについて</SectionTitle>
+      <p class="leading-loose mb-8">
+        {SITE.SERVICE_NAME}の紹介文をここに入れます。<br />
+        代表者のごあいさつや、サービスを始めた理由などを掲載する予定です。
+      </p>
+      <p class="text-sm text-ink/60">※ 内容は準備中です</p>
+    </div>
+  </section>
+
+  <!-- Links -->
+  <section id="links" class="py-20 md:py-28 fade-in scroll-mt-16">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <p class="font-heading text-accent tracking-[0.3em] text-sm mb-3">LINKS</p>
+      <SectionTitle class="mb-8">関連リンク</SectionTitle>
+      {links.length > 0 ? (
+        <ul class="flex flex-wrap justify-center gap-4">
+          {links.map((l) => (
+            <li>
+              <a href={l.href} target="_blank" rel="noopener noreferrer" class="inline-block border-2 border-accent text-accent font-bold px-6 py-3 rounded-full hover:bg-accent hover:text-white transition-colors min-h-[44px]">
+                {l.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="text-sm text-ink/60">準備中です</p>
+      )}
     </div>
   </section>
 
