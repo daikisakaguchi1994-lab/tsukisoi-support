@@ -1,0 +1,26 @@
+---
+interface Props {
+  name: 'pace' | 'steps' | 'family' | 'trip' | 'estimate' | 'form';
+}
+const { name } = Astro.props;
+---
+<svg class="w-24 h-24 mx-auto text-accent" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  {name === 'pace' && (<>
+    <circle cx="36" cy="22" r="7" /><path d="M36 30v26M36 40l-12 10M36 40l12 4M36 56l-10 22M36 56l12 22" /><path d="M62 40v38M56 40h12" /><path d="M72 66c4 0 10 2 12 10" />
+  </>)}
+  {name === 'steps' && (<>
+    <path d="M10 78h18V64h18V50h18V36h22" /><path d="M10 78h76" /><path d="M20 30l8 8 16-18" />
+  </>)}
+  {name === 'family' && (<>
+    <path d="M12 46L48 16l36 30" /><path d="M20 40v38h56V40" /><path d="M48 70c-10-7-14-12-14-17a7 7 0 0114-3 7 7 0 0114 3c0 5-4 10-14 17z" />
+  </>)}
+  {name === 'trip' && (<>
+    <rect x="16" y="32" width="64" height="46" rx="5" /><path d="M36 32v-8a4 4 0 014-4h16a4 4 0 014 4v8" /><path d="M16 52h64M44 52v6h8v-6" />
+  </>)}
+  {name === 'estimate' && (<>
+    <path d="M24 14h34l16 16v52H24z" /><path d="M58 14v16h16" /><path d="M36 48h28M36 58h28M36 68h16" />
+  </>)}
+  {name === 'form' && (<>
+    <rect x="10" y="24" width="76" height="52" rx="4" /><path d="M10 28l38 26 38-26" /><circle cx="72" cy="68" r="14" fill="#fff" /><path d="M72 60v8l5 3" />
+  </>)}
+</svg>

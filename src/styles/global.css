@@ -1,23 +1,28 @@
 @import "tailwindcss";
 
 @theme {
-  --color-base: #FAF7F2;
-  --color-base-alt: #F1EBE1;
-  --color-ink: #3D3833;
-  --color-ink-strong: #2B2724;
-  --color-ink-muted: #655F59; /* 補足文字。どの地色でも 5:1 以上 */
+  --color-base: #FFFFFF;
+  --color-base-alt: #F7F4EC; /* 注記ボックスなど */
+  --color-ink: #3A3632;
+  --color-ink-strong: #26231F;
+  --color-ink-muted: #5F5953; /* 補足文字。白・生成り地で 6:1 以上 */
+  --color-deep: #2E4A35; /* 見出し帯・ステップ・濃いボタン。白文字 9:1 以上 */
+  --color-mist: #E6EFE1; /* 薄い緑の帯。ink 文字 11:1 以上 */
+  --color-mist-strong: #CFE0C9; /* 薄いチップ。deep 文字 6:1 以上 */
+  --color-rule: #D9D4CA; /* 罫線 */
   --color-accent: #4A7042; /* 白文字 5.69:1、生成り地 5.33:1 */
   --color-accent-hover: #3D5E37;
   --color-line: #067A38; /* LINE の緑を暗くした色。白文字 5.46:1（公式色 #06C755 は 2.26:1 で不足） */
 
-  --font-heading: 'Zen Maru Gothic', sans-serif;
-  --font-body: 'Noto Sans JP', sans-serif;
+  --font-heading: 'Noto Serif JP', serif;
+  --font-body: 'Noto Serif JP', serif;
 }
 
 html {
   font-family: var(--font-body);
-  font-size: 18px;
-  line-height: 1.9;
+  font-size: 16px;
+  line-height: 1.95;
+  letter-spacing: 0.02em;
   color: var(--color-ink);
   background-color: var(--color-base);
   scroll-behavior: smooth;
@@ -74,7 +79,182 @@ html {
 .article-body li { margin-bottom: 0.5rem; }
 .article-body strong { color: var(--color-ink-strong); }
 
-/* サンプル表示中は、上部の帯（h-7 = 1.75rem）の分だけ固定ヘッダーと本文を下げる */
-body[data-sample-preview] { padding-top: 1.75rem; }
-body[data-sample-preview] #site-header { top: 1.75rem; }
-body[data-sample-preview] section[id] { scroll-margin-top: 5.75rem; }
+/* ===== 部品（参考サイトの作りに合わせた見出し・ボタン・料金表） ===== */
+@layer components {
+  /* 濃い見出し帯（二重線）。ページの h1・セクション見出し */
+  .heading-bar {
+    background: var(--color-deep);
+    color: #fff;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 0.95rem 1rem;
+    outline: 1px solid var(--color-deep);
+    outline-offset: 4px;
+    border-radius: 1px;
+  }
+  .heading-bar, .heading-bar * { color: #fff; }
+
+  /* 左に濃い線が付く下線つき見出し（基本料金・ご利用例など） */
+  .title-line {
+    position: relative;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .title-line::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 33%;
+    height: 2px;
+    background: var(--color-deep);
+  }
+  .title-line.is-left { text-align: left; padding-left: 0.5rem; }
+
+  /* 太字の強調に黄色い蛍光ペン風の下線 */
+  .marker {
+    background: linear-gradient(transparent 62%, #F4E3A6 62%);
+    font-weight: 700;
+    color: var(--color-ink-strong);
+  }
+
+  /* 枠だけのボタン（▶ 付き）。副次的な導線 */
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 44px;
+    padding: 0.55rem 2.25rem;
+    border: 1px solid var(--color-accent);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--color-accent);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .btn-outline::before {
+    content: '';
+    border-left: 0.5em solid currentColor;
+    border-top: 0.32em solid transparent;
+    border-bottom: 0.32em solid transparent;
+  }
+  .btn-outline:hover { background: var(--color-accent); color: #fff; }
+  .btn-outline[aria-disabled='true'] {
+    border-color: var(--color-rule);
+    color: var(--color-ink-muted);
+    background: var(--color-base-alt);
+    pointer-events: none;
+  }
+
+  /* 塗りのボタン。主な導線（お問い合わせなど） */
+  .btn-solid {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 48px;
+    padding: 0.7rem 2.75rem;
+    border-radius: 999px;
+    background: var(--color-accent);
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    box-shadow: 0 3px 0 rgba(38, 35, 31, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    transition: transform 0.15s, box-shadow 0.15s, background-color 0.2s;
+  }
+  .btn-solid:hover {
+    background: var(--color-accent-hover);
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(38, 35, 31, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  }
+
+  /* 電話の濃いピル。番号が未確定のときは文字が薄くなる */
+  .btn-phone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 48px;
+    padding: 0.6rem 2rem;
+    border-radius: 999px;
+    background: var(--color-ink-strong);
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+  .btn-phone.is-muted { background: var(--color-ink-muted); }
+
+  /* 料金表: 濃い見出し帯 + 罫線つきの本文 */
+  .price-head {
+    background: var(--color-deep);
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 0.6rem 1rem;
+  }
+  .price-body {
+    border: 1px solid var(--color-rule);
+    border-top: 0;
+    padding: 1rem 1rem 1.1rem;
+  }
+
+  /* ご利用の流れ: 丸い STEP 表示と縦の点線 */
+  .step { position: relative; padding-left: 4.25rem; padding-bottom: 2.25rem; }
+  .step:last-child { padding-bottom: 0; }
+  .step::before {
+    content: '';
+    position: absolute;
+    left: 1.35rem;
+    top: 3rem;
+    bottom: 0.25rem;
+    border-left: 1px dotted var(--color-rule);
+  }
+  .step:last-child::before { display: none; }
+  .step-badge {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: var(--color-deep);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .step-badge small { font-size: 0.5rem; letter-spacing: 0.08em; }
+  .step-badge b { font-size: 1.15rem; font-weight: 500; }
+
+  /* ご利用例のチップ（濃い・薄いを交互に） */
+  .chip {
+    display: inline-block;
+    padding: 0.55rem 1.4rem;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-size: 0.9rem;
+  }
+  .chip:nth-child(odd) { background: var(--color-mist-strong); color: var(--color-deep); }
+  .chip:nth-child(even) { background: var(--color-deep); color: #fff; }
+
+  /* 入力欄: 角の立った細い枠 */
+  .field {
+    width: 100%;
+    border: 1px solid #9A948A;
+    background: #fff;
+    padding: 0.7rem 0.9rem;
+    border-radius: 2px;
+    min-height: 44px;
+  }
+  .field:focus { border-color: var(--color-accent); outline: 2px solid var(--color-accent); outline-offset: 0; }
+}

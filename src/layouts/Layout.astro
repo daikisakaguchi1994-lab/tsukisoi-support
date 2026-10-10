@@ -2,16 +2,21 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import MobileFixedBar from '../components/MobileFixedBar.astro';
+import TopBar from '../components/TopBar.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
 import SamplePreviewBanner from '../components/SamplePreviewBanner.astro';
 import { SITE, SAMPLE_PREVIEW, isConfigured } from '../config';
 
 interface Props {
   title: string;
   description?: string;
+  /** パンくず（ホームは自動で先頭に付く）。トップは指定しない */
+  crumbs?: { label: string; href?: string }[];
+  /** トップ: ヘッダーを大きな画像の上に重ねる */
+  overlay?: boolean;
 }
 
-const { title, description = `${SITE.SERVICE_NAME} — 病院への通院、お買い物、旅行まで。ひとりでは不安なお出かけに、スタッフが寄り添います。` } = Astro.props;
+const { crumbs, overlay = false, title, description = `${SITE.SERVICE_NAME} — 病院への通院、お買い物、旅行まで。ひとりでは不安なお出かけに、スタッフが寄り添います。` } = Astro.props;
 const fullTitle = title === 'トップ' ? `${SITE.SERVICE_NAME} | 外出・旅行の付き添い` : `${title} | ${SITE.SERVICE_NAME}`;
 
 const jsonLd = {
@@ -45,19 +50,22 @@ const jsonLd = {
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet" />
 
   <!-- JSON-LD -->
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 </head>
 <body class="bg-base text-ink min-h-screen flex flex-col" data-sample-preview={SAMPLE_PREVIEW ? 'true' : undefined}>
   <SamplePreviewBanner />
-  <Header />
-  <main class="flex-1">
-    <slot />
-  </main>
+  <TopBar />
+  <div class="relative flex-1 flex flex-col">
+    <Header overlay={overlay} />
+    {crumbs && <Breadcrumb items={crumbs} />}
+    <main class="flex-1">
+      <slot />
+    </main>
+  </div>
   <Footer />
-  <MobileFixedBar />
 
   <script>
     const observer = new IntersectionObserver(

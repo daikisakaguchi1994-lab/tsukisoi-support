@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Breadcrumb from '../components/Breadcrumb.astro';
+import PageTitle from '../components/PageTitle.astro';
+import SectionTitle from '../components/SectionTitle.astro';
 import { SITE, isConfigured } from '../config';
 
 // カテゴリごとに並べる。href が未設定のものは画面に出さず、カテゴリごと「準備中」にする。
@@ -19,34 +20,30 @@ const categories = [
   },
 ];
 ---
-<Layout title="関連リンク" description={`${SITE.SERVICE_NAME}の公式アカウントや関連団体へのリンクです。`}>
-  <section class="pt-16">
-    <div class="max-w-3xl mx-auto px-4 py-12 md:py-20">
-      <Breadcrumb items={[{ label: '関連リンク' }]} />
-      <p class="font-heading text-accent tracking-[0.3em] text-sm text-center mb-3">LINKS</p>
-      <h1 class="font-heading text-3xl md:text-5xl font-bold text-ink-strong text-center mb-12">関連リンク</h1>
+<Layout title="関連リンク" description={`${SITE.SERVICE_NAME}の公式アカウントや関連団体へのリンクです。`} crumbs={[{ label: '関連リンク' }]}>
+  <div class="max-w-3xl mx-auto px-4 py-14 md:py-20">
+    <PageTitle class="mb-14">関連リンク</PageTitle>
 
-      <div class="space-y-14">
-        {categories.map((c) => (
-          <section>
-            <h2 class="font-heading text-xl font-bold text-ink-strong mb-6 border-b border-ink/10 pb-2">{c.title}</h2>
-            {c.links.length > 0 ? (
-              <ul class="space-y-4">
-                {c.links.map((l) => (
-                  <li>
-                    <a href={l.href} target="_blank" rel="noopener noreferrer" class="block bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow">
-                      <span class="block font-heading font-bold text-accent">{l.label}</span>
-                      <span class="block text-sm mt-1">{l.description}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p class="text-sm text-ink-muted">準備中です</p>
-            )}
-          </section>
-        ))}
-      </div>
+    <div class="space-y-14">
+      {categories.map((c) => (
+        <section>
+          <SectionTitle class="is-left mb-6">{c.title}</SectionTitle>
+          {c.links.length > 0 ? (
+            <ul class="space-y-3">
+              {c.links.map((l) => (
+                <li>
+                  <a href={l.href} target="_blank" rel="noopener noreferrer" class="block border border-rule p-5 hover:border-accent">
+                    <span class="block font-heading font-bold text-accent">{l.label}</span>
+                    <span class="block text-sm mt-1">{l.description}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="text-sm text-ink-muted">準備中です</p>
+          )}
+        </section>
+      ))}
     </div>
-  </section>
+  </div>
 </Layout>

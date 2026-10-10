@@ -4,109 +4,94 @@ import SectionTitle from '../components/SectionTitle.astro';
 import { SITE } from '../config';
 
 // 金額はすべて税込。参考サイトの価格帯に合わせた初期値。独自の価格設定にする際はここだけ書き換える。
-// 公開できるのは、許可・登録が不要な「付き添い」の料金だけ。
+// 公開できるのは、許可・登録が不要な「付き添い」の料金だけ（CLAUDE.md 1.）。
 const prices = [
-  { group: '基本料金', name: '1時間あたりの利用料', price: '3,300円〜', note: '半日・1日ご利用の場合は割引があります（詳細は準備中）。' },
+  {
+    head: '1時間のご利用料金',
+    lines: [{ label: '', price: '3,300円（税込）〜' }],
+    note: '半日や1日のご利用には割引を用意します（詳細は準備中）。',
+  },
+  {
+    head: '国内・宿泊旅行の付き添い　基本料金',
+    lines: [{ label: '1泊2日', price: '49,500円（税込）〜' }],
+    note: '付き添いの料金です。交通・宿泊の手配は含みません。',
+  },
+  {
+    head: '海外旅行の付き添い　基本料金',
+    lines: [{ label: '1日あたり', price: '33,000円（税込）〜' }],
+    note: '付き添いの料金です。交通・宿泊の手配は含みません。',
+  },
 ];
 
-// 許可・登録の確認が済むまで、料金は載せず「準備中」とだけ案内する（CLAUDE.md 1. 公開前の安全方針）。
-// 確認できたら prices に移す。公開時に揃える価格帯の目安: 旅行(国内1泊2日) 49,500円〜 / 海外(1日) 33,000円〜 / 福祉タクシー 初乗り(30分) 3,550円・加算(15分) 1,770円
+// 許可・登録の確認が済むまで、料金は載せず「準備中」とだけ案内する。確認できたら prices に移す。
+// 公開時に揃える価格帯の目安: 福祉タクシー 初乗り(30分) 3,550円・加算(15分ごと) 1,770円
 const upcoming = [
-  { name: '旅行の手配（交通・宿泊の予約など）', text: '旅行の付き添いとは別のメニューです。必要な登録などの確認が済み次第ご案内します。' },
-  { name: '福祉タクシー（介護タクシー）', text: '必要な許可などの確認が済み次第ご案内します。' },
+  { head: '福祉タクシー（利用条件あり）', text: '必要な許可などの確認が済み次第、料金とあわせてご案内します。' },
+  { head: '旅行の手配について', text: '交通・宿泊の予約などの手配は、旅行の付き添いとは別のメニューです。必要な登録などの確認が済み次第ご案内します。' },
 ];
 
 const flow = [
-  { title: 'ご相談', text: 'まずはフォームかお電話でご連絡ください。行き先や日時、手伝ってほしいことを伺います。' },
-  { title: 'お見積り', text: '伺った内容から費用をお出しします。金額にご了承いただいてから、日程を確定します。' },
-  { title: '当日', text: 'お約束した日時に、打ち合わせた内容に沿ってスタッフが付き添います。' },
+  { title: 'ご相談', text: 'まずはフォームかお電話でご連絡ください。行き先や日時、手伝ってほしいことを伺います。', note: 'お会いしての事前打ち合わせには、別途料金がかかります。' },
+  { title: 'お見積り', text: '伺った内容から費用をお出しします。金額にご了承いただいてから、日程を確定します。', note: '' },
+  { title: '当日', text: 'お約束した日時に、打ち合わせた内容に沿ってスタッフが付き添います。', note: 'お支払いを後日にしたい方は、ご依頼の前にお知らせください。' },
 ];
 
 const examples = ['通院', 'お買い物', '外食', '日帰りのお出かけ', '旅行への付き添い', '結婚式', 'お引越し'];
 ---
-<Layout title="サービス" description={`${SITE.SERVICE_NAME}のサービス内容、料金、ご利用の流れのご案内です。`}>
-  <section class="pt-16">
-    <div class="max-w-4xl mx-auto px-4 py-12 md:py-20">
-      <p class="font-heading text-accent tracking-[0.3em] text-sm text-center mb-3">SERVICE</p>
-      <h1 class="font-heading text-3xl md:text-5xl font-bold text-ink-strong text-center mb-6">サービス</h1>
-      <p class="text-center leading-loose mb-16">
-        ご利用の流れと料金のご案内です。<br />
-        ご不明な点は、お気軽にご相談ください。
-      </p>
+<Layout title="サービス" description={`${SITE.SERVICE_NAME}のサービス内容、料金、ご利用の流れのご案内です。`} crumbs={[{ label: 'サービス' }]}>
+  <div class="max-w-3xl mx-auto px-4 py-14 md:py-20">
+    <h1 class="sr-only">サービス</h1>
 
-      <!-- Flow -->
-      <SectionTitle class="mb-10">ご利用の流れ</SectionTitle>
-      <ol class="grid md:grid-cols-3 gap-6 mb-20">
-        {flow.map((f, i) => (
-          <li class="bg-white rounded-2xl shadow-sm p-8 text-center">
-            <span class="inline-flex w-10 h-10 items-center justify-center rounded-full bg-accent text-white font-heading font-bold mb-4">{i + 1}</span>
-            <h3 class="font-heading font-bold text-lg text-ink-strong mb-2">{f.title}</h3>
-            <p class="text-sm leading-relaxed [word-break:auto-phrase]">{f.text}</p>
-          </li>
-        ))}
-      </ol>
+    <!-- Flow -->
+    <h2 class="font-heading text-xl md:text-2xl font-bold text-center border-[3px] border-base-alt outline outline-1 outline-rule py-5 mb-12 tracking-[0.12em]">ご利用の流れ</h2>
+    <ol class="mb-16">
+      {flow.map((f, i) => (
+        <li class="step">
+          <span class="step-badge" aria-hidden="true"><small>STEP</small><b>{i + 1}</b></span>
+          <h3 class="font-heading text-lg font-bold pt-2 mb-3 text-ink-strong">{f.title}</h3>
+          <p class="text-[15px] leading-loose [word-break:auto-phrase]">{f.text}</p>
+          {f.note && <p class="text-[15px] leading-loose [word-break:auto-phrase]">※{f.note}</p>}
+        </li>
+      ))}
+    </ol>
 
-      <!-- Price -->
-      <SectionTitle class="mb-3">基本料金</SectionTitle>
-      <p class="text-center text-sm text-ink-muted mb-10">表示はすべて税込です。</p>
-      <div class="bg-white rounded-2xl shadow-sm overflow-hidden mb-6">
-        <table class="w-full text-left">
-          <caption class="sr-only">{SITE.SERVICE_NAME}の料金表</caption>
-          <thead class="bg-base-alt text-sm">
-            <tr>
-              <th scope="col" class="hidden sm:table-cell px-5 py-3">区分</th>
-              <th scope="col" class="px-5 py-3">項目</th>
-              <th scope="col" class="px-5 py-3 text-right">料金</th>
-            </tr>
-          </thead>
-          <tbody>
-            {prices.map((p) => (
-              <tr class="border-t border-ink/10 align-top">
-                <td class="hidden sm:table-cell px-5 py-4 text-sm text-ink-muted whitespace-nowrap">{p.group}</td>
-                <td class="px-4 sm:px-5 py-4">
-                  <span class="sm:hidden block text-xs text-ink-muted">{p.group}</span>
-                  {p.name}
-                  {p.note && <span class="block text-xs text-ink-muted mt-1">{p.note}</span>}
-                </td>
-                <td class="px-4 sm:px-5 py-4 text-right font-heading font-bold text-accent whitespace-nowrap">{p.price}</td>
-              </tr>
+    <!-- Price -->
+    <SectionTitle class="mb-10">基本料金</SectionTitle>
+    <div class="mb-16" data-testid="price-list">
+      {prices.map((p) => (
+        <section>
+          <h3 class="price-head text-[15px]">▼ {p.head}</h3>
+          <div class="price-body">
+            {p.lines.map((l) => (
+              <p class="font-bold text-ink-strong">{l.label && <span class="mr-3">{l.label}</span>}{l.price}</p>
             ))}
-          </tbody>
-        </table>
-      </div>
-      <ul class="text-sm text-ink-muted space-y-1 mb-16 list-disc pl-5">
-        <li>お会いしての事前打ち合わせには、別途料金がかかります。</li>
-        <li>お支払いを後日にしたい方は、ご依頼の前にお知らせください。</li>
-      </ul>
+            <p class="text-sm text-ink-muted mt-1">※{p.note}</p>
+          </div>
+        </section>
+      ))}
 
-      <!-- Upcoming -->
-      <SectionTitle class="mb-3">準備中のメニュー</SectionTitle>
-      <p class="text-center text-sm text-ink-muted mb-10">現在はご利用いただけません。ご案内できる状況になりましたら、こちらでお知らせします。</p>
-      <ul class="space-y-4 mb-20" data-testid="upcoming-menu">
+      <div data-testid="upcoming-menu">
         {upcoming.map((u) => (
-          <li class="bg-white rounded-2xl shadow-sm p-6 flex flex-col sm:flex-row sm:items-center gap-3">
-            <div class="grow">
-              <h3 class="font-heading font-bold text-ink-strong">{u.name}</h3>
-              <p class="text-sm mt-1">{u.text}</p>
+          <section>
+            <h3 class="price-head text-[15px]">▼ {u.head}</h3>
+            <div class="price-body flex flex-col sm:flex-row sm:items-center gap-3">
+              <p class="grow text-[15px] leading-loose [word-break:auto-phrase]">{u.text}</p>
+              <span class="shrink-0 self-start border border-rule bg-base-alt text-ink-muted font-bold text-sm px-4 py-1 rounded-full">準備中</span>
             </div>
-            <span class="shrink-0 self-start sm:self-center bg-base-alt text-ink-muted font-bold text-sm px-4 py-1 rounded-full">準備中</span>
-          </li>
+          </section>
         ))}
-      </ul>
-
-      <!-- Examples -->
-      <SectionTitle class="mb-10">ご利用例</SectionTitle>
-      <ul class="flex flex-wrap justify-center gap-3 mb-20">
-        {examples.map((e) => (
-          <li class="bg-accent/10 text-accent font-bold px-5 py-2 rounded-full">{e}</li>
-        ))}
-      </ul>
-
-      <div class="text-center">
-        <a href="/contact" class="inline-block bg-accent text-white font-bold px-10 py-4 rounded-full hover:bg-accent-hover transition-colors min-h-[44px]">
-          お問い合わせはこちら
-        </a>
       </div>
+      <p class="text-sm text-ink-muted mt-3">表示はすべて税込です。</p>
     </div>
-  </section>
+
+    <!-- Examples -->
+    <SectionTitle class="mb-8">ご利用例</SectionTitle>
+    <ul class="flex flex-wrap gap-3 mb-16">
+      {examples.map((e) => <li class="chip">{e}</li>)}
+    </ul>
+
+    <div class="text-center">
+      <a href="/contact" class="btn-solid">お問い合わせはこちら</a>
+    </div>
+  </div>
 </Layout>

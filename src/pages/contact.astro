@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SectionTitle from '../components/SectionTitle.astro';
 import { SITE, isTelConfigured, isTelSample } from '../config';
 import { generateLineQrSvg, isLineUrlConfigured } from '../utils/qr';
 
@@ -8,136 +9,127 @@ const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
 const telConfigured = isTelConfigured(SITE.TEL);
 const telSample = isTelSample(SITE.TEL);
 const formKey = import.meta.env.PUBLIC_FORM_KEY || '{{FORM_KEY}}';
+const kinds = ['通院・お買い物などの付き添い', '旅行の付き添い', 'その他・まだ決まっていない'];
 ---
-<Layout title="お問い合わせ" description={`${SITE.SERVICE_NAME}へのお問い合わせ。お電話・LINE・メールフォームからお気軽にご連絡ください。`}>
-  <section class="pt-16">
-    <div class="max-w-3xl mx-auto px-4 py-12 md:py-20">
-      <h1 class="font-heading text-3xl md:text-5xl font-bold text-ink-strong text-center mb-6">お問い合わせ</h1>
-      <p class="text-center mb-12">お電話・LINE・フォームから、お気軽にご相談ください。</p>
+<Layout title="お問い合わせ" description={`${SITE.SERVICE_NAME}へのお問い合わせ。お電話・LINE・メールフォームからお気軽にご連絡ください。`} crumbs={[{ label: 'お問合せ' }]}>
+  <div class="max-w-3xl mx-auto px-4 py-14 md:py-20">
+    <h1 class="sr-only">お問い合わせ</h1>
 
-      <!-- Quick Contact -->
-      <div class="grid md:grid-cols-2 gap-6 mb-16">
-        <div class="bg-base-alt rounded-2xl p-6 text-center">
-          <p class="text-sm mb-2">お電話でのご相談</p>
-          {telConfigured ? (
-            <>
-              <a href={`tel:${SITE.TEL}`} class="block font-heading text-3xl font-bold text-accent hover:text-accent-hover transition-colors min-h-[44px]">
-                {SITE.TEL}
-              </a>
-              <p class="text-sm mt-1 text-ink-muted">{SITE.TEL_HOURS}</p>
-            </>
-          ) : telSample ? (
-            <>
-              <p class="font-heading text-3xl font-bold text-accent min-h-[44px]">{SITE.TEL}</p>
-              <p class="text-sm mt-1 text-ink-muted">{SITE.TEL_HOURS}</p>
-              <p class="text-xs mt-1 text-ink-muted">（サンプル。実際の番号は準備中です）</p>
-            </>
-          ) : (
-            <>
-              <p class="font-heading text-xl font-bold text-ink-muted min-h-[44px] py-2">電話相談は準備中</p>
-              <p class="text-sm mt-1 text-ink-muted">公開までしばらくお待ちください</p>
-            </>
-          )}
-        </div>
-        <div class="bg-base-alt rounded-2xl p-6 text-center">
-          <p class="text-sm mb-2">LINEでのご相談</p>
-          {lineConfigured ? (
-            <a
-              href={SITE.LINE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="md:hidden inline-block bg-line text-white font-bold px-6 py-3 rounded-full min-h-[44px] hover:opacity-90 transition-opacity"
-            >
-              LINEで友だち追加
-            </a>
-          ) : (
-            <span class="md:hidden inline-flex items-center justify-center bg-base-alt text-ink-muted font-bold px-6 py-3 rounded-full min-h-[44px]" aria-disabled="true">
-              LINE公式アカウント 準備中
-            </span>
-          )}
-          <div class="hidden md:block">
-            <div class="inline-block bg-white p-2 rounded-lg" set:html={qrSvg} />
-            <p class="text-xs mt-1 text-ink-muted">{lineConfigured ? 'QRコードを読み取ってください' : 'LINE公式アカウント 準備中'}</p>
-          </div>
-        </div>
+    <!-- Tel -->
+    <SectionTitle class="is-left mb-8">お電話での問い合わせ</SectionTitle>
+    <div class="grid md:grid-cols-[auto_1fr] gap-6 md:gap-10 items-center mb-14">
+      <div class="text-center">
+        {telConfigured ? (
+          <a href={`tel:${SITE.TEL}`} class="btn-phone">{SITE.TEL}</a>
+        ) : telSample ? (
+          <p class="btn-phone">{SITE.TEL}</p>
+        ) : (
+          <p class="btn-phone is-muted">電話相談は準備中</p>
+        )}
+        {telSample && <p class="text-xs text-ink-muted mt-2">（サンプル。実際の番号は準備中です）</p>}
+        {(telConfigured || telSample) && SITE.TEL_HOURS && <p class="text-xs text-ink-muted mt-1">{SITE.TEL_HOURS}</p>}
+        {!telConfigured && !telSample && <p class="text-xs text-ink-muted mt-2">公開までしばらくお待ちください</p>}
       </div>
+      <p class="text-[15px] leading-loose [word-break:auto-phrase]">
+        お付き添い中などで、すぐにお電話に出られないことがあります。つながらないときは、下のフォームかLINEからご連絡ください。内容を確認のうえ、折り返しご連絡します。
+      </p>
+    </div>
 
-      <!-- Form -->
-      <div class="bg-white rounded-2xl shadow-sm p-8 md:p-10">
-        <h2 class="font-heading text-xl font-bold text-ink-strong mb-6">メールフォーム</h2>
-
-        <form id="contact-form" action="https://api.web3forms.com/submit" method="POST" class="space-y-6">
-          <input type="hidden" name="access_key" value={formKey} />
-          <input type="hidden" name="subject" value={`${SITE.SERVICE_NAME} お問い合わせ`} />
-          <input type="hidden" name="redirect" value="/thanks" />
-
-          <div>
-            <label for="name" class="block font-bold text-sm mb-1">お名前 <span class="text-red-500">*</span></label>
-            <input type="text" id="name" name="name" required
-              class="w-full border border-base-alt rounded-lg px-4 py-3 text-base focus:border-accent focus:ring-1 focus:ring-accent min-h-[44px]"
-              placeholder="山田 太郎" />
-          </div>
-
-          <div>
-            <label for="furigana" class="block font-bold text-sm mb-1">ふりがな</label>
-            <input type="text" id="furigana" name="furigana"
-              class="w-full border border-base-alt rounded-lg px-4 py-3 text-base focus:border-accent focus:ring-1 focus:ring-accent min-h-[44px]"
-              placeholder="やまだ たろう" />
-          </div>
-
-          <div>
-            <label for="tel" class="block font-bold text-sm mb-1">お電話番号 <span class="text-red-500">*</span></label>
-            <input type="tel" id="tel" name="phone" required
-              class="w-full border border-base-alt rounded-lg px-4 py-3 text-base focus:border-accent focus:ring-1 focus:ring-accent min-h-[44px]"
-              placeholder="090-1234-5678" />
-          </div>
-
-          <div>
-            <label for="email" class="block font-bold text-sm mb-1">メールアドレス</label>
-            <input type="email" id="email" name="email"
-              class="w-full border border-base-alt rounded-lg px-4 py-3 text-base focus:border-accent focus:ring-1 focus:ring-accent min-h-[44px]"
-              placeholder="example@email.com" />
-          </div>
-
-          <fieldset>
-            <legend class="font-bold text-sm mb-2">ご希望の連絡方法</legend>
-            <div class="flex flex-wrap gap-4">
-              {['電話', 'LINE', 'メール'].map((method) => (
-                <label class="flex items-center gap-2 cursor-pointer min-h-[44px]">
-                  <input type="radio" name="contact_method" value={method}
-                    class="w-5 h-5 text-accent focus:ring-accent" />
-                  <span>{method}</span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
-          <div>
-            <label for="message" class="block font-bold text-sm mb-1">ご相談内容 <span class="text-red-500">*</span></label>
-            <textarea id="message" name="message" required rows={5}
-              class="w-full border border-base-alt rounded-lg px-4 py-3 text-base focus:border-accent focus:ring-1 focus:ring-accent"
-              placeholder="ご利用を検討されている内容や、ご不明な点をお聞かせください。"></textarea>
-          </div>
-
-          <div>
-            <label class="flex items-start gap-3 cursor-pointer min-h-[44px]">
-              <input type="checkbox" name="privacy" required
-                class="w-5 h-5 mt-0.5 text-accent focus:ring-accent" />
-              <span class="text-sm">
-                <a href="/privacy" class="text-accent underline">個人情報の取り扱い</a>に同意する
-                <span class="text-red-500">*</span>
-              </span>
-            </label>
-          </div>
-
-          <button type="submit"
-            class="w-full bg-accent text-white font-bold py-4 rounded-full hover:bg-accent-hover transition-colors text-lg min-h-[44px]">
-            送信する
-          </button>
-        </form>
+    <!-- LINE -->
+    <SectionTitle class="is-left mb-8">LINEでの問い合わせ</SectionTitle>
+    <div class="mb-14 text-center md:text-left">
+      {lineConfigured ? (
+        <a
+          href={SITE.LINE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="md:hidden inline-flex items-center justify-center bg-line text-white font-bold px-8 min-h-[44px] rounded-full tracking-widest hover:opacity-90"
+        >
+          LINEで友だち追加
+        </a>
+      ) : (
+        <span class="md:hidden btn-outline" aria-disabled="true">LINE公式アカウント 準備中</span>
+      )}
+      <div class="hidden md:flex items-center gap-6">
+        <div class="inline-block border border-rule p-2" set:html={qrSvg} />
+        <p class="text-sm text-ink-muted">{lineConfigured ? 'スマートフォンでQRコードを読み取ってください。' : 'LINE公式アカウント 準備中'}</p>
       </div>
     </div>
-  </section>
+
+    <!-- Form -->
+    <SectionTitle class="is-left mb-8">メールでの問い合わせ</SectionTitle>
+    <form id="contact-form" action="https://api.web3forms.com/submit" method="POST" class="space-y-7">
+      <input type="hidden" name="access_key" value={formKey} />
+      <input type="hidden" name="subject" value={`${SITE.SERVICE_NAME} お問い合わせ`} />
+      <input type="hidden" name="redirect" value="/thanks" />
+
+      <div>
+        <label for="name" class="block font-bold text-[15px] mb-2">お名前 <span class="text-red-700">*</span></label>
+        <input type="text" id="name" name="name" required class="field md:max-w-md" placeholder="山田 太郎" />
+      </div>
+
+      <div>
+        <label for="furigana" class="block font-bold text-[15px] mb-2">ふりがな</label>
+        <input type="text" id="furigana" name="furigana" class="field md:max-w-md" placeholder="やまだ たろう" />
+      </div>
+
+      <div>
+        <label for="tel" class="block font-bold text-[15px] mb-2">お電話番号 <span class="text-red-700">*</span></label>
+        <input type="tel" id="tel" name="phone" required class="field md:max-w-md" placeholder="090-1234-5678" />
+      </div>
+
+      <div>
+        <label for="email" class="block font-bold text-[15px] mb-2">メールアドレス</label>
+        <input type="email" id="email" name="email" class="field md:max-w-md" placeholder="example@email.com" />
+      </div>
+
+      <fieldset>
+        <legend class="font-bold text-[15px] mb-2">ご希望の連絡方法</legend>
+        <div class="space-y-1">
+          {['電話', 'LINE', 'メール'].map((method) => (
+            <label class="flex items-center gap-3 cursor-pointer min-h-[44px]">
+              <input type="radio" name="contact_method" value={method} class="w-5 h-5 accent-[#4A7042]" />
+              <span>{method}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class="font-bold text-[15px] mb-2">お問い合わせの種類</legend>
+        <div class="space-y-1">
+          {kinds.map((k) => (
+            <label class="flex items-center gap-3 cursor-pointer min-h-[44px]">
+              <input type="radio" name="inquiry_kind" value={k} class="w-5 h-5 accent-[#4A7042]" />
+              <span>{k}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <div>
+        <label for="message" class="block font-bold text-[15px] mb-2">ご相談内容 <span class="text-red-700">*</span></label>
+        <textarea id="message" name="message" required rows={6} class="field"
+          placeholder="ご利用を検討されている内容や、ご不明な点をお聞かせください。"></textarea>
+      </div>
+
+      <div>
+        <label class="flex items-start gap-3 cursor-pointer min-h-[44px]">
+          <input type="checkbox" name="privacy" required class="w-5 h-5 mt-0.5 accent-[#4A7042]" />
+          <span class="text-sm">
+            <a href="/privacy" class="text-accent underline">個人情報の取り扱い</a>に同意する
+            <span class="text-red-700">*</span>
+          </span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn-solid">送信する</button>
+    </form>
+
+    <div class="mt-10 flex gap-4 bg-[#F3E4E2] border-l-4 border-[#9A3B32] px-5 py-4 text-sm leading-loose">
+      <p class="[word-break:auto-phrase]">内容を確認のうえ、2営業日以内にご連絡します。返信が届かないときは、迷惑メールの振り分けも見てみてください。</p>
+    </div>
+  </div>
 </Layout>
 
 <script>

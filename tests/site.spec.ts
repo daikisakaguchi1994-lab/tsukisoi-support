@@ -48,6 +48,7 @@ test('every navigation item leads to an existing page or section', async ({ page
 // 照合は scripts/compare-reference.py で行う
 const BORROWED_PHRASES = [
   'お支払いのご案内', '後日払いをご希望', 'ご希望の場所・内容', '対面でのお打ち合わせは有料', 'ご希望の日時とサポート内容',
+  'Please feel free to contact us', '詳しいサービスについて', '旅行の各種手配', '1時間あたりのご利用料金', 'あわせてご確認ください', '半日・1日ご利用の場合は割引',
 ];
 for (const path of PAGES) {
   test(`does not reuse reference-site wording: ${path}`, async ({ page }) => {
@@ -145,12 +146,21 @@ for (const width of [1440, 390, 320]) {
   }
 }
 
-// 公開できる料金は、許可・登録が不要な付き添いの基本料金だけ
-test('service page lists only the base price', async ({ page }) => {
+// 公開できる料金は、許可・登録が不要な「付き添い」の基本料金だけ（参考サイトの料金表と同じ作り: 濃い見出し帯 + 本文）
+test('service page lists the accompaniment prices as header bars', async ({ page }) => {
   await page.goto('/service');
-  const rows = page.locator('table tbody tr');
-  await expect(rows).toHaveCount(1);
-  await expect(page.locator('table')).toContainText('3,300円〜');
+  const list = page.getByTestId('price-list');
+  const heads = list.locator('.price-head');
+  await expect(heads).toHaveText([
+    '▼ 1時間のご利用料金',
+    '▼ 国内・宿泊旅行の付き添い　基本料金',
+    '▼ 海外旅行の付き添い　基本料金',
+    '▼ 福祉タクシー（利用条件あり）',
+    '▼ 旅行の手配について',
+  ]);
+  for (const price of ['3,300円（税込）〜', '49,500円（税込）〜', '33,000円（税込）〜']) await expect(list).toContainText(price);
+  // 付き添いの料金に、交通・宿泊の手配は含まない旨を明記
+  await expect(list).toContainText('交通・宿泊の手配は含みません');
 });
 
 // 福祉タクシー・旅行の手配は、確認が済むまで料金も「提供中」の表現も出さず、準備中と明記する
@@ -160,8 +170,67 @@ test('service page marks taxi and travel arrangement as preparing, without price
   await expect(upcoming).toContainText('福祉タクシー');
   await expect(upcoming).toContainText('旅行の手配');
   await expect(upcoming.getByText('準備中', { exact: true })).toHaveCount(2);
+  await expect(upcoming).not.toContainText('円');
   const text = await page.locator('main').innerText();
-  for (const price of ['49,500', '33,000', '3,550', '1,770', 'オプション']) expect(text, price).not.toContain(price);
+  for (const price of ['3,550', '1,770', 'オプション']) expect(text, price).not.toContain(price);
+});
+
+// 参考サイトに合わせた作り: ご利用の流れは3つの STEP、ご利用例は7つのチップ
+test('service page follows the reference layout: 3 steps, price blocks, usage chips', async ({ page }) => {
+  await page.goto('/service');
+  await expect(page.getByRole('heading', { level: 2, name: 'ご利用の流れ' })).toBeVisible();
+  await expect(page.locator('.step')).toHaveCount(3);
+  await expect(page.locator('.step-badge').first()).toContainText('STEP');
+  await expect(page.getByRole('heading', { level: 2, name: '基本料金' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 2, name: 'ご利用例' })).toBeVisible();
+  await expect(page.locator('.chip')).toHaveCount(7);
+  await expect(page.getByRole('navigation', { name: 'パンくずリスト' })).toContainText('サービス');
+});
+
+// トップは参考サイトと同じ順番: 全面スライド → 導入 → お知らせ → 6つの特徴 → 旅行の手配 → 電話
+test('home page has a full-screen slideshow hero followed by the reference section order', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  const hero = page.locator('#hero');
+  const box = (await hero.boundingBox())!;
+  expect(box.height).toBeGreaterThanOrEqual(560);
+  expect(box.width).toBeGreaterThanOrEqual(1400);
+  await expect(page.locator('[data-slide]')).toHaveCount(5);
+  await expect(page.locator('[data-dot]')).toHaveCount(5);
+  const headings = await page.locator('main h2').allInnerTexts();
+  expect(headings.map((h) => h.trim())).toEqual(['最新のお知らせ', 'つきそいサポートの6つの特徴', '旅行の手配について']);
+  await expect(page.locator('#features li')).toHaveCount(6);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+});
+
+// スライドはドットで手動切り替えできる（動きを減らす設定でも）
+test('hero slides can be switched with the dots', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('[data-dot="2"]').click();
+  await expect(page.locator('[data-slide]').nth(2)).toHaveAttribute('aria-hidden', 'false');
+  await expect(page.locator('[data-slide]').nth(0)).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('[data-dot="2"]')).toHaveAttribute('aria-current', 'true');
+});
+
+// ヘッダーは参考サイトと同じ: ロゴを中央に、ナビをその下に中央寄せ。現在のページに下線
+test('header centers the logo and nav, and marks the current page', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/service');
+  const logo = (await page.locator('#site-header a[aria-label$="トップページ"]').boundingBox())!;
+  expect(Math.abs(logo.x + logo.width / 2 - 720)).toBeLessThan(8);
+  const nav = page.getByRole('navigation', { name: 'メインナビゲーション' });
+  const navBox = (await nav.boundingBox())!;
+  expect(navBox.y).toBeGreaterThan(logo.y + logo.height - 4);
+  await expect(nav.locator('a[aria-current="page"]')).toHaveText(/サービス/);
+});
+
+// 参考サイトの装飾に近づけた部品（濃い見出し帯・左に線が付く下線見出し）がページ内で使われている
+test('pages use the heading bar and underlined titles', async ({ page }) => {
+  await page.goto('/about');
+  await expect(page.locator('h1.heading-bar')).toHaveText('私たちについて');
+  await expect(page.locator('.title-line').first()).toBeVisible();
+  await page.goto('/');
+  await expect(page.locator('h2.heading-bar')).toHaveCount(2);
 });
 
 // お知らせ・読み物（参考サイトの構成に合わせた一覧・記事ページ）

@@ -94,7 +94,7 @@ function contrast(fg: string, bg: string) {
   const [a, b] = [luminance(rgb(fg)), luminance(rgb(bg))].sort((x, y) => y - x);
   return (a + 0.05) / (b + 0.05);
 }
-for (const [path, name] of [['/contact', 'LINEで友だち追加'], ['/', 'LINEで友だち追加'], ['/', 'LINEで相談']] as const) {
+for (const [path, name] of [['/contact', 'LINEで友だち追加'], ['/', 'LINEで友だち追加']] as const) {
   test(`LINE button text has enough contrast on ${path}: ${name}`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(path);
