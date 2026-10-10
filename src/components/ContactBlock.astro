@@ -1,9 +1,10 @@
 ---
-import { SITE } from '../config';
+import { SITE, isTelConfigured } from '../config';
 import { generateLineQrSvg, isLineUrlConfigured } from '../utils/qr';
 
 const qrSvg = await generateLineQrSvg(SITE.LINE_URL);
 const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
+const telConfigured = isTelConfigured(SITE.TEL);
 ---
 <section class="bg-base-alt py-20 md:py-28" id="contact-block">
   <div class="max-w-5xl mx-auto px-4">
@@ -20,13 +21,22 @@ const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
           </svg>
         </div>
         <p class="text-sm mb-2">お電話でのご相談</p>
-        <a
-          href={`tel:${SITE.TEL}`}
-          class="block font-heading text-3xl md:text-4xl font-bold text-accent hover:text-accent-hover transition-colors min-h-[44px] leading-tight"
-        >
-          {SITE.TEL}
-        </a>
-        <p class="text-sm mt-2 text-ink-muted">{SITE.TEL_HOURS}</p>
+        {telConfigured ? (
+          <>
+            <a
+              href={`tel:${SITE.TEL}`}
+              class="block font-heading text-3xl md:text-4xl font-bold text-accent hover:text-accent-hover transition-colors min-h-[44px] leading-tight"
+            >
+              {SITE.TEL}
+            </a>
+            <p class="text-sm mt-2 text-ink-muted">{SITE.TEL_HOURS}</p>
+          </>
+        ) : (
+          <>
+            <p class="font-heading text-xl font-bold text-ink-muted min-h-[44px] leading-tight py-2">電話相談は準備中</p>
+            <p class="text-sm mt-2 text-ink-muted">公開までしばらくお待ちください</p>
+          </>
+        )}
       </div>
 
       <!-- LINE -->

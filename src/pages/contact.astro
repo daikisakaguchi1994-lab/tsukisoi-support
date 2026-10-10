@@ -1,10 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { SITE } from '../config';
+import { SITE, isTelConfigured } from '../config';
 import { generateLineQrSvg, isLineUrlConfigured } from '../utils/qr';
 
 const qrSvg = await generateLineQrSvg(SITE.LINE_URL);
 const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
+const telConfigured = isTelConfigured(SITE.TEL);
 const formKey = import.meta.env.PUBLIC_FORM_KEY || '{{FORM_KEY}}';
 ---
 <Layout title="お問い合わせ" description={`${SITE.SERVICE_NAME}へのお問い合わせ。お電話・LINE・メールフォームからお気軽にご連絡ください。`}>
@@ -17,10 +18,19 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY || '{{FORM_KEY}}';
       <div class="grid md:grid-cols-2 gap-6 mb-16">
         <div class="bg-base-alt rounded-2xl p-6 text-center">
           <p class="text-sm mb-2">お電話でのご相談</p>
-          <a href={`tel:${SITE.TEL}`} class="block font-heading text-3xl font-bold text-accent hover:text-accent-hover transition-colors min-h-[44px]">
-            {SITE.TEL}
-          </a>
-          <p class="text-sm mt-1 text-ink-muted">{SITE.TEL_HOURS}</p>
+          {telConfigured ? (
+            <>
+              <a href={`tel:${SITE.TEL}`} class="block font-heading text-3xl font-bold text-accent hover:text-accent-hover transition-colors min-h-[44px]">
+                {SITE.TEL}
+              </a>
+              <p class="text-sm mt-1 text-ink-muted">{SITE.TEL_HOURS}</p>
+            </>
+          ) : (
+            <>
+              <p class="font-heading text-xl font-bold text-ink-muted min-h-[44px] py-2">電話相談は準備中</p>
+              <p class="text-sm mt-1 text-ink-muted">公開までしばらくお待ちください</p>
+            </>
+          )}
         </div>
         <div class="bg-base-alt rounded-2xl p-6 text-center">
           <p class="text-sm mb-2">LINEでのご相談</p>

@@ -4,12 +4,16 @@ import SectionTitle from '../components/SectionTitle.astro';
 import { SITE } from '../config';
 
 // 金額はすべて税込。参考サイトの価格帯に合わせた初期値。独自の価格設定にする際はここだけ書き換える。
+// 公開できるのは、許可・登録が不要な「付き添い」の料金だけ。
 const prices = [
   { group: '基本料金', name: '1時間あたりの利用料', price: '3,300円〜', note: '半日・1日ご利用の場合は割引があります（詳細は準備中）。' },
-  { group: '旅行', name: '国内・宿泊旅行（1泊2日）', price: '49,500円〜', note: '行き先・内容に応じてお見積りします。' },
-  { group: '旅行', name: '海外旅行（1日あたり）', price: '33,000円〜', note: '渡航先・日数に応じてお見積りします。' },
-  { group: '福祉タクシー', name: '初乗り（30分まで）', price: '3,550円', note: '' },
-  { group: '福祉タクシー', name: '加算（15分ごと）', price: '1,770円', note: '' },
+];
+
+// 許可・登録の確認が済むまで、料金は載せず「準備中」とだけ案内する（CLAUDE.md 1. 公開前の安全方針）。
+// 確認できたら prices に移す。公開時に揃える価格帯の目安: 旅行(国内1泊2日) 49,500円〜 / 海外(1日) 33,000円〜 / 福祉タクシー 初乗り(30分) 3,550円・加算(15分) 1,770円
+const upcoming = [
+  { name: '旅行の手配（交通・宿泊の予約など）', text: '旅行の付き添いとは別のメニューです。必要な登録などの確認が済み次第ご案内します。' },
+  { name: '福祉タクシー（介護タクシー）', text: '必要な許可などの確認が済み次第ご案内します。' },
 ];
 
 const flow = [
@@ -18,7 +22,7 @@ const flow = [
   { title: '当日のサポート', text: 'ご希望の場所・内容に合わせて、スタッフが付き添います。' },
 ];
 
-const examples = ['日帰り旅行', '国内旅行', '海外旅行', 'お買い物', '外食', '結婚式', 'お引越し'];
+const examples = ['通院', 'お買い物', '外食', '日帰りのお出かけ', '旅行への付き添い', '結婚式', 'お引越し'];
 ---
 <Layout title="サービス" description={`${SITE.SERVICE_NAME}のサービス内容、料金、ご利用の流れのご案内です。`}>
   <section class="pt-16">
@@ -70,11 +74,24 @@ const examples = ['日帰り旅行', '国内旅行', '海外旅行', 'お買い�
           </tbody>
         </table>
       </div>
-      <ul class="text-sm text-ink-muted space-y-1 mb-20 list-disc pl-5">
-        <li>旅行の各種手配はオプション（有料）です。内容によって金額が変わります。</li>
+      <ul class="text-sm text-ink-muted space-y-1 mb-16 list-disc pl-5">
         <li>対面でのお打ち合わせは有料です。</li>
-        <li>福祉タクシーは、おひとりでの移動が難しい方が対象です。</li>
         <li>後日払いをご希望の場合は、事前にご相談ください。</li>
+      </ul>
+
+      <!-- Upcoming -->
+      <SectionTitle class="mb-3">準備中のメニュー</SectionTitle>
+      <p class="text-center text-sm text-ink-muted mb-10">現在はご利用いただけません。ご案内できる状況になりましたら、こちらでお知らせします。</p>
+      <ul class="space-y-4 mb-20" data-testid="upcoming-menu">
+        {upcoming.map((u) => (
+          <li class="bg-white rounded-2xl shadow-sm p-6 flex flex-col sm:flex-row sm:items-center gap-3">
+            <div class="grow">
+              <h3 class="font-heading font-bold text-ink-strong">{u.name}</h3>
+              <p class="text-sm mt-1">{u.text}</p>
+            </div>
+            <span class="shrink-0 self-start sm:self-center bg-base-alt text-ink-muted font-bold text-sm px-4 py-1 rounded-full">準備中</span>
+          </li>
+        ))}
       </ul>
 
       <!-- Examples -->

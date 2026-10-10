@@ -1,0 +1,84 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { getCollection, render } from 'astro:content';
+import { formatDate, isoDate } from '../../utils/date';
+
+export async function getStaticPaths() {
+  const articles = (await getCollection('news')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  return articles.map((article, i) => ({
+    params: { slug: article.id },
+    props: {
+      article,
+      newer: articles[i - 1],
+      older: articles[i + 1],
+      related: articles.filter((a) => a.id !== article.id).slice(0, 4),
+    },
+  }));
+}
+
+const { article, newer, older, related } = Astro.props;
+const { Content } = await render(article);
+---
+<Layout title={article.data.title} description={article.data.summary}>
+  <section class="pt-16">
+    <article class="max-w-3xl mx-auto px-4 py-12 md:py-20">
+      <Breadcrumb items={[{ label: 'お知らせ・読み物', href: '/news' }, { label: article.data.title }]} />
+
+      <header class="mb-10">
+        <div class="flex items-center gap-3 mb-3">
+          <a href="/news" class="bg-accent/10 text-accent text-xs font-bold px-3 py-0.5 rounded-full">{article.data.category}</a>
+          <time datetime={isoDate(article.data.date)} class="text-sm text-ink-muted">{formatDate(article.data.date)}</time>
+        </div>
+        <h1 class="font-heading text-2xl md:text-4xl font-bold text-ink-strong leading-snug">{article.data.title}</h1>
+      </header>
+
+      <div class="article-body">
+        <Content />
+      </div>
+
+      <!-- Prev / Next -->
+      <nav aria-label="前後の記事" class="mt-16 border-t border-ink/10 pt-8 grid sm:grid-cols-2 gap-4 text-sm">
+        <div>
+          {newer && (
+            <a href={`/news/${newer.id}`} class="block hover:text-accent">
+              <span class="block text-xs text-ink-muted">← 新しい記事</span>
+              {newer.data.title}
+            </a>
+          )}
+        </div>
+        <div class="sm:text-right">
+          {older && (
+            <a href={`/news/${older.id}`} class="block hover:text-accent">
+              <span class="block text-xs text-ink-muted">古い記事 →</span>
+              {older.data.title}
+            </a>
+          )}
+        </div>
+      </nav>
+
+      <!-- Related -->
+      {related.length > 0 && (
+        <section class="mt-16" aria-labelledby="related-heading">
+          <h2 id="related-heading" class="font-heading text-xl font-bold text-ink-strong mb-4">ほかの記事</h2>
+          <ul class="space-y-3">
+            {related.map((r) => (
+              <li>
+                <a href={`/news/${r.id}`} class="block bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow">
+                  <time datetime={isoDate(r.data.date)} class="text-xs text-ink-muted">{formatDate(r.data.date)}</time>
+                  <span class="block font-bold text-ink-strong">{r.data.title}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <div class="text-center mt-16">
+        <a href="/news" class="inline-block border-2 border-accent text-accent font-bold px-8 py-3 rounded-full hover:bg-accent hover:text-white transition-colors min-h-[44px]">
+          お知らせ・読み物の一覧へ
+        </a>
+      </div>
+    </article>
+  </section>
+</Layout>

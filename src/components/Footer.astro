@@ -1,5 +1,5 @@
 ---
-import { SITE, NAV_ITEMS, isConfigured } from '../config';
+import { SITE, NAV_ITEMS, isConfigured, isTelConfigured } from '../config';
 
 const year = new Date().getFullYear();
 ---
@@ -13,7 +13,9 @@ const year = new Date().getFullYear();
       <div class="text-sm space-y-1 opacity-80">
         <p>{SITE.COMPANY_NAME}</p>
         {isConfigured(SITE.ADDRESS) && <p>{SITE.ADDRESS}</p>}
-        <p>TEL: <a href={`tel:${SITE.TEL}`} class="hover:underline">{SITE.TEL}</a></p>
+        {isTelConfigured(SITE.TEL)
+          ? <p>TEL: <a href={`tel:${SITE.TEL}`} class="hover:underline">{SITE.TEL}</a></p>
+          : <p>電話相談は準備中です</p>}
         {isConfigured(SITE.INSTAGRAM_URL) && (
           <p><a href={SITE.INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" class="hover:underline">Instagram</a></p>
         )}

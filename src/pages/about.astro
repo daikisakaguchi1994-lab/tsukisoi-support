@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import ContactBlock from '../components/ContactBlock.astro';
+import { SITE } from '../config';
+
+// 代表者の氏名・資格・経歴は未確定。確定した内容をここに入れると、「準備中」の表示が自動で消える。
+const profile = {
+  name: '',
+  qualifications: [] as string[],
+  career: [] as string[],
+};
+const hasProfile = Boolean(profile.name);
+
+const policies = [
+  { title: 'ご本人のペースを大切に', text: '急がせず、できることはご本人にお任せし、必要なところだけをお手伝いします。' },
+  { title: '「大丈夫」を一緒に確かめる', text: '段差や待ち時間など、不安に思うことを出かける前に一緒に確認します。' },
+  { title: 'ご家族にも安心を', text: '当日の様子は、ご希望に応じてご家族にもお伝えします。' },
+];
+---
+<Layout title="私たちについて" description={`${SITE.SERVICE_NAME}の考え方と、代表者のご紹介です。`}>
+  <section class="pt-16">
+    <div class="max-w-3xl mx-auto px-4 py-12 md:py-20">
+      <Breadcrumb items={[{ label: '私たちについて' }]} />
+      <p class="font-heading text-accent tracking-[0.3em] text-sm text-center mb-3">ABOUT</p>
+      <h1 class="font-heading text-3xl md:text-5xl font-bold text-ink-strong text-center mb-6">私たちについて</h1>
+      <p class="text-center leading-loose mb-16 [word-break:auto-phrase]">
+        {SITE.SERVICE_NAME}が大切にしていることと、代表者のご紹介です。
+      </p>
+
+      <!-- Policy -->
+      <h2 class="font-heading text-2xl font-bold text-ink-strong text-center mb-8">大切にしていること</h2>
+      <ul class="grid md:grid-cols-3 gap-6 mb-20">
+        {policies.map((p) => (
+          <li class="bg-white rounded-2xl shadow-sm p-6">
+            <h3 class="font-heading font-bold text-ink-strong mb-2">{p.title}</h3>
+            <p class="text-sm leading-relaxed">{p.text}</p>
+          </li>
+        ))}
+      </ul>
+
+      <!-- Profile -->
+      <h2 class="font-heading text-2xl font-bold text-ink-strong text-center mb-8">代表者のご紹介</h2>
+      <div class="bg-white rounded-2xl shadow-sm p-8 md:p-10">
+        <div class="flex flex-col items-center text-center mb-8">
+          <div class="w-40 h-40 rounded-full bg-base-alt flex items-center justify-center text-ink-muted text-sm mb-4" role="img" aria-label="写真は準備中です">
+            写真 準備中
+          </div>
+          <p class="font-heading text-xl font-bold text-ink-strong">{hasProfile ? profile.name : 'お名前は準備中です'}</p>
+        </div>
+
+        <h3 class="font-heading font-bold text-ink-strong mb-2">保有資格</h3>
+        {profile.qualifications.length > 0 ? (
+          <ul class="list-disc pl-6 mb-8">{profile.qualifications.map((q) => <li>{q}</li>)}</ul>
+        ) : (
+          <p class="text-sm text-ink-muted mb-8">準備中です</p>
+        )}
+
+        <h3 class="font-heading font-bold text-ink-strong mb-2">経験・経歴</h3>
+        {profile.career.length > 0 ? (
+          <ul class="list-disc pl-6">{profile.career.map((c) => <li>{c}</li>)}</ul>
+        ) : (
+          <p class="text-sm text-ink-muted">準備中です</p>
+        )}
+      </div>
+    </div>
+  </section>
+  <ContactBlock />
+</Layout>

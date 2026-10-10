@@ -1,0 +1,36 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+import { SITE } from '../../config';
+import { formatDate, isoDate } from '../../utils/date';
+
+const articles = (await getCollection('news')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<Layout title="お知らせ・読み物" description={`${SITE.SERVICE_NAME}からのお知らせと、お出かけの付き添いに役立つ読み物です。`}>
+  <section class="pt-16">
+    <div class="max-w-3xl mx-auto px-4 py-12 md:py-20">
+      <Breadcrumb items={[{ label: 'お知らせ・読み物' }]} />
+      <p class="font-heading text-accent tracking-[0.3em] text-sm text-center mb-3">NEWS</p>
+      <h1 class="font-heading text-3xl md:text-5xl font-bold text-ink-strong text-center mb-6">お知らせ・読み物</h1>
+      <p class="text-center leading-loose mb-12 [word-break:auto-phrase]">
+        {SITE.SERVICE_NAME}からのお知らせと、お出かけの付き添いに役立つ読み物です。
+      </p>
+
+      <ul class="space-y-4">
+        {articles.map((a) => (
+          <li>
+            <a href={`/news/${a.id}`} class="block bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="bg-accent/10 text-accent text-xs font-bold px-3 py-0.5 rounded-full">{a.data.category}</span>
+                <time datetime={isoDate(a.data.date)} class="text-sm text-ink-muted">{formatDate(a.data.date)}</time>
+              </div>
+              <h2 class="font-heading font-bold text-lg text-ink-strong">{a.data.title}</h2>
+              <p class="text-sm mt-1">{a.data.summary}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Layout>

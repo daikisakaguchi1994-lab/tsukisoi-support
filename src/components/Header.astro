@@ -55,12 +55,14 @@ import { SITE, NAV_ITEMS } from '../config';
     const isOpen = !menu?.classList.contains('hidden');
     menu?.classList.toggle('hidden');
     toggle.setAttribute('aria-expanded', String(!isOpen));
+    toggle.setAttribute('aria-label', isOpen ? 'メニューを開く' : 'メニューを閉じる');
   });
   // アンカーリンクを押したらメニューを閉じる
   menu?.querySelectorAll('a').forEach((a) =>
     a.addEventListener('click', () => {
       menu.classList.add('hidden');
       toggle?.setAttribute('aria-expanded', 'false');
+      toggle?.setAttribute('aria-label', 'メニューを開く');
     })
   );
 </script>

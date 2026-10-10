@@ -3,21 +3,23 @@ import Layout from '../layouts/Layout.astro';
 import ContactBlock from '../components/ContactBlock.astro';
 import SectionTitle from '../components/SectionTitle.astro';
 import Hero from '../components/Hero.astro';
+import { getCollection } from 'astro:content';
 import { SITE, isConfigured } from '../config';
+import { formatDate, isoDate } from '../utils/date';
 
 // 以下の文面は仮のコピーです。サービス内容が確定したら差し替えてください。
 const services = [
   { icon: '🏥', title: '通院の付き添い', text: '受付から診察、会計、お薬の受け取りまで、院内でもそばに寄り添います。' },
   { icon: '🛍️', title: 'お買い物・外食', text: '歩くのが不安な方も、荷物の持ち運びや移動のお手伝いで、気兼ねなくお出かけいただけます。' },
-  { icon: '🧳', title: '旅行・観光', text: '駅や空港での移動から宿泊先まで、旅の道中をトータルでサポートします。' },
+  { icon: '🧳', title: '旅行・観光への付き添い', text: '駅や空港での移動など、旅の道中に付き添います。交通・宿泊の予約などの手配は準備中です。' },
   { icon: '🌸', title: '行事・お墓参り', text: '冠婚葬祭やお墓参りなど、大切な場面への外出もお手伝いします。' },
   { icon: '👨‍👩‍👧', title: 'ご家族への報告', text: '当日の様子をご家族にお伝えします。離れて暮らす方も安心です。' },
   { icon: '💬', title: 'まずはご相談を', text: 'こんなこともできる？というお悩みも、お気軽にお問い合わせください。' },
 ];
 
-const news = [
-  { date: '2026.10.10', text: 'ホームページを公開しました' },
-];
+const news = (await getCollection('news'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 5);
 
 const links = [
   { label: 'Instagram', href: SITE.INSTAGRAM_URL },
@@ -72,11 +74,16 @@ const links = [
       <ul class="space-y-4">
         {news.map((n) => (
           <li class="flex gap-4 items-baseline border-b border-ink/10 pb-4">
-            <time class="text-sm text-ink-muted shrink-0">{n.date}</time>
-            <p>{n.text}</p>
+            <time datetime={isoDate(n.data.date)} class="text-sm text-ink-muted shrink-0">{formatDate(n.data.date)}</time>
+            <a href={`/news/${n.id}`} class="hover:text-accent underline-offset-4 hover:underline">{n.data.title}</a>
           </li>
         ))}
       </ul>
+      <div class="text-center mt-8">
+        <a href="/news" class="inline-block border-2 border-accent text-accent font-bold px-8 py-3 rounded-full hover:bg-accent hover:text-white transition-colors min-h-[44px]">
+          お知らせ・読み物の一覧へ
+        </a>
+      </div>
     </div>
   </section>
 
@@ -85,11 +92,13 @@ const links = [
     <div class="max-w-3xl mx-auto px-4 text-center">
       <p class="font-heading text-accent tracking-[0.3em] text-sm mb-3">ABOUT</p>
       <SectionTitle class="mb-8">私たちについて</SectionTitle>
-      <p class="leading-loose mb-8">
-        {SITE.SERVICE_NAME}の紹介文をここに入れます。<br />
-        代表者のごあいさつや、サービスを始めた理由などを掲載する予定です。
+      <p class="leading-loose mb-8 [word-break:auto-phrase]">
+        {SITE.SERVICE_NAME}が大切にしていることと、代表者のご紹介です。<br />
+        代表者の紹介は準備中です。
       </p>
-      <p class="text-sm text-ink-muted">※ 内容は準備中です</p>
+      <a href="/about" class="inline-block border-2 border-accent text-accent font-bold px-8 py-3 rounded-full hover:bg-accent hover:text-white transition-colors min-h-[44px]">
+        私たちについて
+      </a>
     </div>
   </section>
 
@@ -111,6 +120,9 @@ const links = [
       ) : (
         <p class="text-sm text-ink-muted">準備中です</p>
       )}
+      <div class="mt-8">
+        <a href="/links" class="text-accent underline underline-offset-4 hover:text-accent-hover">関連リンクのページへ</a>
+      </div>
     </div>
   </section>
 
