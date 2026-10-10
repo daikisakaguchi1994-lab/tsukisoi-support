@@ -29,7 +29,7 @@
 
 **実装済み（2026-10-11、ブランチ `claude/usecases`）**: 11件の `src/content/cases/*.md`、`/cases`、`/cases/<スラッグ>`、サービスページのリンク化、相談フォームの自動入力、ボタンの動きのトークン（`global.css` の `--motion-*`）。`service.astro` に `#prices` `#flow` のアンカーを追加（バッチ C の前倒し分）。料金は `src/utils/prices.ts` に移し共有。**写真は未配置**（`public/images/README.md` に11枚の案。置くと反映）。検証: astro check 0 errors、Playwright 全件成功。Codex 監査は段階 1（未実施）。
 
-**トップ写真の差し替え（済、2026-10-11）**: 2〜5枚目を Codex で生成して配置、`pos`・コピー・文字位置を調整済み（1枚目は据え置き。夕景のまま）。ご利用例の写真は3枚（tsuin・kaimono・ryokou-kokunai）を配置済み、残り8枚は未生成。1枚目も明るい版に差し替え済み。ご利用例の写真（旧記述: 11枚は未生成）（`public/images/README.md` に案。続けて Codex で作れる。使用枠の様子を見ながら数枚ずつ）。生成の手順: 作業用フォルダで `codex exec -m gpt-5.6-sol -s workspace-write --skip-git-repo-check -C <作業用フォルダ>` に日本語の指示を渡し、PNG を保存させる → `sharp` で 1600×900 の JPEG（300〜400KB 以下）に変換して `public/images/` に置く。サイトのコードには触れさせない。旧写真の退避先は DECISIONS 参照。直下に「画像はイメージです」を追加済み（バッチ E ⑨ の採用分）。
+**トップ写真の差し替え（済、2026-10-11）**: 2〜5枚目を Codex で生成して配置、`pos`・コピー・文字位置を調整済み（1枚目は据え置き。夕景のまま）。ご利用例の写真は7枚（tsuin・kaimono・ryokou-kokunai・shoshin-kensa・gaishoku・yakusho-ginko・nichigaeri）を配置済み、残り4枚（ryokou-kaigai・kekkonshiki・hikkoshi・hoji-hakamairi）は未生成。1枚目も明るい版に差し替え済み。ご利用例の写真（旧記述: 11枚は未生成）（`public/images/README.md` に案。続けて Codex で作れる。使用枠の様子を見ながら数枚ずつ）。生成の手順: 作業用フォルダで `codex exec -m gpt-5.6-sol -s workspace-write --skip-git-repo-check -C <作業用フォルダ>` に日本語の指示を渡し、PNG を保存させる → `sharp` で 1600×900 の JPEG（300〜400KB 以下）に変換して `public/images/` に置く。サイトのコードには触れさせない。旧写真の退避先は DECISIONS 参照。直下に「画像はイメージです」を追加済み（バッチ E ⑨ の採用分）。
 
 ## 進行中（旧）
 
