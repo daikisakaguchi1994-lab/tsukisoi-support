@@ -107,3 +107,10 @@ for (const [path, name] of [['/contact', 'LINEで友だち追加'], ['/', 'LINE�
     expect(contrast(color, backgroundColor), `${color} on ${backgroundColor}`).toBeGreaterThanOrEqual(4.5);
   });
 }
+
+// サンプルの架空の LINE は連絡先として見せるが、返信方法の選択肢には出さない
+test('sample LINE is not offered as a reply method in the form', async ({ page }) => {
+  await page.goto('/contact');
+  await expect(page.locator('input[name="contact_method"][value="LINE"]')).toHaveCount(0);
+  await expect(page.locator('input[name="contact_method"]')).toHaveCount(2);
+});

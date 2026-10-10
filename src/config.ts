@@ -45,6 +45,9 @@ const withSamples = (base: Site): Site => {
 
 export const SITE: Site = SAMPLE_PREVIEW ? withSamples(BASE) : BASE;
 
+// 返信方法に LINE を出してよいか。サンプルの架空値ではなく、確定した設定値（BASE）で判定する
+export const LINE_CONFIRMED = isConfigured(BASE.LINE_URL);
+
 // ヘッダー/フッター共通のナビゲーション
 export const NAV_ITEMS = [
   { label: 'ホーム', en: 'Home', href: '/' },

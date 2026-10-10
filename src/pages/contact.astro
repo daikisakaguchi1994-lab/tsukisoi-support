@@ -1,132 +1,147 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SectionTitle from '../components/SectionTitle.astro';
-import { SITE, isTelConfigured, isTelSample } from '../config';
+import { SITE, isTelConfigured, isTelSample, LINE_CONFIRMED } from '../config';
 import { generateLineQrSvg, isLineUrlConfigured } from '../utils/qr';
 
 const qrSvg = await generateLineQrSvg(SITE.LINE_URL);
 const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
 const telConfigured = isTelConfigured(SITE.TEL);
 const telSample = isTelSample(SITE.TEL);
-const formKey = import.meta.env.PUBLIC_FORM_KEY || '{{FORM_KEY}}';
+// 送信キーが未設定のうちは受付前。キーがあるだけで受付開始とは見せない（受付開始は公開判断に従う）
+const formKey = import.meta.env.PUBLIC_FORM_KEY || '';
+const formReady = Boolean(formKey);
 const kinds = ['通院・お買い物などの付き添い', '旅行の付き添い', 'その他・まだ決まっていない'];
+// 返信方法の LINE は、LINE が確定して返信できる体制になるまで出さない（サンプルの架空値では出さない）
+const methods = LINE_CONFIRMED ? ['電話', 'メール', 'LINE'] : ['電話', 'メール'];
 ---
-<Layout title="お問い合わせ" description={`${SITE.SERVICE_NAME}へのお問い合わせ。お電話・LINE・メールフォームからお気軽にご連絡ください。`} crumbs={[{ label: 'お問合せ' }]}>
+<Layout title="お問い合わせ" description={`${SITE.SERVICE_NAME}へのお問い合わせ。相談フォームからお気軽にご連絡ください。`} crumbs={[{ label: 'お問合せ' }]}>
   <div class="max-w-3xl mx-auto px-4 py-14 md:py-20">
     <h1 class="sr-only">お問い合わせ</h1>
 
+    <p class="leading-loose mb-4 [word-break:auto-phrase]">
+      ご相談は、下の相談フォームからお送りください。お付き添い中などで、すぐにお返事できないことがあります。内容を確認のうえ、折り返しご連絡します。
+    </p>
+    <p class="mb-12"><a href="#contact-form" class="btn-outline">相談フォームへ</a></p>
+
     <!-- Tel -->
-    <SectionTitle class="is-left mb-8">お電話での問い合わせ</SectionTitle>
-    <div class="grid md:grid-cols-[auto_1fr] gap-6 md:gap-10 items-center mb-14">
-      <div class="text-center">
-        {telConfigured ? (
-          <a href={`tel:${SITE.TEL}`} class="btn-phone">{SITE.TEL}</a>
-        ) : telSample ? (
-          <p class="btn-phone">{SITE.TEL}</p>
-        ) : (
-          <p class="btn-phone is-muted">電話相談は準備中</p>
-        )}
-        {telSample && <p class="text-xs text-ink-muted mt-2">（サンプル。実際の番号は準備中です）</p>}
-        {(telConfigured || telSample) && SITE.TEL_HOURS && <p class="text-xs text-ink-muted mt-1">{SITE.TEL_HOURS}</p>}
-        {!telConfigured && !telSample && <p class="text-xs text-ink-muted mt-2">公開までしばらくお待ちください</p>}
-      </div>
-      <p class="text-[15px] leading-loose [word-break:auto-phrase]">
-        お付き添い中などで、すぐにお電話に出られないことがあります。つながらないときは、下のフォームかLINEからご連絡ください。内容を確認のうえ、折り返しご連絡します。
-      </p>
+    <SectionTitle class="is-left mb-6">お電話での問い合わせ</SectionTitle>
+    <div class="mb-12">
+      {telConfigured ? (
+        <a href={`tel:${SITE.TEL}`} class="btn-phone">{SITE.TEL}</a>
+      ) : telSample ? (
+        <p class="btn-phone">{SITE.TEL}</p>
+      ) : (
+        <p class="text-[1rem] leading-loose">電話相談は準備中です。公開までしばらくお待ちください。</p>
+      )}
+      {telSample && <p class="text-sm text-ink-muted mt-2">（サンプル。実際の番号は準備中です）</p>}
+      {(telConfigured || telSample) && SITE.TEL_HOURS && <p class="text-sm text-ink-muted mt-2">{SITE.TEL_HOURS}</p>}
     </div>
 
     <!-- LINE -->
-    <SectionTitle class="is-left mb-8">LINEでの問い合わせ</SectionTitle>
-    <div class="mb-14 text-center md:text-left">
+    <SectionTitle class="is-left mb-6">LINEでの問い合わせ</SectionTitle>
+    <div class="mb-12">
       {lineConfigured ? (
-        <a
-          href={SITE.LINE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="md:hidden inline-flex items-center justify-center bg-line text-white font-bold px-8 min-h-[44px] rounded-full tracking-widest hover:opacity-90"
-        >
-          LINEで友だち追加
-        </a>
+        <>
+          <a
+            href={SITE.LINE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="md:hidden inline-flex items-center justify-center bg-line text-white font-bold px-8 min-h-[44px] rounded-full tracking-widest hover:opacity-90"
+          >
+            LINEで友だち追加
+          </a>
+          <div class="hidden md:flex items-center gap-6">
+            <div class="inline-block border border-rule p-2" set:html={qrSvg} />
+            <p class="text-[1rem] text-ink-muted">スマートフォンでQRコードを読み取ってください。</p>
+          </div>
+        </>
       ) : (
-        <span class="md:hidden btn-outline" aria-disabled="true">LINE公式アカウント 準備中</span>
+        <p class="text-[1rem] leading-loose">LINE公式アカウントは準備中です。</p>
       )}
-      <div class="hidden md:flex items-center gap-6">
-        <div class="inline-block border border-rule p-2" set:html={qrSvg} />
-        <p class="text-sm text-ink-muted">{lineConfigured ? 'スマートフォンでQRコードを読み取ってください。' : 'LINE公式アカウント 準備中'}</p>
-      </div>
     </div>
 
     <!-- Form -->
-    <SectionTitle class="is-left mb-8">メールでの問い合わせ</SectionTitle>
-    <form id="contact-form" action="https://api.web3forms.com/submit" method="POST" class="space-y-7">
-      <input type="hidden" name="access_key" value={formKey} />
+    <SectionTitle class="is-left mb-8">相談フォーム</SectionTitle>
+    {!formReady && (
+      <div data-testid="form-pending" class="mb-8 flex gap-4 bg-[#F3E4E2] border-l-4 border-[#9A3B32] px-5 py-4 text-[1rem] leading-loose">
+        <p class="[word-break:auto-phrase]">相談フォームは公開準備中です。受付を始めるまで、しばらくお待ちください。</p>
+      </div>
+    )}
+    <form id="contact-form" action="https://api.web3forms.com/submit" method="POST" novalidate>
+      {formReady && <input type="hidden" name="access_key" value={formKey} />}
       <input type="hidden" name="subject" value={`${SITE.SERVICE_NAME} お問い合わせ`} />
       <input type="hidden" name="redirect" value="/thanks" />
 
-      <div>
-        <label for="name" class="block font-bold text-[15px] mb-2">お名前 <span class="text-red-700">*</span></label>
-        <input type="text" id="name" name="name" required class="field md:max-w-md" placeholder="山田 太郎" />
-      </div>
-
-      <div>
-        <label for="furigana" class="block font-bold text-[15px] mb-2">ふりがな</label>
-        <input type="text" id="furigana" name="furigana" class="field md:max-w-md" placeholder="やまだ たろう" />
-      </div>
-
-      <div>
-        <label for="tel" class="block font-bold text-[15px] mb-2">お電話番号 <span class="text-red-700">*</span></label>
-        <input type="tel" id="tel" name="phone" required class="field md:max-w-md" placeholder="090-1234-5678" />
-      </div>
-
-      <div>
-        <label for="email" class="block font-bold text-[15px] mb-2">メールアドレス</label>
-        <input type="email" id="email" name="email" class="field md:max-w-md" placeholder="example@email.com" />
-      </div>
-
-      <fieldset>
-        <legend class="font-bold text-[15px] mb-2">ご希望の連絡方法</legend>
-        <div class="space-y-1">
-          {['電話', 'LINE', 'メール'].map((method) => (
-            <label class="flex items-center gap-3 cursor-pointer min-h-[44px]">
-              <input type="radio" name="contact_method" value={method} class="w-5 h-5 accent-[#4A7042]" />
-              <span>{method}</span>
-            </label>
-          ))}
+      <fieldset disabled={!formReady} class="space-y-7">
+        <div>
+          <label for="name" class="block font-bold text-[1rem] mb-2">お名前 <span class="text-red-700">*</span></label>
+          <input type="text" id="name" name="name" autocomplete="name" aria-describedby="err-name" class="field md:max-w-md" placeholder="山田 太郎" />
+          <p id="err-name" class="field-error" role="alert" hidden></p>
         </div>
-      </fieldset>
 
-      <fieldset>
-        <legend class="font-bold text-[15px] mb-2">お問い合わせの種類</legend>
-        <div class="space-y-1">
-          {kinds.map((k) => (
-            <label class="flex items-center gap-3 cursor-pointer min-h-[44px]">
-              <input type="radio" name="inquiry_kind" value={k} class="w-5 h-5 accent-[#4A7042]" />
-              <span>{k}</span>
-            </label>
-          ))}
+        <fieldset>
+          <legend class="font-bold text-[1rem] mb-2">ご希望の連絡方法 <span class="text-red-700">*</span></legend>
+          <div class="space-y-1">
+            {methods.map((method) => (
+              <label class="flex items-center gap-3 cursor-pointer min-h-[44px]">
+                <input type="radio" name="contact_method" value={method} class="w-5 h-5 accent-[#4A7042]" />
+                <span class="text-[1rem]">{method}</span>
+              </label>
+            ))}
+          </div>
+          <p id="err-method" class="field-error" role="alert" hidden></p>
+        </fieldset>
+
+        <div>
+          <label for="tel" class="block font-bold text-[1rem] mb-2">お電話番号 <span data-required-mark="phone" class="text-red-700" hidden>*</span></label>
+          <input type="tel" id="tel" name="phone" autocomplete="tel" inputmode="tel" aria-describedby="hint-contact err-phone" class="field md:max-w-md" placeholder="090-1234-5678" />
+          <p id="err-phone" class="field-error" role="alert" hidden></p>
         </div>
+
+        <div>
+          <label for="email" class="block font-bold text-[1rem] mb-2">メールアドレス <span data-required-mark="email" class="text-red-700" hidden>*</span></label>
+          <input type="email" id="email" name="email" autocomplete="email" aria-describedby="hint-contact err-email" class="field md:max-w-md" placeholder="example@email.com" />
+          <p id="err-email" class="field-error" role="alert" hidden></p>
+          <p id="hint-contact" class="text-sm text-ink-muted mt-2">ご希望の連絡方法に合わせて、電話番号またはメールアドレスをご入力ください。</p>
+        </div>
+
+        <fieldset>
+          <legend class="font-bold text-[1rem] mb-2">お問い合わせの種類</legend>
+          <div class="space-y-1">
+            {kinds.map((k) => (
+              <label class="flex items-center gap-3 cursor-pointer min-h-[44px]">
+                <input type="radio" name="inquiry_kind" value={k} class="w-5 h-5 accent-[#4A7042]" />
+                <span class="text-[1rem]">{k}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div>
+          <label for="message" class="block font-bold text-[1rem] mb-2">ご相談内容 <span class="text-red-700">*</span></label>
+          <textarea id="message" name="message" rows={6} aria-describedby="hint-message err-message" class="field"
+            placeholder="例：来月、病院への通院に付き添ってほしい。"></textarea>
+          <p id="err-message" class="field-error" role="alert" hidden></p>
+          <p id="hint-message" class="text-sm text-ink-muted mt-2">わかる範囲で構いません。お体の状態など、詳しいことは後からお伺いします。</p>
+        </div>
+
+        <div>
+          <label class="flex items-start gap-3 cursor-pointer min-h-[44px]">
+            <input type="checkbox" name="privacy" aria-describedby="err-privacy" class="w-5 h-5 mt-0.5 accent-[#4A7042]" />
+            <span class="text-[1rem]">
+              <a href="/privacy" class="text-accent underline">個人情報の取り扱い</a>に同意する
+              <span class="text-red-700">*</span>
+            </span>
+          </label>
+          <p id="err-privacy" class="field-error" role="alert" hidden></p>
+        </div>
+
+        <button type="submit" class="btn-solid">相談内容を送信する</button>
       </fieldset>
-
-      <div>
-        <label for="message" class="block font-bold text-[15px] mb-2">ご相談内容 <span class="text-red-700">*</span></label>
-        <textarea id="message" name="message" required rows={6} class="field"
-          placeholder="ご利用を検討されている内容や、ご不明な点をお聞かせください。"></textarea>
-      </div>
-
-      <div>
-        <label class="flex items-start gap-3 cursor-pointer min-h-[44px]">
-          <input type="checkbox" name="privacy" required class="w-5 h-5 mt-0.5 accent-[#4A7042]" />
-          <span class="text-sm">
-            <a href="/privacy" class="text-accent underline">個人情報の取り扱い</a>に同意する
-            <span class="text-red-700">*</span>
-          </span>
-        </label>
-      </div>
-
-      <button type="submit" class="btn-solid">送信する</button>
     </form>
 
-    <div class="mt-10 flex gap-4 bg-[#F3E4E2] border-l-4 border-[#9A3B32] px-5 py-4 text-sm leading-loose">
+    <div class="mt-10 flex gap-4 bg-[#F3E4E2] border-l-4 border-[#9A3B32] px-5 py-4 text-[1rem] leading-loose">
       <p class="[word-break:auto-phrase]">内容を確認のうえ、2営業日以内にご連絡します。返信が届かないときは、迷惑メールの振り分けも見てみてください。</p>
     </div>
   </div>
@@ -134,21 +149,46 @@ const kinds = ['通院・お買い物などの付き添い', '旅行の付き添
 
 <script>
   const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const field = (name: string) => form?.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${name}"]`);
+  const checkedMethod = () => form?.querySelector<HTMLInputElement>('[name="contact_method"]:checked')?.value;
+
+  // 返信方法に合わせて、連絡先の必須の印を切り替える
+  const syncRequired = () => {
+    const method = checkedMethod();
+    for (const [key, name] of [['phone', '電話'], ['email', 'メール']] as const) {
+      const mark = form?.querySelector<HTMLElement>(`[data-required-mark="${key}"]`);
+      if (mark) mark.hidden = method !== name;
+    }
+  };
+  form?.addEventListener('change', syncRequired);
+  syncRequired();
+
+  const show = (id: string, text: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = text;
+    el.hidden = !text;
+  };
+
   form?.addEventListener('submit', (e) => {
-    const name = form.querySelector<HTMLInputElement>('[name="name"]');
-    const tel = form.querySelector<HTMLInputElement>('[name="phone"]');
-    const message = form.querySelector<HTMLTextAreaElement>('[name="message"]');
-    const privacy = form.querySelector<HTMLInputElement>('[name="privacy"]');
-    const errors: string[] = [];
+    const method = checkedMethod();
+    const empty = (name: string) => !field(name)?.value.trim();
+    const errors: { id: string; text: string; target: HTMLElement | null | undefined }[] = [];
 
-    if (!name?.value.trim()) errors.push('お名前を入力してください。');
-    if (!tel?.value.trim()) errors.push('お電話番号を入力してください。');
-    if (!message?.value.trim()) errors.push('ご相談内容を入力してください。');
-    if (!privacy?.checked) errors.push('個人情報の取り扱いに同意してください。');
+    if (empty('name')) errors.push({ id: 'err-name', text: 'お名前を入力してください。', target: field('name') });
+    if (!method) errors.push({ id: 'err-method', text: 'ご希望の連絡方法を選んでください。', target: field('contact_method') });
+    if (method === '電話' && empty('phone')) errors.push({ id: 'err-phone', text: '電話でのご連絡をご希望の場合は、お電話番号を入力してください。', target: field('phone') });
+    if (method === 'メール' && empty('email')) errors.push({ id: 'err-email', text: 'メールでのご連絡をご希望の場合は、メールアドレスを入力してください。', target: field('email') });
+    if (field('email') && !empty('email') && !(field('email') as HTMLInputElement).validity.valid) errors.push({ id: 'err-email', text: 'メールアドレスの形式をご確認ください。', target: field('email') });
+    if (empty('message')) errors.push({ id: 'err-message', text: 'ご相談内容を入力してください。', target: field('message') });
+    if (!(field('privacy') as HTMLInputElement | null)?.checked) errors.push({ id: 'err-privacy', text: '個人情報の取り扱いに同意してください。', target: field('privacy') });
 
+    for (const id of ['err-name', 'err-method', 'err-phone', 'err-email', 'err-message', 'err-privacy']) show(id, '');
     if (errors.length > 0) {
+      // 入力内容は消さない。該当欄の近くにメッセージを出し、最初の欄へ移す
       e.preventDefault();
-      alert(errors.join('\n'));
+      for (const err of errors) show(err.id, err.text);
+      errors[0].target?.focus();
     }
   });
 </script>

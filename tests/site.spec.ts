@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readdirSync } from 'node:fs';
-import { NAV_ITEMS, SITE, SAMPLE_PREVIEW, isTelConfigured } from '../src/config';
+import { NAV_ITEMS, SITE, SAMPLE_PREVIEW, LINE_CONFIRMED, isTelConfigured } from '../src/config';
 import { SAMPLE_VALUES } from '../src/config.sample';
 
 // お知らせ・読み物の記事は src/content/news/*.md から自動で拾う
@@ -447,4 +447,86 @@ test('privacy page is marked as a draft and the contact form links to it', async
   await page.goto('/contact');
   await expect(page.getByRole('link', { name: '個人情報の取り扱い' }).first()).toHaveAttribute('href', '/privacy');
   await expect(page.locator('a[href="#"]')).toHaveCount(0);
+});
+
+// バッチ A: 相談フォームと準備中の表示
+test('contact form has no furigana field and the privacy page does not mention it', async ({ page }) => {
+  await page.goto('/contact');
+  await expect(page.locator('#furigana, [name="furigana"]')).toHaveCount(0);
+  await expect(page.locator('main')).not.toContainText('ふりがな');
+  await page.goto('/privacy');
+  await expect(page.locator('main')).not.toContainText('ふりがな');
+});
+
+test('contact form does not offer LINE as a reply method until LINE is confirmed', async ({ page }) => {
+  test.skip(LINE_CONFIRMED, 'LINE is confirmed');
+  await page.goto('/contact');
+  const methods = page.locator('input[name="contact_method"]');
+  await expect(methods).toHaveCount(2);
+  await expect(page.locator('input[name="contact_method"][value="LINE"]')).toHaveCount(0);
+  await expect(page.locator('main')).toContainText('LINE公式アカウントは準備中です');
+});
+
+// 送信キーがない間は受付前。押せるボタンに見せず、キーを HTML に出さない
+test('contact form shows a pending notice and is disabled while the form key is unset', async ({ page }) => {
+  test.skip(Boolean(process.env.PUBLIC_FORM_KEY), 'form key is set');
+  await page.goto('/contact');
+  await expect(page.getByTestId('form-pending')).toContainText('相談フォームは公開準備中です');
+  await expect(page.getByRole('button', { name: '相談内容を送信する' })).toBeDisabled();
+  await expect(page.locator('#name')).toBeDisabled();
+  await expect(page.locator('input[name="access_key"]')).toHaveCount(0);
+  await expect(page.locator('#contact-form')).not.toContainText('{{');
+});
+
+test('phone and LINE pending states are plain text, not button-like', async ({ page }) => {
+  test.skip(isTelConfigured(SITE.TEL), 'phone number is configured');
+  await page.goto('/contact');
+  await expect(page.locator('.is-muted')).toHaveCount(0);
+  await expect(page.locator('.btn-phone')).toHaveCount(0);
+  await expect(page.locator('main')).toContainText('電話相談は準備中です');
+});
+
+test('contact page links to the form from the top and uses a clear submit label', async ({ page }) => {
+  await page.goto('/contact');
+  await expect(page.locator('a[href="#contact-form"]').first()).toBeVisible();
+  await expect(page.getByRole('button', { name: '相談内容を送信する' })).toBeVisible();
+});
+
+// 返信方法に応じて連絡先を必須にし、エラーは該当欄の近くに出して入力は消さない
+// （フォームの項目は fieldset の disabled を外して検証する。受付前の見た目は別のテストで固定）
+test('reply method decides which contact field is required, errors appear next to the field', async ({ page }) => {
+  await page.goto('/contact');
+  await page.evaluate(() => document.querySelectorAll('fieldset[disabled]').forEach((f) => f.removeAttribute('disabled')));
+  await page.fill('#name', '山田 太郎');
+  await page.fill('#message', 'テスト');
+  await page.check('[name="privacy"]');
+  await page.check('input[name="contact_method"][value="電話"]');
+  await page.getByRole('button', { name: '相談内容を送信する' }).click();
+  await expect(page.locator('#err-phone')).toBeVisible();
+  await expect(page.locator('#err-email')).toBeHidden();
+  await expect(page).toHaveURL(/\/contact$/);
+  await expect(page.locator('#name')).toHaveValue('山田 太郎');
+  await page.check('input[name="contact_method"][value="メール"]');
+  await page.getByRole('button', { name: '相談内容を送信する' }).click();
+  await expect(page.locator('#err-email')).toBeVisible();
+  await expect(page.locator('#err-phone')).toBeHidden();
+  await expect(page.locator('#message')).toHaveValue('テスト');
+});
+
+test('form fields are at least 16px and carry autocomplete', async ({ page }) => {
+  await page.goto('/contact');
+  for (const [id, ac] of [['name', 'name'], ['tel', 'tel'], ['email', 'email']] as const) {
+    await expect(page.locator(`#${id}`)).toHaveAttribute('autocomplete', ac);
+    const size = await page.locator(`#${id}`).evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+    expect(size).toBeGreaterThanOrEqual(16);
+  }
+});
+
+// text-base は白の色トークンと衝突する（文字が白く消える）。フォームの文字が背景と同化していないこと
+test('contact form text is not white on white', async ({ page }) => {
+  await page.goto('/contact');
+  for (const sel of ['label[for="name"]', '#hint-contact', 'main p.leading-loose']) {
+    const color = await page.locator(sel).first().evaluate((el) => getComputedStyle(el).color);
+    expect(color, sel).not.toBe('rgb(255, 255, 255)');
+  }
 });

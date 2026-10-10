@@ -182,7 +182,7 @@ html {
     box-shadow: 0 1px 0 rgba(38, 35, 31, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.25);
   }
 
-  /* 電話の濃いピル。番号が未確定のときは文字が薄くなる */
+  /* 電話の濃いピル（番号が確定しているときだけ使う。未確定は文章で「準備中」と伝える） */
   .btn-phone {
     display: inline-flex;
     align-items: center;
@@ -196,7 +196,6 @@ html {
     font-weight: 700;
     letter-spacing: 0.08em;
   }
-  .btn-phone.is-muted { background: var(--color-ink-muted); }
 
   /* 料金表: 濃い見出し帯 + 罫線つきの本文 */
   .price-head {
@@ -262,6 +261,8 @@ html {
     padding: 0.7rem 0.9rem;
     border-radius: 2px;
     min-height: 44px;
+    font-size: 1rem;
   }
+  .field-error { margin-top: 0.5rem; color: #B91C1C; font-weight: 700; font-size: 1rem; line-height: 1.7; }
   .field:focus { border-color: var(--color-accent); outline: 2px solid var(--color-accent); outline-offset: 0; }
 }
