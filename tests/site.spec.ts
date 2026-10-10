@@ -53,6 +53,24 @@ for (const path of PAGES) {
   });
 }
 
+// 実績・利用者の声があるように読める表現は、事実を確認するまで書かない（仮原稿を含む）
+const TRACK_RECORD_CLAIMS = ['よくいただ', '多数', 'お客様の声', 'ご好評', '多くの方', '実績があ', '累計'];
+for (const path of PAGES) {
+  test(`makes no track-record claims: ${path}`, async ({ page }) => {
+    await page.goto(path);
+    const text = await page.locator('body').innerText();
+    for (const word of TRACK_RECORD_CLAIMS) expect(text, word).not.toContain(word);
+  });
+}
+
+// 狭い画面でボタンの文字が1文字だけ次の行に孤立しない（1行に収まる）
+test('article back button stays on one line at 320px', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto(ARTICLES[0]);
+  const box = await page.getByRole('link', { name: '一覧に戻る' }).boundingBox();
+  expect(box!.height).toBeLessThan(70);
+});
+
 // 未確定の電話番号に発信できる導線を出さない（確定したら自動で表示される）
 for (const path of PAGES) {
   test(`has no dialable link while the phone number is unset: ${path}`, async ({ page }) => {
@@ -149,7 +167,7 @@ for (const path of ARTICLES) {
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'パンくずリスト' })).toContainText('お知らせ・読み物');
     await expect(page.locator('article header time')).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}$/);
-    await expect(page.getByRole('link', { name: 'お知らせ・読み物の一覧へ' })).toHaveAttribute('href', '/news');
+    await expect(page.getByRole('link', { name: '一覧に戻る' })).toHaveAttribute('href', '/news');
   });
 }
 
