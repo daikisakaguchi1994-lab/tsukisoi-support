@@ -1,45 +1,13 @@
-# Astro Starter Kit: Minimal
+# つきそいサポート ホームページ
+
+Astro 7 + Tailwind 4 の静的サイト（Vercel にデプロイ）。公開前のため全ページ `noindex`。
+
+- 作業の約束事: `CLAUDE.md`（Claude Code）/ `AGENTS.md`（Codex）
+- 目的・設計: `docs/PROJECT.md`、運用ルール: `docs/WORKFLOW.md`、現在地: `docs/HANDOFF.md`、決定の履歴: `docs/DECISIONS.md`
 
 ```sh
-npm create astro@latest -- --template minimal
+npm ci
+npm run build
+npx astro check
+CI=1 npx playwright test   # PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH にブラウザのパスを指定
 ```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-<!-- Vercel Git連携の動作確認用コメント 2026-08-01 -->
