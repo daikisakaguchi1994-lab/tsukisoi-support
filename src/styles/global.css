@@ -8,7 +8,7 @@
   --color-ink-muted: #655F59; /* 補足文字。どの地色でも 5:1 以上 */
   --color-accent: #4A7042; /* 白文字 5.69:1、生成り地 5.33:1 */
   --color-accent-hover: #3D5E37;
-  --color-line: #06C755;
+  --color-line: #067A38; /* LINE の緑を暗くした色。白文字 5.46:1（公式色 #06C755 は 2.26:1 で不足） */
 
   --font-heading: 'Zen Maru Gothic', sans-serif;
   --font-body: 'Noto Sans JP', sans-serif;

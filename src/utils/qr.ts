@@ -17,6 +17,6 @@ export async function generateLineQrSvg(url: string): Promise<string> {
     type: 'svg',
     margin: 1,
     width: 200,
-    color: { dark: '#06C755', light: '#FFFFFF' },
+    color: { dark: '#067A38', light: '#FFFFFF' },
   });
 }

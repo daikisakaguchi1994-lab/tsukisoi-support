@@ -83,3 +83,27 @@ for (const width of [1440, 390, 320]) {
     expect(overflow).toBeLessThanOrEqual(0);
   });
 }
+
+// LINE ボタン（緑地に白文字）は文字コントラスト 4.5:1 以上（公式色 #06C755 は 2.26:1 で不足だった）
+function luminance([r, g, b]: number[]) {
+  const f = (c: number) => ((c /= 255) <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+}
+const rgb = (css: string) => (css.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+function contrast(fg: string, bg: string) {
+  const [a, b] = [luminance(rgb(fg)), luminance(rgb(bg))].sort((x, y) => y - x);
+  return (a + 0.05) / (b + 0.05);
+}
+for (const [path, name] of [['/contact', 'LINEで友だち追加'], ['/', 'LINEで友だち追加'], ['/', 'LINEで相談']] as const) {
+  test(`LINE button text has enough contrast on ${path}: ${name}`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(path);
+    const link = page.getByRole('link', { name }).first();
+    await expect(link).toBeVisible();
+    const { color, backgroundColor } = await link.evaluate((el) => {
+      const s = getComputedStyle(el);
+      return { color: s.color, backgroundColor: s.backgroundColor };
+    });
+    expect(contrast(color, backgroundColor), `${color} on ${backgroundColor}`).toBeGreaterThanOrEqual(4.5);
+  });
+}
