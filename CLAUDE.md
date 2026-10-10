@@ -17,7 +17,7 @@ Astro 7 + Tailwind 4 の静的サイト。Vercel にデプロイ（Git 連携）
 - 揃えてよいもの: ページ構成、セクションの順番、ナビ項目、料金の価格帯、ご利用の流れの段数。
 - 転載しないもの: 文章、写真、ロゴ、屋号、電話番号、受賞歴・掲載歴などその事業者固有の事実。文章は自前で書き起こす。
 - `tests/site.spec.ts` の `FORBIDDEN_TEXT` に、画面に出してはいけない語を入れて再発を防ぐ。
-- 本文照合は `npm run build` の後に `python3 scripts/compare-reference.py`。取得できない環境では保存済み HTML を `--ref-dir` で渡す。見つかった言い回しは `BORROWED_PHRASES` に足す。
+- 本文照合は `npm run build` の後に `python3 scripts/compare-reference.py`。取得できない環境では保存済み HTML を `--ref-dir` で渡す。見つかった言い回しは `BORROWED_PHRASES` に足す。スクリプトは参照ページ単位で比べて出典を併記し、比較対象が0件なら終了コード2で失敗する（直したら `python3 scripts/test_compare_reference.py`）。
 
 ## 3. デザインの約束
 

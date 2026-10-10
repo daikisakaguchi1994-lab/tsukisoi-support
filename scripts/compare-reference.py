@@ -8,12 +8,14 @@
   python3 scripts/compare-reference.py --ref-dir <保存済みHTMLのフォルダ>   # 取得できない環境向け
 
 空白と句読点を除いて比べる。ナビの項目名やごく短い定型句は一致しても問題ない（CLAUDE.md 2.）。
+参照ページ単位で比べ、出典（参照ページ@正規化後の位置）を併記する。比較対象が0件なら終了コード2で失敗する。
 文として一致・言い換え程度のものが出たら自前の文章に書き直し、tests/site.spec.ts の BORROWED_PHRASES に足す。
 """
 import argparse
 import glob
 import os
 import re
+import sys
 import urllib.request
 from html.parser import HTMLParser
 
@@ -60,6 +62,21 @@ def load_reference(ref_dir):
     return pages
 
 
+def find_runs(s, ref_text, grams, n):
+    """s の中で ref_text に連続して存在する部分文字列（n 文字以上）を (開始位置, 文字列) で返す。"""
+    runs, i = [], 0
+    while i <= len(s) - n:
+        if s[i:i + n] not in grams:
+            i += 1
+            continue
+        j = i + n
+        while j < len(s) and s[i:j + 1] in ref_text:
+            j += 1
+        runs.append(s[i:j])
+        i = j
+    return runs
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--min', type=int, default=8)
@@ -68,27 +85,29 @@ def main():
     args = ap.parse_args()
     n = args.min
 
-    grams = set()
-    for html in load_reference(args.ref_dir).values():
-        s = normalize(html)
-        grams.update(s[i:i + n] for i in range(len(s) - n + 1))
+    # 参照ページごとに保持する。別ページの断片をつないで「一致」にしないため。
+    refs = {name: normalize(html) for name, html in load_reference(args.ref_dir).items()}
+    dist_files = glob.glob(os.path.join(args.dist, '**', '*.html'), recursive=True)
+    if not refs or not dist_files:
+        print(f'比較対象が0件です（参照HTML {len(refs)}件 / {args.dist} のHTML {len(dist_files)}件）。'
+              '--ref-dir / --dist を確認してください。', file=sys.stderr)
+        sys.exit(2)
+    print(f'比較: 参照 {len(refs)} ページ × 自サイト {len(dist_files)} ページ（最小一致 {n} 文字）', file=sys.stderr)
 
+    ref_grams = {name: {r[i:i + n] for i in range(len(r) - n + 1)} for name, r in refs.items()}
     hits = {}
-    for f in glob.glob(os.path.join(args.dist, '**', '*.html'), recursive=True):
+    for f in dist_files:
         s = normalize(open(f, encoding='utf-8').read())
-        i = 0
-        while i <= len(s) - n:
-            if s[i:i + n] not in grams:
-                i += 1
-                continue
-            j = i + n
-            while j < len(s) and s[j - n + 1:j + 1] in grams:
-                j += 1
-            hits.setdefault(s[i:j], set()).add(os.path.relpath(f, args.dist))
-            i = j
+        page = os.path.relpath(f, args.dist)
+        for name, r in refs.items():
+            for text in find_runs(s, r, ref_grams[name], n):
+                hits.setdefault(text, set()).add((page, os.path.basename(name.rstrip('/')) or name, r.find(text)))
 
-    for text, files in sorted(hits.items(), key=lambda kv: -len(kv[0])):
-        print(f'{len(text):3d}  {text}  ({", ".join(sorted(files))})')
+    for text, srcs in sorted(hits.items(), key=lambda kv: -len(kv[0])):
+        pages = ', '.join(sorted({p for p, _, _ in srcs}))
+        found = sorted({(ref, pos) for _, ref, pos in srcs})
+        origins = ', '.join(f'{ref}@{pos}' for ref, pos in found[:3]) + (f' ほか{len(found) - 3}件' if len(found) > 3 else '')
+        print(f'{len(text):3d}  {text}  ({pages})  出典: {origins}')
 
 
 if __name__ == '__main__':
