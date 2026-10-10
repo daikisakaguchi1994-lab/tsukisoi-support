@@ -63,8 +63,9 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/opt/pw-browsers/chromium CI=1 npx playwrigh
 
 - Claude Code が実装・検証・push まで行い、Codex には依頼文で指示を出す。Codex の常設手順は `AGENTS.md`。
 - 作業は指定の作業ブランチで行い、commit & push。`master` へのマージは PR を作ってから。
-- Codex の使い方は2通り。
+- Codex の使い方は3通り。
   - **監査（毎回）**: 変更ごとに Codex で独立監査する（読み取り専用）。
+  - **分析・提案（デザイン・導線の見直しのとき）**: 読み取り専用で、想定する訪問者から色・フォント・CTA・導線を分析して提案だけを出してもらう（`AGENTS.md` の C）。提案は Claude Code が方針（1・2）と照らして取捨選択してから実装する。
   - **並行実装（必要なときだけ）**: 共通部品に触れない独立したページ（例: 読み物・関連リンク）を Codex に任せると早いときは、`codex/<テーマ>` ブランチ・変更してよいファイルを依頼文で限定して渡す。上がってきたブランチは Claude Code がレビュー・検証してから取り込む。
 - Claude Code は毎回の最後に次の3つを出す。
   1. Codex 用の依頼文（コードブロック）。手順・観点・出力形式は `AGENTS.md` にあるので、依頼文は短くする。
