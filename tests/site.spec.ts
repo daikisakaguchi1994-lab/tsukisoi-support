@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readdirSync } from 'node:fs';
-import { NAV_ITEMS, SITE, SAMPLE_PREVIEW, LINE_CONFIRMED, isTelConfigured } from '../src/config';
+import { NAV_ITEMS, SITE, SAMPLE_PREVIEW, isFormOpen, isTelConfigured } from '../src/config';
 import { SAMPLE_VALUES } from '../src/config.sample';
 
 // お知らせ・読み物の記事は src/content/news/*.md から自動で拾う
@@ -458,8 +458,8 @@ test('contact form has no furigana field and the privacy page does not mention i
   await expect(page.locator('main')).not.toContainText('ふりがな');
 });
 
-test('contact form does not offer LINE as a reply method until LINE is confirmed', async ({ page }) => {
-  test.skip(LINE_CONFIRMED, 'LINE is confirmed');
+// LINE は、識別子の受け取り方・返信手順が決まるまで返信方法に出さない（LINE_URL が確定しても出さない）
+test('contact form does not offer LINE as a reply method', async ({ page }) => {
   await page.goto('/contact');
   const methods = page.locator('input[name="contact_method"]');
   await expect(methods).toHaveCount(2);
@@ -486,9 +486,34 @@ test('phone and LINE pending states are plain text, not button-like', async ({ p
   await expect(page.locator('main')).toContainText('電話相談は準備中です');
 });
 
-test('contact page links to the form from the top and uses a clear submit label', async ({ page }) => {
+// 送信キーがあるだけでは受付を開かない。PUBLIC_FORM_OPEN=1 のときだけ開く（受付開始は利用者の判断）
+test('form opens only with both the key and the explicit open flag', () => {
+  expect(isFormOpen(undefined, '1')).toBe(false);
+  expect(isFormOpen('', '1')).toBe(false);
+  expect(isFormOpen('key', undefined)).toBe(false);
+  expect(isFormOpen('key', '')).toBe(false);
+  expect(isFormOpen('key', 'true')).toBe(false);
+  expect(isFormOpen('key', '1')).toBe(true);
+});
+
+test('pending contact page does not invite to send, and the disabled button looks disabled', async ({ page }) => {
+  test.skip(Boolean(process.env.PUBLIC_FORM_KEY), 'form key is set');
   await page.goto('/contact');
-  await expect(page.locator('a[href="#contact-form"]').first()).toBeVisible();
+  await expect(page.locator('a[href="#contact-form"]')).toHaveCount(0);
+  await expect(page.locator('main')).not.toContainText('お送りください');
+  const bg = await page.getByRole('button', { name: '相談内容を送信する' }).evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(bg).not.toBe('rgb(74, 112, 66)');
+});
+
+test('privacy page lists every collected form item', async ({ page }) => {
+  await page.goto('/privacy');
+  for (const item of ['お名前', 'お電話番号', 'メールアドレス', 'ご希望の連絡方法', 'お問い合わせの種類', 'ご相談内容']) {
+    await expect(page.locator('main')).toContainText(item);
+  }
+});
+
+test('contact page uses a clear submit label', async ({ page }) => {
+  await page.goto('/contact');
   await expect(page.getByRole('button', { name: '相談内容を送信する' })).toBeVisible();
 });
 

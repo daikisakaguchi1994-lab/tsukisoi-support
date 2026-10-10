@@ -182,6 +182,14 @@ html {
     box-shadow: 0 1px 0 rgba(38, 35, 31, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.25);
   }
 
+  /* 受付前などで押せないとき。緑の押せるボタンに見せない */
+  .btn-solid:disabled {
+    background: var(--color-ink-muted);
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+  }
+
   /* 電話の濃いピル（番号が確定しているときだけ使う。未確定は文章で「準備中」と伝える） */
   .btn-phone {
     display: inline-flex;

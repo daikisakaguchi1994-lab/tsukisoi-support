@@ -1,28 +1,30 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SectionTitle from '../components/SectionTitle.astro';
-import { SITE, isTelConfigured, isTelSample, LINE_CONFIRMED } from '../config';
+import { SITE, isTelConfigured, isTelSample, isFormOpen } from '../config';
 import { generateLineQrSvg, isLineUrlConfigured } from '../utils/qr';
 
 const qrSvg = await generateLineQrSvg(SITE.LINE_URL);
 const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
 const telConfigured = isTelConfigured(SITE.TEL);
 const telSample = isTelSample(SITE.TEL);
-// 送信キーが未設定のうちは受付前。キーがあるだけで受付開始とは見せない（受付開始は公開判断に従う）
+// 受付前は、送信キーがあっても受付中に見せない。受付開始は PUBLIC_FORM_OPEN=1（利用者の判断）で切り替える
 const formKey = import.meta.env.PUBLIC_FORM_KEY || '';
-const formReady = Boolean(formKey);
+const formReady = isFormOpen(formKey, import.meta.env.PUBLIC_FORM_OPEN);
 const kinds = ['通院・お買い物などの付き添い', '旅行の付き添い', 'その他・まだ決まっていない'];
-// 返信方法の LINE は、LINE が確定して返信できる体制になるまで出さない（サンプルの架空値では出さない）
-const methods = LINE_CONFIRMED ? ['電話', 'メール', 'LINE'] : ['電話', 'メール'];
+// 返信方法に LINE は出さない。LINE の識別子の受け取り方・返信手順が決まるまで（確定後も、その手順を決めてから足す）
+const methods = ['電話', 'メール'];
 ---
 <Layout title="お問い合わせ" description={`${SITE.SERVICE_NAME}へのお問い合わせ。相談フォームからお気軽にご連絡ください。`} crumbs={[{ label: 'お問合せ' }]}>
   <div class="max-w-3xl mx-auto px-4 py-14 md:py-20">
     <h1 class="sr-only">お問い合わせ</h1>
 
     <p class="leading-loose mb-4 [word-break:auto-phrase]">
-      ご相談は、下の相談フォームからお送りください。お付き添い中などで、すぐにお返事できないことがあります。内容を確認のうえ、折り返しご連絡します。
+      {formReady
+        ? 'ご相談は、下の相談フォームからお送りください。お付き添い中などで、すぐにお返事できないことがあります。内容を確認のうえ、折り返しご連絡します。'
+        : '相談フォームは公開準備中です。受付を始めるまで、しばらくお待ちください。'}
     </p>
-    <p class="mb-12"><a href="#contact-form" class="btn-outline">相談フォームへ</a></p>
+    {formReady && <p class="mb-12"><a href="#contact-form" class="btn-outline">相談フォームへ</a></p>}
 
     <!-- Tel -->
     <SectionTitle class="is-left mb-6">お電話での問い合わせ</SectionTitle>

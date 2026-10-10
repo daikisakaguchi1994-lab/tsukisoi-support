@@ -48,7 +48,7 @@
 公開（`SITE.PUBLISHED = true`、Production への反映）の前に、次がすべて満たされていること。
 
 - [ ] 電話・住所・LINE・Instagram・メール・受付時間の実際の値の確定（`src/config.ts`）
-- [ ] `PUBLIC_FORM_KEY` を Vercel に設定し、実際の送信を確認
+- [ ] `PUBLIC_FORM_KEY` を設定し、Preview で `PUBLIC_FORM_OPEN=1` も付けて実際の送信を確認。本番で受付を始めるときに `PUBLIC_FORM_OPEN=1` を設定（利用者の判断）
 - [ ] `/privacy` の正式な文面（「雛形・要確認」の表示を外す）
 - [ ] 福祉タクシー・旅行手配の許可／登録の取得状況の確認と、表記の確定
 - [ ] 写真・画像の権利、代表者プロフィール、連携団体の掲載承諾

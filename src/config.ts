@@ -45,8 +45,9 @@ const withSamples = (base: Site): Site => {
 
 export const SITE: Site = SAMPLE_PREVIEW ? withSamples(BASE) : BASE;
 
-// 返信方法に LINE を出してよいか。サンプルの架空値ではなく、確定した設定値（BASE）で判定する
-export const LINE_CONFIRMED = isConfigured(BASE.LINE_URL);
+// 相談フォームの受付を始めてよいか。送信キー（PUBLIC_FORM_KEY）があるだけでは開けない。
+// 利用者が受付開始を決めたときだけ PUBLIC_FORM_OPEN=1 を足す（実送信の確認は Preview で両方を設定して行う）
+export const isFormOpen = (key: string | undefined, openFlag: string | undefined): boolean => Boolean(key) && openFlag === '1';
 
 // ヘッダー/フッター共通のナビゲーション
 export const NAV_ITEMS = [
