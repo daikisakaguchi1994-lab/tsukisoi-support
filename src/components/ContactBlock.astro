@@ -26,7 +26,7 @@ const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
         >
           {SITE.TEL}
         </a>
-        <p class="text-sm mt-2 text-ink/60">{SITE.TEL_HOURS}</p>
+        <p class="text-sm mt-2 text-ink-muted">{SITE.TEL_HOURS}</p>
       </div>
 
       <!-- LINE -->
@@ -48,15 +48,15 @@ const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
             LINEで友だち追加
           </a>
         ) : (
-          <span class="md:hidden inline-flex items-center justify-center bg-base-alt text-ink/50 font-bold px-8 py-3 rounded-full min-h-[44px]" aria-disabled="true">
+          <span class="md:hidden inline-flex items-center justify-center bg-base-alt text-ink-muted font-bold px-8 py-3 rounded-full min-h-[44px]" aria-disabled="true">
             LINE公式アカウント 準備中
           </span>
         )}
-        <p class="md:hidden text-xs mt-2 text-ink/50">{lineConfigured ? 'スマホの方はタップしてください' : '公開までしばらくお待ちください'}</p>
+        <p class="md:hidden text-xs mt-2 text-ink-muted">{lineConfigured ? 'スマホの方はタップしてください' : '公開までしばらくお待ちください'}</p>
 
         <div class="hidden md:block">
           <div class="inline-block bg-white p-2 rounded-lg" set:html={qrSvg} />
-          <p class="text-xs mt-2 text-ink/50">{lineConfigured ? 'パソコンの方はQRコードを読み取り' : 'LINE公式アカウント 準備中'}</p>
+          <p class="text-xs mt-2 text-ink-muted">{lineConfigured ? 'パソコンの方はQRコードを読み取り' : 'LINE公式アカウント 準備中'}</p>
         </div>
       </div>
 
@@ -74,7 +74,7 @@ const lineConfigured = isLineUrlConfigured(SITE.LINE_URL);
         >
           お問い合わせフォーム
         </a>
-        <p class="text-sm mt-2 text-ink/60">24時間受付</p>
+        <p class="text-sm mt-2 text-ink-muted">24時間受付</p>
       </div>
     </div>
   </div>

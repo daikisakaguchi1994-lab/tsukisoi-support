@@ -44,13 +44,13 @@ const examples = ['日帰り旅行', '国内旅行', '海外旅行', 'お買い�
 
       <!-- Price -->
       <SectionTitle class="mb-3">基本料金</SectionTitle>
-      <p class="text-center text-sm text-ink/60 mb-10">表示はすべて税込です。</p>
+      <p class="text-center text-sm text-ink-muted mb-10">表示はすべて税込です。</p>
       <div class="bg-white rounded-2xl shadow-sm overflow-hidden mb-6">
         <table class="w-full text-left">
           <caption class="sr-only">{SITE.SERVICE_NAME}の料金表</caption>
           <thead class="bg-base-alt text-sm">
             <tr>
-              <th scope="col" class="px-5 py-3">区分</th>
+              <th scope="col" class="hidden sm:table-cell px-5 py-3">区分</th>
               <th scope="col" class="px-5 py-3">項目</th>
               <th scope="col" class="px-5 py-3 text-right">料金</th>
             </tr>
@@ -58,18 +58,19 @@ const examples = ['日帰り旅行', '国内旅行', '海外旅行', 'お買い�
           <tbody>
             {prices.map((p) => (
               <tr class="border-t border-ink/10 align-top">
-                <td class="px-5 py-4 text-sm text-ink/60 whitespace-nowrap">{p.group}</td>
-                <td class="px-5 py-4">
+                <td class="hidden sm:table-cell px-5 py-4 text-sm text-ink-muted whitespace-nowrap">{p.group}</td>
+                <td class="px-4 sm:px-5 py-4">
+                  <span class="sm:hidden block text-xs text-ink-muted">{p.group}</span>
                   {p.name}
-                  {p.note && <span class="block text-xs text-ink/50 mt-1">{p.note}</span>}
+                  {p.note && <span class="block text-xs text-ink-muted mt-1">{p.note}</span>}
                 </td>
-                <td class="px-5 py-4 text-right font-heading font-bold text-accent whitespace-nowrap">{p.price}</td>
+                <td class="px-4 sm:px-5 py-4 text-right font-heading font-bold text-accent whitespace-nowrap">{p.price}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <ul class="text-sm text-ink/70 space-y-1 mb-20 list-disc pl-5">
+      <ul class="text-sm text-ink-muted space-y-1 mb-20 list-disc pl-5">
         <li>旅行の各種手配はオプション（有料）です。内容によって金額が変わります。</li>
         <li>対面でのお打ち合わせは有料です。</li>
         <li>福祉タクシーは、おひとりでの移動が難しい方が対象です。</li>

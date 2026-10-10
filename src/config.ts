@@ -1,6 +1,8 @@
 // Placeholder values are written as {{VAR}}. Use `grep -r "{{"` to find what is still unset.
 
 export const SITE = {
+  // 公開判断が出るまで false。false の間は全ページ noindex, nofollow
+  PUBLISHED: false,
   COMPANY_NAME: 'つきそいサポート',
   SERVICE_NAME: 'つきそいサポート',
   TAGLINE: 'いつでも、そばに。',

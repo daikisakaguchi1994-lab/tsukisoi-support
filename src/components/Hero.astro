@@ -3,15 +3,15 @@ import { SITE } from '../config';
 ---
 
 <!-- 写真素材が決まるまでは配色グラデーションで代替。差し替え時は背景の div に <img> を入れる -->
-<section class="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center text-center text-white bg-gradient-to-br from-accent via-[#4f7a47] to-ink-strong">
+<section class="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center text-center text-white bg-gradient-to-br from-accent via-[#3D5E37] to-ink-strong">
   <div class="absolute inset-0 opacity-20" aria-hidden="true" style="background: radial-gradient(circle at 20% 20%, #fff 0, transparent 40%), radial-gradient(circle at 80% 80%, #fff 0, transparent 35%);"></div>
 
   <div class="relative z-10 px-6 pt-16">
     <p class="font-heading text-sm md:text-base tracking-[0.3em] mb-4 opacity-90">ACCOMPANY SUPPORT</p>
     <h1 class="font-heading text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 text-white tracking-wide">
-      {SITE.TAGLINE}
+      {SITE.TAGLINE.split(/(?<=、)/).map((part) => <span class="inline-block">{part}</span>)}
     </h1>
-    <p class="font-heading text-base md:text-xl font-semibold leading-relaxed mb-10 text-white">
+    <p class="font-heading text-base md:text-xl font-semibold leading-relaxed mb-10 text-white [word-break:auto-phrase]">
       — お出かけに、安心の付き添いを —
     </p>
     <div class="font-heading text-sm md:text-lg leading-loose opacity-95">

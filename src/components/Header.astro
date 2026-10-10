@@ -12,7 +12,7 @@ import { SITE, NAV_ITEMS } from '../config';
       {NAV_ITEMS.map((item) => (
         <a href={item.href} class="group text-center leading-tight hover:text-accent transition-colors">
           <span class="block text-sm text-ink group-hover:text-accent">{item.label}</span>
-          <span class="block text-[10px] tracking-wider text-ink/40">{item.en}</span>
+          <span class="block text-[10px] tracking-wider text-ink-muted">{item.en}</span>
         </a>
       ))}
     </nav>
@@ -41,7 +41,7 @@ import { SITE, NAV_ITEMS } from '../config';
       {NAV_ITEMS.map((item) => (
         <a href={item.href} class="block text-lg text-ink hover:text-accent transition-colors">
           {item.label}
-          <span class="ml-2 text-xs tracking-wider text-ink/40">{item.en}</span>
+          <span class="ml-2 text-xs tracking-wider text-ink-muted">{item.en}</span>
         </a>
       ))}
     </div>

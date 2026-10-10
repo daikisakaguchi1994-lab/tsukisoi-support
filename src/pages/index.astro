@@ -34,7 +34,7 @@ const links = [
       <h2 class="font-heading text-2xl md:text-3xl font-bold text-ink-strong mb-8">
         行きたい気持ちに、付き添います。
       </h2>
-      <p class="leading-loose">
+      <p class="leading-loose [word-break:auto-phrase]">
         {SITE.SERVICE_NAME}は、お出かけに付き添うサービスです。<br />
         年齢や体調、お住まいに関わらず、<br class="hidden md:inline" />
         「ひとりでは心配」を「一緒なら大丈夫」に変えていきます。
@@ -72,7 +72,7 @@ const links = [
       <ul class="space-y-4">
         {news.map((n) => (
           <li class="flex gap-4 items-baseline border-b border-ink/10 pb-4">
-            <time class="text-sm text-ink/50 shrink-0">{n.date}</time>
+            <time class="text-sm text-ink-muted shrink-0">{n.date}</time>
             <p>{n.text}</p>
           </li>
         ))}
@@ -89,7 +89,7 @@ const links = [
         {SITE.SERVICE_NAME}の紹介文をここに入れます。<br />
         代表者のごあいさつや、サービスを始めた理由などを掲載する予定です。
       </p>
-      <p class="text-sm text-ink/60">※ 内容は準備中です</p>
+      <p class="text-sm text-ink-muted">※ 内容は準備中です</p>
     </div>
   </section>
 
@@ -109,7 +109,7 @@ const links = [
           ))}
         </ul>
       ) : (
-        <p class="text-sm text-ink/60">準備中です</p>
+        <p class="text-sm text-ink-muted">準備中です</p>
       )}
     </div>
   </section>
