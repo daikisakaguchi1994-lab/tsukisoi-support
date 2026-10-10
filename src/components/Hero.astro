@@ -15,7 +15,10 @@ const slides = [
   return { ...s, img: existsSync(join(process.cwd(), 'public', file)) ? file : null };
 });
 ---
-<section id="hero" class="relative w-full h-[100svh] min-h-[560px] max-h-[960px] overflow-hidden text-white bg-ink-strong" aria-roledescription="carousel" aria-label="つきそいサポートのご案内">
+<section id="hero" class="relative w-full h-[calc(100svh-1.75rem)] min-h-[560px] max-h-[960px] overflow-hidden text-white bg-ink-strong" aria-roledescription="carousel" aria-label="つきそいサポートのご案内">
+  <!-- 見出しはスライドの外に置く（切り替わっても読み上げの見出しが消えない） -->
+  <h1 class="sr-only">{SITE.SERVICE_NAME} — {SITE.TAGLINE}お出かけに、安心の付き添いを</h1>
+
   {slides.map((s, i) => (
     <div
       class="hero-slide absolute inset-0 flex items-center justify-center text-center transition-opacity duration-[1400ms]"
@@ -24,33 +27,49 @@ const slides = [
       style={`background:${s.bg}; opacity:${i === 0 ? 1 : 0};`}
     >
       {s.img && <img src={s.img} alt="" class="absolute inset-0 w-full h-full object-cover" loading={i === 0 ? 'eager' : 'lazy'} />}
-      <div class="absolute inset-0 bg-black/30" aria-hidden="true"></div>
-      <div class="relative px-6 max-w-4xl">
-        <p class="text-sm md:text-lg tracking-[0.2em] mb-4 italic">{s.en}</p>
-        {i === 0
-          ? <h1 class="font-heading text-3xl md:text-6xl font-bold leading-tight tracking-widest !text-white [text-wrap:balance]">{s.title}</h1>
-          : <p class="font-heading text-2xl md:text-5xl font-bold leading-tight tracking-widest [text-wrap:balance]">{s.title}</p>}
-        {s.sub && <p class="mt-5 text-sm md:text-xl tracking-[0.15em]">— {s.sub} —</p>}
+      <!-- 文字が読めるよう、全体を暗くする（小さい白文字で 4.5:1 以上） -->
+      <div class="absolute inset-0 bg-black/55" aria-hidden="true"></div>
+      <div class="relative px-6 max-w-4xl" data-copy>
+        <p class="text-base md:text-lg tracking-[0.2em] mb-4 italic" data-copy-en>{s.en}</p>
+        <p class="font-heading text-3xl md:text-6xl font-bold leading-tight tracking-widest [text-wrap:balance] [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]" data-copy-title>{s.title}</p>
+        {s.sub && <p class="mt-5 text-base md:text-xl tracking-[0.15em]" data-copy-sub>— {s.sub} —</p>}
       </div>
     </div>
   ))}
 
-  <a href="#intro" class="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center text-xs tracking-[0.3em] text-white" aria-label="下へスクロール">
+  <a href="#intro" class="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center text-sm tracking-[0.3em] text-white" aria-label="下へスクロール" data-scroll-cue>
     <svg class="w-4 h-4 mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 7l6 6 6-6M6 13l6 6 6-6" /></svg>
     <span class="block motion-safe:animate-pulse">Scroll</span>
   </a>
 
-  <div class="absolute bottom-5 left-0 right-0 z-10 flex justify-center gap-2" role="group" aria-label="スライドの切り替え">
+  <div class="absolute bottom-4 left-0 right-0 z-10 flex justify-center" role="group" aria-label="スライドの切り替え">
     {slides.map((_, i) => (
-      <button type="button" data-dot={i} class="hero-dot w-2.5 h-2.5 rounded-full bg-white/50 aria-[current=true]:bg-white" aria-current={i === 0 ? 'true' : 'false'} aria-label={`${i + 1}枚目を表示`}></button>
+      <button type="button" data-dot={i} class="hero-dot group w-8 h-8 flex items-center justify-center" aria-current={i === 0 ? 'true' : 'false'} aria-label={`${i + 1}枚目を表示`}>
+        <span class="block w-2.5 h-2.5 rounded-full bg-white/60 group-aria-[current=true]:bg-white"></span>
+      </button>
     ))}
   </div>
+
+  <!-- 自動切り替えの停止・再開（WCAG 2.2.2） -->
+  <button
+    type="button"
+    id="hero-toggle"
+    class="absolute bottom-3 right-3 md:right-6 z-10 w-11 h-11 rounded-full bg-black/60 text-white flex items-center justify-center"
+    aria-pressed="false"
+    aria-label="スライドの自動切り替えを止める"
+  >
+    <svg data-icon-pause class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" /><rect x="14" y="5" width="4" height="14" /></svg>
+    <svg data-icon-play class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5l12 7-12 7z" /></svg>
+  </button>
 </section>
 
 <script>
   const slides = Array.from(document.querySelectorAll<HTMLElement>('[data-slide]'));
   const dots = Array.from(document.querySelectorAll<HTMLElement>('[data-dot]'));
+  const toggle = document.getElementById('hero-toggle');
   let current = 0;
+  let timer: number | undefined;
+
   const show = (n: number) => {
     current = (n + slides.length) % slides.length;
     slides.forEach((s, i) => {
@@ -59,9 +78,18 @@ const slides = [
     });
     dots.forEach((d, i) => d.setAttribute('aria-current', i === current ? 'true' : 'false'));
   };
+
+  const setPlaying = (playing: boolean) => {
+    window.clearInterval(timer);
+    timer = playing ? window.setInterval(() => show(current + 1), 6500) : undefined;
+    toggle?.setAttribute('aria-pressed', String(!playing));
+    toggle?.setAttribute('aria-label', playing ? 'スライドの自動切り替えを止める' : 'スライドの自動切り替えを再開する');
+    toggle?.querySelector('[data-icon-pause]')?.classList.toggle('hidden', !playing);
+    toggle?.querySelector('[data-icon-play]')?.classList.toggle('hidden', playing);
+  };
+
   dots.forEach((d, i) => d.addEventListener('click', () => show(i)));
-  // 動きを減らす設定では自動で切り替えない（ドットで手動のみ）
-  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    setInterval(() => show(current + 1), 6500);
-  }
+  toggle?.addEventListener('click', () => setPlaying(timer === undefined));
+  // 動きを減らす設定では自動で切り替えない（ドットか再開ボタンで操作できる）
+  setPlaying(!window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 </script>

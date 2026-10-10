@@ -1,12 +1,11 @@
 ---
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
 import Layout from '../layouts/Layout.astro';
 import ContactBlock from '../components/ContactBlock.astro';
 import SectionTitle from '../components/SectionTitle.astro';
 import FeatureIcon from '../components/FeatureIcon.astro';
 import Wave from '../components/Wave.astro';
 import Hero from '../components/Hero.astro';
+import LogoImage from '../components/LogoImage.astro';
 import { getCollection } from 'astro:content';
 import { SITE } from '../config';
 import { formatDate, isoDate } from '../utils/date';
@@ -25,9 +24,6 @@ const features = [
 const news = (await getCollection('news'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 5);
-
-// public/images/logo-mark.png があれば、導入部の大きなロゴに使う（無い間は文字のロゴ）
-const logoMark = ['/images/logo-mark.png', '/images/logo-mark.svg'].find((f) => existsSync(join(process.cwd(), 'public', f)));
 ---
 <Layout title="トップ" overlay>
   <Hero />
@@ -37,15 +33,13 @@ const logoMark = ['/images/logo-mark.png', '/images/logo-mark.svg'].find((f) => 
     <div class="max-w-4xl mx-auto px-4">
       <div class="grid md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-8 md:gap-12 items-center mb-10">
         <div class="flex justify-center">
-          {logoMark
-            ? <img src={logoMark} alt={SITE.SERVICE_NAME} class="w-56 md:w-64 h-auto" />
-            : (
-              <div class="w-56 h-56 md:w-64 md:h-64 border border-rule flex flex-col items-center justify-center text-center" role="img" aria-label={`${SITE.SERVICE_NAME} ロゴ`}>
-                <span class="font-heading text-xl md:text-2xl font-bold tracking-[0.18em] pl-[0.18em] whitespace-nowrap text-ink-strong">{SITE.SERVICE_NAME}</span>
-                <span class="block w-10 h-px bg-accent my-3"></span>
-                <span class="text-[10px] tracking-[0.4em] pl-[0.4em] text-ink-muted">TSUKISOI SUPPORT</span>
-              </div>
-            )}
+          <LogoImage alt={SITE.SERVICE_NAME} class="w-64 md:w-80 h-auto">
+            <div class="w-56 h-56 md:w-64 md:h-64 border border-rule flex flex-col items-center justify-center text-center" role="img" aria-label={`${SITE.SERVICE_NAME} ロゴ`}>
+              <span class="font-heading text-xl md:text-2xl font-bold tracking-[0.18em] pl-[0.18em] whitespace-nowrap text-ink-strong">{SITE.SERVICE_NAME}</span>
+              <span class="block w-10 h-px bg-accent my-3"></span>
+              <span class="text-[10px] tracking-[0.4em] pl-[0.4em] text-ink-muted">TSUKISOI SUPPORT</span>
+            </div>
+          </LogoImage>
         </div>
         <div class="leading-loose text-[15px] [word-break:auto-phrase] space-y-4">
           <p>{SITE.SERVICE_NAME}は、お出かけに付き添うサービスです。通院やお買い物、旅行まで、ひとりでは不安な外出にスタッフが寄り添います。</p>

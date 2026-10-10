@@ -197,6 +197,7 @@ test('home page has a full-screen slideshow hero followed by the reference secti
   expect(box.width).toBeGreaterThanOrEqual(1400);
   await expect(page.locator('[data-slide]')).toHaveCount(5);
   await expect(page.locator('[data-dot]')).toHaveCount(5);
+  await expect(page.locator('[data-slide] img')).toHaveCount(5); // public/images/hero/hero-1〜5.jpg
   const headings = await page.locator('main h2').allInnerTexts();
   expect(headings.map((h) => h.trim())).toEqual(['最新のお知らせ', 'つきそいサポートの6つの特徴', '旅行の手配について']);
   await expect(page.locator('#features li')).toHaveCount(6);
@@ -211,6 +212,118 @@ test('hero slides can be switched with the dots', async ({ page }) => {
   await expect(page.locator('[data-slide]').nth(0)).toHaveAttribute('aria-hidden', 'true');
   await expect(page.locator('[data-dot="2"]')).toHaveAttribute('aria-current', 'true');
 });
+
+// 切り替えても、読み上げの見出し（h1）が消えない（Codex 指摘）
+test('the h1 stays available while slides change', async ({ page }) => {
+  await page.goto('/');
+  for (const i of [1, 2, 3, 4, 0]) {
+    await page.locator(`[data-dot="${i}"]`).click();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+  }
+});
+
+// ドットの操作領域は 24px 以上（WCAG 2.5.8）
+test('slide dots have a tap target of at least 24px', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const boxes = await page.locator('[data-dot]').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().toJSON()));
+  expect(boxes).toHaveLength(5);
+  for (const b of boxes) {
+    expect(b.width).toBeGreaterThanOrEqual(24);
+    expect(b.height).toBeGreaterThanOrEqual(24);
+  }
+});
+
+// 自動切り替えは止められる（WCAG 2.2.2）。止めている間は切り替わらず、再開すると切り替わる
+test('auto-advance can be paused and resumed', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.clock.install();
+  await page.goto('/');
+  const toggle = page.locator('#hero-toggle');
+  const active = () => page.locator('[data-slide][aria-hidden="false"]').evaluateAll((els) => els.map((e) => [...e.parentElement!.children].indexOf(e)));
+  const firstIndex = (await active())[0];
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+
+  await page.clock.fastForward(7000);
+  expect((await active())[0]).not.toBe(firstIndex);
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  await expect(toggle).toHaveAccessibleName('スライドの自動切り替えを再開する');
+  const stopped = (await active())[0];
+  await page.clock.fastForward(30000);
+  expect((await active())[0]).toBe(stopped);
+
+  await toggle.click();
+  await expect(toggle).toHaveAccessibleName('スライドの自動切り替えを止める');
+  await page.clock.fastForward(7000);
+  expect((await active())[0]).not.toBe(stopped);
+});
+
+// 動きを減らす設定では、最初から止まっていて、再開ボタンで動かせる
+test('auto-advance starts paused under reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.clock.install();
+  await page.goto('/');
+  await expect(page.locator('#hero-toggle')).toHaveAttribute('aria-pressed', 'true');
+  await page.clock.fastForward(30000);
+  await expect(page.locator('[data-slide]').first()).toHaveAttribute('aria-hidden', 'false');
+});
+
+// 各スライドの小さい白文字は、写真の上でも 4.5:1 以上（大きい見出しは 3:1 以上）。画面に出た画素で実測する（Codex 指摘）
+for (const [width, height] of [[1440, 900], [390, 844]] as const) {
+  test(`hero text keeps its contrast on every slide at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height });
+    await page.goto('/');
+    for (let i = 0; i < 5; i++) {
+      await page.locator(`[data-dot="${i}"]`).click();
+      await page.waitForTimeout(1600); // 切り替えの 1.4 秒を待つ
+      const targets = await page.evaluate(() => {
+        const rectOf = (el: Element) => {
+          const r = document.createRange();
+          r.selectNodeContents(el);
+          return r.getBoundingClientRect().toJSON();
+        };
+        const active = document.querySelector('[data-slide][aria-hidden="false"]')!;
+        const out: { name: string; rect: DOMRect; min: number }[] = [];
+        const add = (name: string, el: Element | null, min: number) => el && out.push({ name, rect: rectOf(el) as DOMRect, min });
+        add('en', active.querySelector('[data-copy-en]'), 4.5);
+        add('title', active.querySelector('[data-copy-title]'), 3);
+        add('sub', active.querySelector('[data-copy-sub]'), 4.5);
+        add('scroll', document.querySelector('[data-scroll-cue] span'), 4.5);
+        // 文字・ボタンを隠して、背景だけを撮る
+        for (const el of document.querySelectorAll('[data-copy], [data-scroll-cue], #hero-toggle, [data-dot]')) (el as HTMLElement).style.visibility = 'hidden';
+        return out;
+      });
+      const png = (await page.screenshot()).toString('base64');
+      const results = await page.evaluate(
+        async ({ png, targets }) => {
+          const blob = await (await fetch(`data:image/png;base64,${png}`)).blob();
+          const bmp = await createImageBitmap(blob);
+          const canvas = document.createElement('canvas');
+          canvas.width = bmp.width;
+          canvas.height = bmp.height;
+          const ctx = canvas.getContext('2d')!;
+          ctx.drawImage(bmp, 0, 0);
+          const lin = (c: number) => ((c /= 255) <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+          return targets.map((t) => {
+            const x = Math.max(0, Math.floor(t.rect.x)), y = Math.max(0, Math.floor(t.rect.y));
+            const w = Math.max(1, Math.min(bmp.width - x, Math.ceil(t.rect.width))), h = Math.max(1, Math.min(bmp.height - y, Math.ceil(t.rect.height)));
+            const data = ctx.getImageData(x, y, w, h).data;
+            const ls: number[] = [];
+            for (let k = 0; k < data.length; k += 4) ls.push(0.2126 * lin(data[k]) + 0.7152 * lin(data[k + 1]) + 0.0722 * lin(data[k + 2]));
+            ls.sort((a, b) => a - b);
+            const bright = ls[Math.floor(ls.length * 0.95)]; // 明るい側 5% でも足りること
+            return { name: t.name, min: t.min, ratio: 1.05 / (bright + 0.05) };
+          });
+        },
+        { png, targets },
+      );
+      for (const r of results) expect(r.ratio, `slide ${i + 1} ${r.name} @${width}px`).toBeGreaterThanOrEqual(r.min);
+      await page.reload();
+    }
+  });
+}
 
 // ヘッダーは参考サイトと同じ: ロゴを中央に、ナビをその下に中央寄せ。現在のページに下線
 test('header centers the logo and nav, and marks the current page', async ({ page }) => {
