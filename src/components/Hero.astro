@@ -4,13 +4,14 @@ import { join } from 'node:path';
 import { SITE } from '../config';
 
 // 画像は public/images/hero/hero-N.jpg に置くと反映される。無い間は色のグラデーションで代替（public/images/README.md）
+// low: 写真の人物が画面の上寄りにいる写真。縦長の画面では文字を下側に置く（人物の顔と重ねない）
 // pos: 縦長の画面（スマホ）で写真を左右に切り取るとき、人物・主役が残る横位置（%）。写真の人物の位置に合わせる。画像を差し替えたら見直す
 const slides = [
   { title: SITE.TAGLINE, sub: ['お出かけに、', '安心の付き添いを'], en: 'Beside you, always', pos: '12%', bg: 'linear-gradient(180deg,#5C7899 0%,#A9A6C2 52%,#F0C9A2 100%)' },
-  { title: '通院も、お買い物も', sub: ['ひとりでは不安な', 'お出かけに'], en: 'Hospital visits & shopping', pos: '85%', bg: 'linear-gradient(180deg,#3F6B4A 0%,#8DB387 55%,#D8E4B8 100%)' },
-  { title: '「ひとりでは心配」を「一緒なら大丈夫」に', sub: [] as string[], en: 'Together, you can go', pos: '62%', bg: 'linear-gradient(180deg,#6B7F8F 0%,#B6C9CE 60%,#EFE6D0 100%)' },
-  { title: '旅の道中も、そばに', sub: ['駅や空港での', '移動に付き添います'], en: 'On the way, by your side', pos: '12%', bg: 'linear-gradient(180deg,#8A6F5A 0%,#D1A988 55%,#F4E2C4 100%)' },
-  { title: 'まずは、お気軽にご相談ください', sub: [] as string[], en: 'We are here to help', pos: '10%', bg: 'linear-gradient(180deg,#5E5A7A 0%,#B9A3B8 55%,#F2CDB4 100%)' },
+  { title: '通院の日も、そばに', sub: ['病院の入口まで、', '一緒に歩きます'], en: 'Hospital visits', pos: '30%', low: true, bg: 'linear-gradient(180deg,#3F6B4A 0%,#8DB387 55%,#D8E4B8 100%)' },
+  { title: 'お買い物も、楽しく', sub: ['「ひとりでは心配」が', '「一緒なら大丈夫」に'], en: 'Together, you can go', pos: '55%', low: true, bg: 'linear-gradient(180deg,#6B7F8F 0%,#B6C9CE 60%,#EFE6D0 100%)' },
+  { title: '旅の道中も、そばに', sub: ['駅や空港での', '移動に付き添います'], en: 'On the way, by your side', pos: '30%', low: true, bg: 'linear-gradient(180deg,#8A6F5A 0%,#D1A988 55%,#F4E2C4 100%)' },
+  { title: 'まずは、お気軽にご相談ください', sub: [] as string[], en: 'We are here to help', pos: '34%', bg: 'linear-gradient(180deg,#5E5A7A 0%,#B9A3B8 55%,#F2CDB4 100%)' },
 ].map((s, i) => {
   const file = `/images/hero/hero-${i + 1}.jpg`;
   return { ...s, img: existsSync(join(process.cwd(), 'public', file)) ? file : null };
@@ -24,6 +25,7 @@ const slides = [
     <div
       class="hero-slide absolute inset-0 flex items-center justify-center text-center transition-opacity duration-[1400ms]"
       data-slide
+      data-copy-low={s.low ? 'true' : undefined}
       aria-hidden={i === 0 ? 'false' : 'true'}
       style={`background:${s.bg}; opacity:${i === 0 ? 1 : 0};`}
     >

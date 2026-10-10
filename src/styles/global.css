@@ -76,6 +76,8 @@ html {
 @media (max-aspect-ratio: 1/1) {
   #hero .hero-img { object-position: var(--hero-pos, 50% 50%); }
   #hero .hero-slide { align-items: flex-start; padding-top: 12svh; }
+  /* 人物が上寄りの写真は、文字を下側（スクロールの案内とドットの上）に置く */
+  #hero .hero-slide[data-copy-low] { align-items: flex-end; padding-top: 0; padding-bottom: 8.5rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
