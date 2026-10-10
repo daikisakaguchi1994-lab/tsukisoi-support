@@ -29,6 +29,8 @@
 
 **実装済み（2026-10-11、ブランチ `claude/usecases`）**: 11件の `src/content/cases/*.md`、`/cases`、`/cases/<スラッグ>`、サービスページのリンク化、相談フォームの自動入力、ボタンの動きのトークン（`global.css` の `--motion-*`）。`service.astro` に `#prices` `#flow` のアンカーを追加（バッチ C の前倒し分）。料金は `src/utils/prices.ts` に移し共有。**写真は未配置**（`public/images/README.md` に11枚の案。置くと反映）。検証: astro check 0 errors、Playwright 全件成功。Codex 監査は段階 1（未実施）。
 
+**トップ写真のストーリー分析（済、写真の差し替えは利用者の生成待ち）**: 「次の指示」は `public/images/README.md` の表。2〜5枚目を差し替えたら `pos` とコピーを見直す。直下に「画像はイメージです」を追加済み（バッチ E ⑨ の採用分）。
+
 ## 進行中（旧）
 
 Codex の分析・提案（C、対象 6fb7992、1440/390/320px の33画面を確認）の結果を受けて、**取捨選択は済み**（2026-10-10、Claude Code）。実装はこれから。

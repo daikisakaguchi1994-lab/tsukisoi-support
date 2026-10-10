@@ -582,3 +582,17 @@ test('hero keeps the people in frame on phones: image is shifted to the subject 
   const desktop = await page.locator('#hero [data-slide] img').first().evaluate((i) => getComputedStyle(i).objectPosition);
   expect(desktop).toBe('50% 50%');
 });
+
+// トップの写真は生成AIの画像。実在の利用者・スタッフの写真に見えないよう、写真の直下に「画像はイメージです」を出す（14px 以上）
+test('hero says the images are illustrative, right below the photo', async ({ page }) => {
+  for (const [w, h] of [[1440, 900], [390, 844], [320, 640]] as const) {
+    await page.setViewportSize({ width: w, height: h });
+    await page.goto('/');
+    const hero = (await page.locator('#hero').boundingBox())!;
+    const note = page.getByTestId('hero-image-note');
+    await expect(note).toHaveText('画像はイメージです');
+    const box = (await note.boundingBox())!;
+    expect(Math.abs(box.y - (hero.y + hero.height))).toBeLessThanOrEqual(2);
+    expect(parseFloat(await note.evaluate((el) => getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(14);
+  }
+});
