@@ -7,7 +7,8 @@
 ## 環境
 
 - 利用者のターミナルの Claude Code が v2.1.294 になり、Sonnet 5.5 が使える。デスクトップアプリの Code タブ（ブラウザ枠でプレビュー確認、エフォートのメニューあり）も使える見込み。
-- 利用者の Windows に `codex-cli 0.154.0` が入っている。ローカルでは Codex を自分で呼ぶ（WORKFLOW 9）。**初回の動作確認がまだ**（読み取り専用の効き、`-o` の出力、文字化け）。結果をここに書く。
+- 利用者の Windows に `codex-cli 0.154.0` が入っている。ローカルでは Codex を自分で呼ぶ（WORKFLOW 9）。初回の動作確認は済（下記）。
+- Codex 初回動作確認（2026-10-10 済・Git Bash）: ①`codex login status` = ChatGPT ログイン（OK）②`-s read-only` で `git status` 不変（OK）③`-o` の出力は日本語が文字化けしない（OK）。**注意**: `~/.codex/config.toml` の既定モデル `gpt-6-sol` は ChatGPT アカウントでは使えず 400 エラーになる。呼ぶときは `-m gpt-5.6-sol` を毎回付ける（設定ファイルは未変更。既定を直すかは利用者の判断）。`marp-slides` の SKILL.md の frontmatter 不備の警告も出るが動作に影響なし。
 - 強度（エフォート）は `/effort` で切り替える。目安は WORKFLOW 7。
 - ローカル（Windows）で始めるときの注意: ①必ずつきそいサポートのフォルダ（このリポジトリ）で `claude` を起動する（ホームフォルダだと別プロジェクトの文書を拾う）。②作業ブランチ `claude/quirky-wozniak-bsohlj` を取得して `npm ci`。③CLAUDE.md 4 のテストコマンドは Linux（クラウド）の例。Windows ではブラウザの場所・環境変数の指定が違うので、初回に `npx playwright install chromium` などで通し、通った手順をここに書く。④利用者の全体設定（ホーム側の指示）の出力形式と、このプロジェクトの `CLAUDE.md` が食い違うときは、プロジェクトの `CLAUDE.md` を優先する。
 
