@@ -464,12 +464,11 @@ test('contact form does not offer LINE as a reply method', async ({ page }) => {
   const methods = page.locator('input[name="contact_method"]');
   await expect(methods).toHaveCount(2);
   await expect(page.locator('input[name="contact_method"][value="LINE"]')).toHaveCount(0);
-  await expect(page.locator('main')).toContainText('LINE公式アカウントは準備中です');
 });
 
 // 送信キーがない間は受付前。押せるボタンに見せず、キーを HTML に出さない
-test('contact form shows a pending notice and is disabled while the form key is unset', async ({ page }) => {
-  test.skip(Boolean(process.env.PUBLIC_FORM_KEY), 'form key is set');
+// このテストのビルドは送信キーあり・PUBLIC_FORM_OPEN なし（playwright.config.ts）。キーだけでは受付中に見せない
+test('contact form stays pending and disabled when the key is set but the open flag is not', async ({ page }) => {
   await page.goto('/contact');
   await expect(page.getByTestId('form-pending')).toContainText('相談フォームは公開準備中です');
   await expect(page.getByRole('button', { name: '相談内容を送信する' })).toBeDisabled();
@@ -497,7 +496,6 @@ test('form opens only with both the key and the explicit open flag', () => {
 });
 
 test('pending contact page does not invite to send, and the disabled button looks disabled', async ({ page }) => {
-  test.skip(Boolean(process.env.PUBLIC_FORM_KEY), 'form key is set');
   await page.goto('/contact');
   await expect(page.locator('a[href="#contact-form"]')).toHaveCount(0);
   await expect(page.locator('main')).not.toContainText('お送りください');

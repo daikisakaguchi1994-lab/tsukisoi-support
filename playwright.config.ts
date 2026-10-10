@@ -20,7 +20,8 @@ export default defineConfig({
       timeout: 180_000,
       url: 'http://127.0.0.1:4331',
       reuseExistingServer: !process.env.CI,
-      env: { ASTRO_TELEMETRY_DISABLED: '1' },
+      // 送信キーはあるが受付開始（PUBLIC_FORM_OPEN）は無い状態でテストする。キーだけでは受付中に見せない
+      env: { ASTRO_TELEMETRY_DISABLED: '1', PUBLIC_FORM_KEY: 'test-key-not-real' },
     },
     {
       // サンプル表示（PUBLIC_SAMPLE_PREVIEW=1）は別の出力先・別ポートで確認する。本番ビルドと混ぜない
@@ -28,7 +29,7 @@ export default defineConfig({
       timeout: 180_000,
       url: 'http://127.0.0.1:4332',
       reuseExistingServer: !process.env.CI,
-      env: { ASTRO_TELEMETRY_DISABLED: '1', PUBLIC_SAMPLE_PREVIEW: '1', ASTRO_OUT_DIR: 'dist-sample' },
+      env: { ASTRO_TELEMETRY_DISABLED: '1', PUBLIC_SAMPLE_PREVIEW: '1', ASTRO_OUT_DIR: 'dist-sample', PUBLIC_FORM_KEY: 'test-key-not-real', PUBLIC_FORM_OPEN: '1' },
     },
   ],
 });

@@ -114,3 +114,13 @@ test('sample LINE is not offered as a reply method in the form', async ({ page }
   await expect(page.locator('input[name="contact_method"][value="LINE"]')).toHaveCount(0);
   await expect(page.locator('input[name="contact_method"]')).toHaveCount(2);
 });
+
+// このビルドは送信キー + PUBLIC_FORM_OPEN=1（playwright.config.ts）。受付中の表示になる
+test('form is open only when both the key and the open flag are set', async ({ page }) => {
+  await page.goto('/contact');
+  await expect(page.getByTestId('form-pending')).toHaveCount(0);
+  await expect(page.locator('input[name="access_key"]')).toHaveCount(1);
+  await expect(page.locator('#name')).toBeEnabled();
+  await expect(page.locator('a[href="#contact-form"]').first()).toBeVisible();
+  await expect(page.locator('main')).not.toContainText('公開準備中');
+});
