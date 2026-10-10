@@ -568,7 +568,7 @@ test('wrangler.jsonc serves the 404 page for unknown URLs', () => {
   expect(text).toMatch(/"directory"\s*:\s*"\.\/dist"/);
 });
 
-// スマホ（縦長）では写真の左右が大きく切り取られる。人物が写る位置に寄せ、文字は上寄せにして人物と重ねない
+// スマホ（縦長）では写真の左右が大きく切り取られる。人物が写る位置に寄せ、文字は人物の顔と重ねない位置に置く
 test('hero keeps the people in frame on phones: image is shifted to the subject and copy sits high', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
@@ -576,7 +576,8 @@ test('hero keeps the people in frame on phones: image is shifted to the subject 
   expect(pos[0]).not.toBe('50% 50%'); // 1枚目（人物2人）は中央のままだと人物が切れる
   expect(parseFloat(pos[0])).toBeLessThan(30);
   const copy = (await page.locator('#hero [data-slide] [data-copy]').first().boundingBox())!;
-  expect(copy.y + copy.height).toBeLessThan(844 * 0.4); // 人物の頭（高さの約4割）より上に収める
+  // 1枚目は人物の頭が上寄りにあるので、文字は下半分に置く（顔と重ねない）
+  expect(copy.y).toBeGreaterThan(844 * 0.5);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.reload();
   const desktop = await page.locator('#hero [data-slide] img').first().evaluate((i) => getComputedStyle(i).objectPosition);
