@@ -10,7 +10,7 @@ test('there are 11 use cases in 4 genres, each with a detail page', async ({ pag
   await expect(page.locator('[data-case-card]')).toHaveCount(11);
   await expect(page.locator('[data-genre-section]')).toHaveCount(4);
   await expect(page.locator('[data-genre-link]')).toHaveCount(4);
-  await expect(page.getByTestId('case-disclaimer')).toContainText('実際のお客様の事例ではありません');
+  await expect(page.getByTestId('case-disclaimer')).toContainText('という想定の場面です');
 });
 
 test('genre navigation jumps to its section', async ({ page }) => {
