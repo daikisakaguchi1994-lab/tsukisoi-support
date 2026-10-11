@@ -1,0 +1,10 @@
+{
+  // 静的な Astro サイトを Cloudflare Workers の静的アセットとして配信する（docs/CLOUDFLARE.md）
+  "name": "tsukisoi-support",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    // 存在しない URL では dist/404.html を 404 で返す（無いと空のページになる）
+    "not_found_handling": "404-page"
+  }
+}

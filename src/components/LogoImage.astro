@@ -1,0 +1,17 @@
+---
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+// public/images/logo-dark.png / logo-white.png（scripts/make-logo.py で logo-mark.png から作る透過 PNG）があれば
+// ロゴ画像を出す。無ければ slot（文字のロゴ）を出す。
+// on-light: 白い地の上（濃い緑の線画）、on-dark: 濃い地・写真の上（白の線画）
+interface Props {
+  tone?: 'on-light' | 'on-dark';
+  class?: string;
+  alt?: string;
+}
+const { tone = 'on-light', class: className = '', alt = '' } = Astro.props;
+const src = tone === 'on-dark' ? '/images/logo-white.png' : '/images/logo-dark.png';
+const exists = existsSync(join(process.cwd(), 'public', src));
+---
+{exists ? <img src={src} alt={alt} class:list={['block', className]} data-logo-image /> : <slot />}

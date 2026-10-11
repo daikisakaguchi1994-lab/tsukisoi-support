@@ -1,0 +1,10 @@
+---
+interface Props {
+  flip?: boolean;
+  class?: string;
+}
+const { flip = false, class: className = '' } = Astro.props;
+---
+<svg class:list={['block w-full h-8 md:h-14 text-mist', className]} viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true" style={flip ? 'transform: scaleY(-1)' : undefined}>
+  <path fill="currentColor" d="M0 60V28C180 6 360 4 540 22s360 30 540 14 270-30 360-30v54z" />
+</svg>

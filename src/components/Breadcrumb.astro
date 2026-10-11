@@ -9,14 +9,14 @@ interface Props {
 
 const { items } = Astro.props;
 ---
-<nav aria-label="パンくずリスト" class="text-sm text-ink-muted mb-8">
-  <ol class="flex flex-wrap items-center gap-x-2">
-    <li><a href="/" class="underline hover:text-accent">ホーム</a></li>
+<nav aria-label="パンくずリスト" class="bg-base-alt border-b border-rule text-xs text-ink-muted">
+  <ol class="max-w-6xl mx-auto px-4 py-2 flex flex-wrap items-center gap-x-2">
+    <li><a href="/" class="hover:text-accent hover:underline">ホーム</a></li>
     {items.map((item, i) => (
       <li class="flex items-center gap-x-2">
         <span aria-hidden="true">›</span>
         {item.href && i < items.length - 1
-          ? <a href={item.href} class="underline hover:text-accent">{item.label}</a>
+          ? <a href={item.href} class="hover:text-accent hover:underline">{item.label}</a>
           : <span aria-current="page">{item.label}</span>}
       </li>
     ))}

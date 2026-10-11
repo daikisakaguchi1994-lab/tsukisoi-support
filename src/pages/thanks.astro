@@ -5,25 +5,18 @@ import { isLineUrlConfigured } from '../utils/qr';
 
 const otherChannels = [isTelConfigured(SITE.TEL) && 'お電話', isLineUrlConfigured(SITE.LINE_URL) && 'LINE'].filter(Boolean);
 ---
-<Layout title="送信完了">
-  <section class="pt-16">
-    <div class="max-w-2xl mx-auto px-4 py-20 md:py-32 text-center">
-      <div class="text-5xl mb-6">✉️</div>
-      <h1 class="font-heading text-3xl md:text-4xl font-bold text-ink-strong mb-6">
-        お問い合わせありがとうございます
-      </h1>
-      <p class="mb-4 leading-relaxed">
-        メッセージを受け付けました。<br />
-        内容を確認のうえ、2営業日以内にご連絡いたします。
+<Layout title="送信完了" crumbs={[{ label: '送信完了' }]}>
+  <div class="max-w-2xl mx-auto px-4 py-20 md:py-28 text-center">
+    <h1 class="heading-bar text-xl md:text-2xl mb-10">お問い合わせありがとうございます</h1>
+    <p class="mb-4 leading-loose">
+      メッセージを受け付けました。<br />
+      内容を確認のうえ、2営業日以内にご連絡いたします。
+    </p>
+    {otherChannels.length > 0 && (
+      <p class="text-sm text-ink-muted mb-10">
+        お急ぎの方は、{otherChannels.join('または')}でもご連絡いただけます。
       </p>
-      {otherChannels.length > 0 && (
-        <p class="text-sm text-ink-muted mb-10">
-          お急ぎの方は、{otherChannels.join('または')}でもご連絡いただけます。
-        </p>
-      )}
-      <a href="/" class="bg-accent text-white font-bold px-8 py-3 rounded-full hover:bg-accent-hover transition-colors min-h-[44px] inline-block">
-        トップページに戻る
-      </a>
-    </div>
-  </section>
+    )}
+    <a href="/" class="btn-solid mt-6">トップページに戻る</a>
+  </div>
 </Layout>

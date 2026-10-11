@@ -2,126 +2,109 @@
 import Layout from '../layouts/Layout.astro';
 import ContactBlock from '../components/ContactBlock.astro';
 import SectionTitle from '../components/SectionTitle.astro';
+import FeatureIcon from '../components/FeatureIcon.astro';
+import Wave from '../components/Wave.astro';
 import Hero from '../components/Hero.astro';
+import LogoImage from '../components/LogoImage.astro';
 import { getCollection } from 'astro:content';
-import { SITE, isConfigured } from '../config';
+import { SITE } from '../config';
 import { formatDate, isoDate } from '../utils/date';
 
 // 以下の文面は仮のコピーです。サービス内容が確定したら差し替えてください。
-const services = [
-  { icon: '🏥', title: '通院の付き添い', text: '受付から診察、会計、お薬の受け取りまで、院内でもそばに寄り添います。' },
-  { icon: '🛍️', title: 'お買い物・外食', text: '歩くのが不安な方も、荷物の持ち運びや移動のお手伝いで、気兼ねなくお出かけいただけます。' },
-  { icon: '🧳', title: '旅行・観光への付き添い', text: '駅や空港での移動など、旅の道中に付き添います。交通・宿泊の予約などの手配は準備中です。' },
-  { icon: '🌸', title: '行事・お墓参り', text: '冠婚葬祭やお墓参りなど、大切な場面への外出もお手伝いします。' },
-  { icon: '👨‍👩‍👧', title: 'ご家族への報告', text: '当日の様子をご家族にお伝えします。離れて暮らす方も安心です。' },
-  { icon: '💬', title: 'まずはご相談を', text: 'こんなこともできる？というお悩みも、お気軽にお問い合わせください。' },
-];
+// 経歴・資格・保有車両・対応言語など、事実の確認が必要なことは書かない（CLAUDE.md 1.）。
+const features = [
+  { icon: 'pace', label: 'ご本人のペースを大切に' },
+  { icon: 'steps', label: '段差や待ち時間を事前に確認' },
+  { icon: 'family', label: 'ご家族にも当日の様子を共有' },
+  { icon: 'trip', label: '通院から旅行まで幅広く' },
+  { icon: 'estimate', label: '見積りは事前に、納得してから' },
+  { icon: 'form', label: 'ご相談はフォームから24時間' },
+] as const;
 
 const news = (await getCollection('news'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 5);
-
-const links = [
-  { label: 'Instagram', href: SITE.INSTAGRAM_URL },
-  { label: 'LINE公式アカウント', href: SITE.LINE_URL },
-].filter((l) => isConfigured(l.href));
 ---
-<Layout title="トップ">
+<Layout title="トップ" overlay>
   <Hero />
 
-  <!-- Concept -->
-  <section id="concept" class="py-20 md:py-28 fade-in scroll-mt-16">
-    <div class="max-w-3xl mx-auto px-4 text-center">
-      <p class="font-heading text-accent tracking-[0.3em] text-sm mb-3">CONCEPT</p>
-      <h2 class="font-heading text-2xl md:text-3xl font-bold text-ink-strong mb-8">
-        行きたい気持ちに、付き添います。
-      </h2>
-      <p class="leading-loose [word-break:auto-phrase]">
-        {SITE.SERVICE_NAME}は、お出かけに付き添うサービスです。<br />
-        年齢や体調、お住まいに関わらず、<br class="hidden md:inline" />
-        「ひとりでは心配」を「一緒なら大丈夫」に変えていきます。
-      </p>
-    </div>
-  </section>
-
-  <!-- Service -->
-  <section id="service" class="bg-base-alt py-20 md:py-28 fade-in scroll-mt-16">
-    <div class="max-w-5xl mx-auto px-4">
-      <p class="font-heading text-accent tracking-[0.3em] text-sm text-center mb-3">SERVICE</p>
-      <SectionTitle class="mb-12">{SITE.SERVICE_NAME}のサービス</SectionTitle>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-        {services.map((s) => (
-          <div class="bg-white rounded-2xl shadow-sm p-8 text-center">
-            <div class="text-4xl mb-4" aria-hidden="true">{s.icon}</div>
-            <h3 class="font-heading font-bold text-lg text-ink-strong mb-2">{s.title}</h3>
-            <p class="text-sm leading-relaxed">{s.text}</p>
-          </div>
-        ))}
+  <!-- Intro -->
+  <section id="intro" class="scroll-mt-4 pt-16 pb-14">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="grid md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-8 md:gap-12 items-center mb-10">
+        <div class="flex justify-center">
+          <LogoImage alt={SITE.SERVICE_NAME} class="w-64 md:w-80 h-auto">
+            <div class="w-56 h-56 md:w-64 md:h-64 border border-rule flex flex-col items-center justify-center text-center" role="img" aria-label={`${SITE.SERVICE_NAME} ロゴ`}>
+              <span class="font-heading text-xl md:text-2xl font-bold tracking-[0.18em] pl-[0.18em] whitespace-nowrap text-ink-strong">{SITE.SERVICE_NAME}</span>
+              <span class="block w-10 h-px bg-accent my-3"></span>
+              <span class="text-[10px] tracking-[0.4em] pl-[0.4em] text-ink-muted">TSUKISOI SUPPORT</span>
+            </div>
+          </LogoImage>
+        </div>
+        <div class="leading-loose text-[15px] [word-break:auto-phrase] space-y-4">
+          <p>{SITE.SERVICE_NAME}は、お出かけに付き添うサービスです。通院やお買い物、旅行まで、ひとりでは不安な外出にスタッフが寄り添います。</p>
+          <p>年齢や体調、お住まいに関わらず、まずはお話をお聞かせください。ご希望を伺ったうえで、できることを一緒に考えます。</p>
+        </div>
       </div>
-      <div class="text-center">
-        <a href="/service" class="inline-block bg-accent text-white font-bold px-8 py-3 rounded-full hover:bg-accent-hover transition-colors min-h-[44px]">
-          料金・ご利用の流れを見る
-        </a>
+
+      <div class="bg-base-alt border-l-4 border-accent px-5 py-4 text-sm leading-loose">
+        <p class="font-bold mb-1"><span class="marker">付き添い（つきそい）</span>とは？</p>
+        <p>行き先まで同行し、移動や手続きをそばで手伝うことです。ひとりで出かけるのが心細いとき、安心して外出できるようお手伝いします。</p>
       </div>
     </div>
   </section>
 
   <!-- News -->
-  <section id="news" class="py-20 md:py-28 fade-in scroll-mt-16">
+  <Wave />
+  <section id="news" class="bg-mist -my-px pb-12 pt-4 scroll-mt-4">
     <div class="max-w-3xl mx-auto px-4">
-      <p class="font-heading text-accent tracking-[0.3em] text-sm text-center mb-3">NEWS</p>
-      <SectionTitle class="mb-10">お知らせ</SectionTitle>
-      <ul class="space-y-4">
+      <SectionTitle class="mb-6">最新のお知らせ</SectionTitle>
+      <ul>
         {news.map((n) => (
-          <li class="flex gap-4 items-baseline border-b border-ink/10 pb-4">
-            <time datetime={isoDate(n.data.date)} class="text-sm text-ink-muted shrink-0">{formatDate(n.data.date)}</time>
-            <a href={`/news/${n.id}`} class="hover:text-accent underline-offset-4 hover:underline">{n.data.title}</a>
+          <li class="border-b border-rule/80">
+            <a href={`/news/${n.id}`} class="block py-3 hover:text-accent">
+              <span class="block text-[15px]">{n.data.title}</span>
+              <time datetime={isoDate(n.data.date)} class="block text-xs text-ink-muted">{formatDate(n.data.date)}</time>
+            </a>
           </li>
         ))}
       </ul>
       <div class="text-center mt-8">
-        <a href="/news" class="inline-block border-2 border-accent text-accent font-bold px-8 py-3 rounded-full hover:bg-accent hover:text-white transition-colors min-h-[44px]">
-          お知らせ一覧を見る
-        </a>
+        <a href="/news" class="btn-outline">お知らせ一覧を見る</a>
+      </div>
+    </div>
+  </section>
+  <Wave flip />
+
+  <!-- Features -->
+  <section id="features" class="py-14 scroll-mt-4">
+    <div class="max-w-3xl mx-auto px-4">
+      <SectionTitle variant="bar" class="mb-12">{SITE.SERVICE_NAME}の6つの特徴</SectionTitle>
+      <ol class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-10 mb-10">
+        {features.map((f, i) => (
+          <li class="text-center">
+            <FeatureIcon name={f.icon} />
+            <p class="mt-4 text-sm md:text-[15px] leading-snug [word-break:auto-phrase]">
+              <span class="marker"><span aria-hidden="true">{i + 1} </span>{f.label}</span>
+            </p>
+          </li>
+        ))}
+      </ol>
+      <div class="text-center">
+        <a href="/service" class="btn-outline">サービスの詳細を見る</a>
       </div>
     </div>
   </section>
 
-  <!-- About -->
-  <section id="about" class="bg-base-alt py-20 md:py-28 fade-in scroll-mt-16">
-    <div class="max-w-3xl mx-auto px-4 text-center">
-      <p class="font-heading text-accent tracking-[0.3em] text-sm mb-3">ABOUT</p>
-      <SectionTitle class="mb-8">私たちについて</SectionTitle>
-      <p class="leading-loose mb-8 [word-break:auto-phrase]">
-        {SITE.SERVICE_NAME}が大切にしていることと、代表者のご紹介です。<br />
-        代表者の紹介は準備中です。
+  <!-- Travel arrangement (preparing) -->
+  <section id="travel" class="pb-16 scroll-mt-4">
+    <div class="max-w-3xl mx-auto px-4">
+      <SectionTitle variant="bar" class="mb-8">旅行の手配について</SectionTitle>
+      <p class="leading-loose text-[15px] mb-6 [word-break:auto-phrase]">
+        旅行の付き添いとは別に、交通・宿泊の予約などの手配も検討しています。必要な登録などの確認が済み次第、こちらでご案内します。
       </p>
-      <a href="/about" class="inline-block border-2 border-accent text-accent font-bold px-8 py-3 rounded-full hover:bg-accent hover:text-white transition-colors min-h-[44px]">
-        私たちについて
-      </a>
-    </div>
-  </section>
-
-  <!-- Links -->
-  <section id="links" class="py-20 md:py-28 fade-in scroll-mt-16">
-    <div class="max-w-3xl mx-auto px-4 text-center">
-      <p class="font-heading text-accent tracking-[0.3em] text-sm mb-3">LINKS</p>
-      <SectionTitle class="mb-8">関連リンク</SectionTitle>
-      {links.length > 0 ? (
-        <ul class="flex flex-wrap justify-center gap-4">
-          {links.map((l) => (
-            <li>
-              <a href={l.href} target="_blank" rel="noopener noreferrer" class="inline-block border-2 border-accent text-accent font-bold px-6 py-3 rounded-full hover:bg-accent hover:text-white transition-colors min-h-[44px]">
-                {l.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p class="text-sm text-ink-muted">準備中です</p>
-      )}
-      <div class="mt-8">
-        <a href="/links" class="text-accent underline underline-offset-4 hover:text-accent-hover">関連リンクのページへ</a>
+      <div class="text-center">
+        <span class="btn-outline" aria-disabled="true">準備中</span>
       </div>
     </div>
   </section>

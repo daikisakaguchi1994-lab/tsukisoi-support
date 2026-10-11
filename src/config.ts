@@ -19,11 +19,11 @@ type Site = { [K in keyof typeof BASE]: (typeof BASE)[K] extends boolean ? boole
 
 export const isConfigured = (value: string): boolean => Boolean(value) && !value.startsWith('{{');
 
-// サンプル表示（完成イメージ確認用）。PUBLIC_SAMPLE_PREVIEW=1 かつ Vercel の Production 以外のときだけ有効
+// サンプル表示（完成イメージ確認用）。PUBLIC_SAMPLE_PREVIEW=1 かつプレビューと明示されたときだけ有効（既定は拒否。config.sample.ts）
 const env = (import.meta as { env?: Record<string, string | undefined> }).env;
 const readEnv = (key: string): string | undefined =>
   env?.[key] ?? (typeof process !== 'undefined' ? process.env[key] : undefined);
-export const SAMPLE_PREVIEW = isSamplePreview(readEnv('PUBLIC_SAMPLE_PREVIEW'), readEnv('VERCEL_ENV'));
+export const SAMPLE_PREVIEW = isSamplePreview(readEnv('PUBLIC_SAMPLE_PREVIEW'), readEnv('VERCEL_ENV'), readEnv('PUBLIC_DEPLOY_TARGET'));
 
 // 仮番号（000-0000-0000 のような 0 だけの並び）や未設定は「未確定」とみなす。発信リンクは確定後だけ出す
 // サンプルの番号も「確定」ではない（発信リンクを出さない）
@@ -45,12 +45,16 @@ const withSamples = (base: Site): Site => {
 
 export const SITE: Site = SAMPLE_PREVIEW ? withSamples(BASE) : BASE;
 
+// 相談フォームの受付を始めてよいか。送信キー（PUBLIC_FORM_KEY）があるだけでは開けない。
+// 利用者が受付開始を決めたときだけ PUBLIC_FORM_OPEN=1 を足す（実送信の確認は Preview で両方を設定して行う）
+export const isFormOpen = (key: string | undefined, openFlag: string | undefined): boolean => Boolean(key) && openFlag === '1';
+
 // ヘッダー/フッター共通のナビゲーション
 export const NAV_ITEMS = [
   { label: 'ホーム', en: 'Home', href: '/' },
   { label: 'サービス', en: 'Service', href: '/service' },
   { label: 'お知らせ', en: 'News', href: '/news' },
   { label: '私たちについて', en: 'About', href: '/about' },
-  { label: '関連リンク', en: 'Links', href: '/links' },
-  { label: 'お問合せ', en: 'Contact', href: '/contact' },
+  { label: '関連リンク', en: 'Related Links', href: '/links' },
+  { label: 'お問合せ', en: 'Contact form', href: '/contact' },
 ] as const;

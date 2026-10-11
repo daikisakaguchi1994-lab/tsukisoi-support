@@ -11,15 +11,24 @@ const ARTICLES = readdirSync('src/content/news')
   .map((f) => `/news/${f.replace(/\.md$/, '')}`);
 const PAGES = ['/', '/service', '/contact', '/thanks', '/news', '/about', '/links', '/privacy', ...ARTICLES];
 
-// 有効にする条件。Vercel の Production では、環境変数が誤って入っていても無効
-test('sample preview switches on only for the flag outside production', () => {
-  expect(isSamplePreview('1', undefined)).toBe(true);
+// 有効にする条件。既定は拒否: フラグがあっても「プレビューだ」と明示されない限り、本番扱い（Cloudflare には VERCEL_ENV が無い）
+test('sample preview needs the flag AND an explicit preview target (default deny)', () => {
+  // 本番相当（Cloudflare の本番ビルドを想定: VERCEL_ENV も PUBLIC_DEPLOY_TARGET も無い）で、フラグだけ誤って入っていても無効
+  expect(isSamplePreview('1', undefined)).toBe(false);
+  expect(isSamplePreview('1', undefined, undefined)).toBe(false);
+  expect(isSamplePreview('1', undefined, '')).toBe(false);
+  expect(isSamplePreview('1', undefined, 'production')).toBe(false);
+  // 明示されたプレビューだけ有効
+  expect(isSamplePreview('1', undefined, 'preview')).toBe(true);
   expect(isSamplePreview('1', 'preview')).toBe(true);
   expect(isSamplePreview('1', 'development')).toBe(true);
+  // Vercel の Production は、他の変数があっても必ず無効
   expect(isSamplePreview('1', 'production')).toBe(false);
-  expect(isSamplePreview(undefined, undefined)).toBe(false);
-  expect(isSamplePreview('', 'preview')).toBe(false);
-  expect(isSamplePreview('true', 'preview')).toBe(false);
+  expect(isSamplePreview('1', 'production', 'preview')).toBe(false);
+  // フラグが正確に '1' でなければ無効
+  expect(isSamplePreview(undefined, 'preview', 'preview')).toBe(false);
+  expect(isSamplePreview('', 'preview', 'preview')).toBe(false);
+  expect(isSamplePreview('true', 'preview', 'preview')).toBe(false);
 });
 
 // サンプルの値は、実在しない形であること
@@ -94,7 +103,7 @@ function contrast(fg: string, bg: string) {
   const [a, b] = [luminance(rgb(fg)), luminance(rgb(bg))].sort((x, y) => y - x);
   return (a + 0.05) / (b + 0.05);
 }
-for (const [path, name] of [['/contact', 'LINEで友だち追加'], ['/', 'LINEで友だち追加'], ['/', 'LINEで相談']] as const) {
+for (const [path, name] of [['/contact', 'LINEで友だち追加'], ['/', 'LINEで友だち追加']] as const) {
   test(`LINE button text has enough contrast on ${path}: ${name}`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(path);
@@ -107,3 +116,20 @@ for (const [path, name] of [['/contact', 'LINEで友だち追加'], ['/', 'LINE�
     expect(contrast(color, backgroundColor), `${color} on ${backgroundColor}`).toBeGreaterThanOrEqual(4.5);
   });
 }
+
+// サンプルの架空の LINE は連絡先として見せるが、返信方法の選択肢には出さない
+test('sample LINE is not offered as a reply method in the form', async ({ page }) => {
+  await page.goto('/contact');
+  await expect(page.locator('input[name="contact_method"][value="LINE"]')).toHaveCount(0);
+  await expect(page.locator('input[name="contact_method"]')).toHaveCount(2);
+});
+
+// このビルドは送信キー + PUBLIC_FORM_OPEN=1（playwright.config.ts）。受付中の表示になる
+test('form is open only when both the key and the open flag are set', async ({ page }) => {
+  await page.goto('/contact');
+  await expect(page.getByTestId('form-pending')).toHaveCount(0);
+  await expect(page.locator('input[name="access_key"]')).toHaveCount(1);
+  await expect(page.locator('#name')).toBeEnabled();
+  await expect(page.locator('a[href="#contact-form"]').first()).toBeVisible();
+  await expect(page.locator('main')).not.toContainText('公開準備中');
+});

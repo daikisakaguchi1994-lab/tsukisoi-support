@@ -1,47 +1,69 @@
 ---
+import LogoImage from './LogoImage.astro';
 import { SITE, NAV_ITEMS } from '../config';
+
+interface Props {
+  overlay?: boolean;
+}
+const { overlay = false } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href: string) => (href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`));
 ---
-<header id="site-header" class="fixed top-0 left-0 right-0 z-50 bg-base/90 backdrop-blur-sm border-b border-base-alt">
-  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-    <a href="/" class="font-heading text-xl font-bold tracking-widest text-ink-strong">
-      {SITE.SERVICE_NAME}
-    </a>
+<header
+  id="site-header"
+  class:list={[
+    'z-40 w-full text-white',
+    overlay ? 'absolute top-0 left-0 bg-gradient-to-b from-black/45 to-transparent' : 'relative bg-deep',
+  ]}
+>
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="relative flex items-center justify-center h-16 md:h-28">
+      <a href="/" class="text-center leading-tight" aria-label={`${SITE.SERVICE_NAME} トップページ`}>
+        <LogoImage tone="on-dark" alt={SITE.SERVICE_NAME} class="h-14 md:h-20 w-auto">
+          <span class="block font-heading text-xl md:text-3xl font-bold tracking-[0.3em] pl-[0.3em]">{SITE.SERVICE_NAME}</span>
+          <span class="hidden md:block text-[10px] tracking-[0.45em] opacity-85 mt-1">TSUKISOI SUPPORT</span>
+        </LogoImage>
+      </a>
+
+      <!-- Mobile Hamburger -->
+      <button
+        id="menu-toggle"
+        class="md:hidden absolute right-0 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
+        aria-label="メニューを開く"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
 
     <!-- Desktop Nav -->
-    <nav class="hidden md:flex items-center gap-7" aria-label="メインナビゲーション">
+    <nav class="hidden md:flex items-end justify-center gap-1 pb-0" aria-label="メインナビゲーション">
       {NAV_ITEMS.map((item) => (
-        <a href={item.href} class="group text-center leading-tight hover:text-accent transition-colors">
-          <span class="block text-sm text-ink group-hover:text-accent">{item.label}</span>
-          <span class="block text-[10px] tracking-wider text-ink-muted">{item.en}</span>
+        <a
+          href={item.href}
+          aria-current={isCurrent(item.href) ? 'page' : undefined}
+          class:list={[
+            'group text-center leading-tight px-4 pt-2 pb-3 border-b-2 transition-colors',
+            isCurrent(item.href) ? 'border-white' : 'border-transparent hover:border-white/60',
+          ]}
+        >
+          <span class="block text-[15px] tracking-[0.08em]">{item.label}</span>
+          <span class="block text-[10px] tracking-wider opacity-85">{item.en}</span>
         </a>
       ))}
     </nav>
-
-    <!-- Mobile Hamburger -->
-    <button
-      id="menu-toggle"
-      class="md:hidden p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
-      aria-label="メニューを開く"
-      aria-expanded="false"
-      aria-controls="mobile-menu"
-    >
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
-    </button>
   </div>
 
   <!-- Mobile Menu -->
-  <nav
-    id="mobile-menu"
-    class="hidden md:hidden bg-base border-t border-base-alt"
-    aria-label="モバイルナビゲーション"
-  >
-    <div class="px-4 py-6 space-y-4">
+  <nav id="mobile-menu" class="hidden md:hidden bg-deep border-t border-white/20" aria-label="モバイルナビゲーション">
+    <div class="px-4 py-4">
       {NAV_ITEMS.map((item) => (
-        <a href={item.href} class="block text-lg text-ink hover:text-accent transition-colors">
-          {item.label}
-          <span class="ml-2 text-xs tracking-wider text-ink-muted">{item.en}</span>
+        <a href={item.href} class="flex items-baseline justify-between py-3 border-b border-white/15 last:border-b-0 text-white">
+          <span class="text-base tracking-wider">{item.label}</span>
+          <span class="text-[11px] tracking-wider opacity-85">{item.en}</span>
         </a>
       ))}
     </div>

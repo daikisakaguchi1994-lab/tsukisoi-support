@@ -1,28 +1,106 @@
 ---
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { SITE } from '../config';
+
+// 画像は public/images/hero/hero-N.jpg に置くと反映される。無い間は色のグラデーションで代替（public/images/README.md）
+// low: 写真の人物が画面の上寄りにいる写真。縦長の画面では文字を下側に置く（人物の顔と重ねない）
+// pos: 縦長の画面（スマホ）で写真を左右に切り取るとき、人物・主役が残る横位置（%）。写真の人物の位置に合わせる。画像を差し替えたら見直す
+const slides = [
+  { title: SITE.TAGLINE, sub: ['お出かけに、', '安心の付き添いを'], en: 'Beside you, always', pos: '24%', low: true, bg: 'linear-gradient(180deg,#5C7899 0%,#A9A6C2 52%,#F0C9A2 100%)' },
+  { title: '通院の日も、そばに', sub: ['病院の入口まで、', '一緒に歩きます'], en: 'Hospital visits', pos: '30%', low: true, bg: 'linear-gradient(180deg,#3F6B4A 0%,#8DB387 55%,#D8E4B8 100%)' },
+  { title: 'お買い物も、楽しく', sub: ['「ひとりでは心配」が', '「一緒なら大丈夫」に'], en: 'Together, you can go', pos: '55%', low: true, bg: 'linear-gradient(180deg,#6B7F8F 0%,#B6C9CE 60%,#EFE6D0 100%)' },
+  { title: '旅の道中も、そばに', sub: ['駅や空港での', '移動に付き添います'], en: 'On the way, by your side', pos: '30%', low: true, bg: 'linear-gradient(180deg,#8A6F5A 0%,#D1A988 55%,#F4E2C4 100%)' },
+  { title: 'まずは、お気軽にご相談ください', sub: [] as string[], en: 'We are here to help', pos: '34%', bg: 'linear-gradient(180deg,#5E5A7A 0%,#B9A3B8 55%,#F2CDB4 100%)' },
+].map((s, i) => {
+  const file = `/images/hero/hero-${i + 1}.jpg`;
+  return { ...s, img: existsSync(join(process.cwd(), 'public', file)) ? file : null };
+});
 ---
+<section id="hero" class="relative w-full h-[calc(100svh-1.75rem)] min-h-[560px] max-h-[960px] overflow-hidden text-white bg-ink-strong" aria-roledescription="carousel" aria-label="つきそいサポートのご案内">
+  <!-- 見出しはスライドの外に置く（切り替わっても読み上げの見出しが消えない） -->
+  <h1 class="sr-only">{SITE.SERVICE_NAME} — {SITE.TAGLINE}お出かけに、安心の付き添いを</h1>
 
-<!-- 写真素材が決まるまでは配色グラデーションで代替。差し替え時は背景の div に <img> を入れる -->
-<section class="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center text-center text-white bg-gradient-to-br from-accent via-[#3D5E37] to-ink-strong">
-  <div class="absolute inset-0 opacity-20" aria-hidden="true" style="background: radial-gradient(circle at 20% 20%, #fff 0, transparent 40%), radial-gradient(circle at 80% 80%, #fff 0, transparent 35%);"></div>
-
-  <div class="relative z-10 px-6 pt-16">
-    <p class="font-heading text-sm md:text-base tracking-[0.3em] mb-4 opacity-90">ACCOMPANY SUPPORT</p>
-    <h1 class="font-heading text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 text-white tracking-wide">
-      {SITE.TAGLINE.split(/(?<=、)/).map((part) => <span class="inline-block">{part}</span>)}
-    </h1>
-    <p class="font-heading text-base md:text-xl font-semibold leading-relaxed mb-10 text-white [word-break:auto-phrase]">
-      — お出かけに、安心の付き添いを —
-    </p>
-    <div class="font-heading text-sm md:text-lg leading-loose opacity-95">
-      <p>通院も、お買い物も、旅行も。</p>
-      <p>ひとりでは不安なお出かけに、</p>
-      <p>{SITE.SERVICE_NAME}が寄り添います。</p>
+  {slides.map((s, i) => (
+    <div
+      class="hero-slide absolute inset-0 flex items-center justify-center text-center transition-opacity duration-[1400ms]"
+      data-slide
+      data-copy-low={s.low ? 'true' : undefined}
+      aria-hidden={i === 0 ? 'false' : 'true'}
+      style={`background:${s.bg}; opacity:${i === 0 ? 1 : 0};`}
+    >
+      {s.img && <img src={s.img} alt="" class="hero-img absolute inset-0 w-full h-full object-cover" style={`--hero-pos:${s.pos} center;`} loading={i === 0 ? 'eager' : 'lazy'} />}
+      <!-- 文字が読めるよう、全体を暗くする（小さい白文字で 4.5:1 以上） -->
+      <div class="absolute inset-0 bg-black/55" aria-hidden="true"></div>
+      <div class="relative px-6 max-w-4xl" data-copy>
+        <p class="text-base md:text-lg tracking-[0.2em] mb-4 italic" data-copy-en>{s.en}</p>
+        <p class="font-heading text-3xl md:text-6xl font-bold leading-tight tracking-widest [text-wrap:balance] [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]" data-copy-title>{s.title}</p>
+        {s.sub.length > 0 && (
+          <p class="mt-5 text-base md:text-xl tracking-[0.15em] [text-wrap:balance]" data-copy-sub>
+            {s.sub.map((phrase, k) => (
+              <span class="inline-block" data-sub-phrase>{k === 0 ? '— ' : ''}{phrase}{k === s.sub.length - 1 ? ' —' : ''}</span>
+            ))}
+          </p>
+        )}
+      </div>
     </div>
+  ))}
+
+  <a href="#intro" class="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center text-sm tracking-[0.3em] text-white" aria-label="下へスクロール" data-scroll-cue>
+    <svg class="w-4 h-4 mb-1 motion-safe:animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-scroll-chevron><path d="M6 7l6 6 6-6M6 13l6 6 6-6" /></svg>
+    <span class="block">Scroll</span>
+  </a>
+
+  <div class="absolute bottom-4 left-0 right-0 z-10 flex justify-center" role="group" aria-label="スライドの切り替え">
+    {slides.map((_, i) => (
+      <button type="button" data-dot={i} class="hero-dot group w-8 h-8 flex items-center justify-center" aria-current={i === 0 ? 'true' : 'false'} aria-label={`${i + 1}枚目を表示`}>
+        <span class="block w-2.5 h-2.5 rounded-full bg-white/60 group-aria-[current=true]:bg-white"></span>
+      </button>
+    ))}
   </div>
 
-  <a href="#concept" class="absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center text-xs tracking-[0.3em] text-white/80 hover:text-white" aria-label="下へスクロール">
-    Scroll
-    <span class="block w-px h-10 bg-white/60 mt-2 motion-safe:animate-pulse"></span>
-  </a>
+  <!-- 自動切り替えの停止・再開（WCAG 2.2.2） -->
+  <button
+    type="button"
+    id="hero-toggle"
+    class="absolute bottom-3 right-3 md:right-6 z-10 w-11 h-11 rounded-full bg-black/60 text-white flex items-center justify-center"
+    aria-pressed="false"
+    aria-label="スライドの自動切り替えを止める"
+  >
+    <svg data-icon-pause class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" /><rect x="14" y="5" width="4" height="14" /></svg>
+    <svg data-icon-play class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5l12 7-12 7z" /></svg>
+  </button>
 </section>
+<!-- 生成AIの画像。実在の利用者・スタッフの写真と読めないように、写真の直下に明記する（CLAUDE.md 3）。写真の上は操作部品で混み合うので外に置く -->
+<p class="bg-base-alt text-ink-muted text-sm text-right px-4 py-1" data-testid="hero-image-note">画像はイメージです</p>
+
+<script>
+  const slides = Array.from(document.querySelectorAll<HTMLElement>('[data-slide]'));
+  const dots = Array.from(document.querySelectorAll<HTMLElement>('[data-dot]'));
+  const toggle = document.getElementById('hero-toggle');
+  let current = 0;
+  let timer: number | undefined;
+
+  const show = (n: number) => {
+    current = (n + slides.length) % slides.length;
+    slides.forEach((s, i) => {
+      s.style.opacity = i === current ? '1' : '0';
+      s.setAttribute('aria-hidden', i === current ? 'false' : 'true');
+    });
+    dots.forEach((d, i) => d.setAttribute('aria-current', i === current ? 'true' : 'false'));
+  };
+
+  const setPlaying = (playing: boolean) => {
+    window.clearInterval(timer);
+    timer = playing ? window.setInterval(() => show(current + 1), 6500) : undefined;
+    toggle?.setAttribute('aria-pressed', String(!playing));
+    toggle?.setAttribute('aria-label', playing ? 'スライドの自動切り替えを止める' : 'スライドの自動切り替えを再開する');
+    toggle?.querySelector('[data-icon-pause]')?.classList.toggle('hidden', !playing);
+    toggle?.querySelector('[data-icon-play]')?.classList.toggle('hidden', playing);
+  };
+
+  dots.forEach((d, i) => d.addEventListener('click', () => show(i)));
+  toggle?.addEventListener('click', () => setPlaying(timer === undefined));
+  // 動きを減らす設定では自動で切り替えない（ドットか再開ボタンで操作できる）
+  setPlaying(!window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+</script>

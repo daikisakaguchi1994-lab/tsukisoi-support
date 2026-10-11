@@ -3,43 +3,40 @@ import { SITE, NAV_ITEMS, isConfigured, isTelConfigured, isTelSample } from '../
 
 const year = new Date().getFullYear();
 ---
-<footer class="bg-ink-strong text-base py-16">
-  <div class="max-w-6xl mx-auto px-4">
-    <div class="grid md:grid-cols-3 gap-10 mb-12">
-      <div>
-        <p class="font-heading text-xl font-bold tracking-widest mb-2">{SITE.SERVICE_NAME}</p>
-        <p class="text-sm opacity-70">{SITE.TAGLINE}</p>
-      </div>
-      <div class="text-sm space-y-1 opacity-80">
-        <p>{SITE.COMPANY_NAME}</p>
-        {isConfigured(SITE.ADDRESS) && <p>{SITE.ADDRESS}</p>}
-        {isTelConfigured(SITE.TEL)
-          ? <p>TEL: <a href={`tel:${SITE.TEL}`} class="hover:underline">{SITE.TEL}</a></p>
-          : isTelSample(SITE.TEL)
-            ? <p>TEL: {SITE.TEL}（サンプル）</p>
-            : <p>電話相談は準備中です</p>}
-        {isConfigured(SITE.EMAIL) && (
-          <p>Mail: <a href={`mailto:${SITE.EMAIL}`} class="hover:underline">{SITE.EMAIL}</a></p>
-        )}
-        <p><a href="/privacy" class="hover:underline">個人情報の取り扱い</a></p>
-        {isConfigured(SITE.INSTAGRAM_URL) && (
-          <p><a href={SITE.INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" class="hover:underline">Instagram</a></p>
-        )}
-      </div>
-      <nav aria-label="フッターナビゲーション">
-        <ul class="space-y-2">
-          {NAV_ITEMS.map((item) => (
-            <li>
-              <a href={item.href} class="text-sm opacity-80 hover:opacity-100 transition-opacity">
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
+<footer class="bg-accent text-white">
+  <div class="max-w-6xl mx-auto px-4 py-10 text-center">
+    <div class="flex justify-center gap-5 mb-5">
+      {isConfigured(SITE.INSTAGRAM_URL) && (
+        <a href={SITE.INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
+        </a>
+      )}
+      <a href="/contact" aria-label="お問い合わせ">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18a1 1 0 011 1v.4l-10 6.3L2 6.4V6a1 1 0 011-1zm-1 3.7l9.5 6a1 1 0 001 0L22 8.7V18a1 1 0 01-1 1H3a1 1 0 01-1-1V8.7z" /></svg>
+      </a>
     </div>
-    <div class="border-t border-white/10 pt-6 text-center text-xs opacity-50">
-      <p>&copy; {year} {SITE.COMPANY_NAME}</p>
+
+    <nav aria-label="フッターナビゲーション" class="mb-6">
+      <ul class="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm">
+        {NAV_ITEMS.map((item) => (
+          <li><a href={item.href} class="hover:underline">{item.label}</a></li>
+        ))}
+        <li><a href="/privacy" class="hover:underline">個人情報の取り扱い</a></li>
+      </ul>
+    </nav>
+
+    <div class="text-sm space-y-1">
+      <p class="font-bold tracking-widest">{SITE.COMPANY_NAME}</p>
+      {isConfigured(SITE.ADDRESS) && <p>{SITE.ADDRESS}</p>}
+      {isTelConfigured(SITE.TEL)
+        ? <p>TEL: <a href={`tel:${SITE.TEL}`} class="hover:underline">{SITE.TEL}</a></p>
+        : isTelSample(SITE.TEL)
+          ? <p>TEL: {SITE.TEL}（サンプル）</p>
+          : <p>電話相談は準備中です</p>}
+      {isConfigured(SITE.EMAIL) && (
+        <p>Mail: <a href={`mailto:${SITE.EMAIL}`} class="hover:underline">{SITE.EMAIL}</a></p>
+      )}
     </div>
+    <p class="mt-6 text-xs">&copy; {year} {SITE.COMPANY_NAME}</p>
   </div>
 </footer>
