@@ -35,6 +35,15 @@ const { Content } = await render(article);
         <Content />
       </div>
 
+      <!-- 読み終えた先に、相談とサービスの案内を置く -->
+      <div class="cta-panel mt-14" data-testid="article-cta">
+        <p class="font-heading font-bold text-ink-strong text-lg mb-4">付き添いについて、お気軽にご相談ください</p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a href="/contact" class="btn-solid min-h-[52px] px-4 sm:px-11 tracking-[0.04em]">付き添いについて相談する</a>
+          <a href="/service" class="btn-outline">サービス・料金を見る</a>
+        </div>
+      </div>
+
       <!-- Prev / Next -->
       <nav aria-label="前後の記事" class="mt-16 border-t border-rule pt-8 grid sm:grid-cols-2 gap-4 text-[1rem]">
         <div>
