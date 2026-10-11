@@ -626,7 +626,7 @@ test('top page has a fixed consult entry right below the slides', async ({ page 
   const secondary = page.getByTestId('consult-secondary');
   await expect(primary).toHaveText('相談フォームへ');
   await expect(primary).toHaveAttribute('href', '/contact');
-  await expect(secondary).toHaveAttribute('href', '/service#prices');
+  await expect(secondary).toHaveAttribute('href', '/service'); // 流れ・料金・ご利用例へのページ内リンクがある先頭へ
   expect((await primary.boundingBox())!.height).toBeGreaterThanOrEqual(52);
   const heroBox = await page.locator('#hero').boundingBox();
   const priBox = await primary.boundingBox();

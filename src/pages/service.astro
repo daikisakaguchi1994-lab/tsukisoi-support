@@ -34,8 +34,9 @@ const caseGroups = await getCasesByGenre();
     </nav>
 
     <!-- Flow -->
+    <div id="flow" class="scroll-mt-24"></div>
     <h2 class="font-heading text-xl md:text-2xl font-bold text-center border-[3px] border-base-alt outline outline-1 outline-rule py-5 mb-12 tracking-[0.12em]">ご利用の流れ</h2>
-    <ol class="mb-16 scroll-mt-24" id="flow">
+    <ol class="mb-16">
       {flow.map((f, i) => (
         <li class="step">
           <span class="step-badge" aria-hidden="true"><small>STEP</small><b>{i + 1}</b></span>
