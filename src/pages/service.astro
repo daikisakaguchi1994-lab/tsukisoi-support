@@ -13,9 +13,25 @@ const upcoming = [
 ];
 
 const flow = [
-  { title: 'ご相談', text: 'まずはフォームかお電話でご連絡ください。行き先や日時、手伝ってほしいことを伺います。', note: 'お会いしての事前打ち合わせには、別途料金がかかります。' },
+  { title: 'ご相談', text: 'まずはフォームかお電話でご連絡ください。行き先や日時、手伝ってほしいことを伺います。', note: 'お会いしての事前打ち合わせの料金は、準備中です。' },
   { title: 'お見積り', text: '伺った内容から費用をお出しします。金額にご了承いただいてから、日程を確定します。', note: '' },
   { title: '当日', text: 'お約束した日時に、打ち合わせた内容に沿ってスタッフが付き添います。', note: 'お支払いを後日にしたい方は、ご依頼の前にお知らせください。' },
+];
+
+// 相談のときに伺うこと（既存の「ご相談」「お見積り」の文面を整理したもの）
+const checks = [
+  { head: '行き先', text: '病院やお店など。日にちがまだ決まっていなくても大丈夫です。' },
+  { head: '日時', text: 'おおよその時間帯が分かれば、お知らせください。' },
+  { head: '必要なお手伝い', text: '歩き方や体調のこと、不安に思うことなど、分かる範囲で構いません。' },
+  { head: '費用の見積り', text: '伺った内容から費用をお出しします。ご了承いただいてから日程を確定します。' },
+];
+
+// 内容が確定するまで、断定せず「準備中」とする（対応範囲・追加費用の条件・家族への共有方法・医療的ケア）
+const pendingScope = [
+  '対応できる範囲のくわしい内容',
+  '上に載せた料金のほかに、費用がかかる場合の条件',
+  'ご家族への共有の具体的な方法（連絡の手段・頻度など）',
+  '医療的なケアについて',
 ];
 
 const caseGroups = await getCasesByGenre();
@@ -47,6 +63,15 @@ const caseGroups = await getCasesByGenre();
       ))}
     </ol>
 
+    <div class="mb-16 bg-base-alt border-l-4 border-accent px-5 py-5" data-testid="consult-checklist">
+      <h3 class="font-heading font-bold text-ink-strong text-lg mb-3">ご相談のときに伺うこと</h3>
+      <ul class="space-y-2">
+        {checks.map((c) => (
+          <li class="text-[17px] leading-loose [word-break:auto-phrase]"><b class="text-ink-strong mr-2">{c.head}</b>{c.text}</li>
+        ))}
+      </ul>
+    </div>
+
     <!-- Price -->
     <div id="prices" class="scroll-mt-24"></div>
     <SectionTitle class="mb-10">基本料金</SectionTitle>
@@ -75,16 +100,26 @@ const caseGroups = await getCasesByGenre();
         ))}
       </div>
       <p class="text-[1rem] text-ink-muted mt-3">表示はすべて税込です。</p>
+      <p class="text-[1rem] text-ink-muted mt-1 [word-break:auto-phrase]" data-testid="estimate-note">実際の金額は、ご相談のあとのお見積りでお知らせします。ご了承いただいてから日程を確定します。</p>
       <div class="text-center mt-10" data-testid="price-cta">
         <p class="mb-4 text-[17px] [word-break:auto-phrase]">料金や内容について、まずはお気軽にご相談ください。</p>
         <a href="/contact" class="btn-solid min-h-[52px]">相談フォームへ</a>
       </div>
     </div>
 
+    <!-- 準備中の項目（断定しない） -->
+    <section class="mb-16 border border-rule px-5 py-6" data-testid="pending-scope" aria-labelledby="pending-scope-title">
+      <h2 id="pending-scope-title" class="font-heading font-bold text-ink-strong text-lg mb-3">くわしい内容は準備中です</h2>
+      <p class="text-[17px] leading-loose mb-3 [word-break:auto-phrase]">次の内容は、まだ準備を進めています。確定するまでは、ご相談のときに個別にお伝えします。</p>
+      <ul class="list-disc pl-6 space-y-1 text-[17px] leading-loose">
+        {pendingScope.map((t) => <li>{t}</li>)}
+      </ul>
+    </section>
+
     <!-- Examples -->
     <div id="examples" class="scroll-mt-24"></div>
     <SectionTitle class="mb-4">ご利用例</SectionTitle>
-    <p class="text-[1rem] text-ink-muted mb-6">気になる場面を選ぶと、写真とくわしい内容が見られます（想定の場面で、実際のお客様の事例ではありません）。</p>
+    <p class="text-[1rem] text-ink-muted mb-6">気になる場面を選ぶと、写真とくわしい内容が見られます（想定の場面です）。</p>
     <div class="mb-8 space-y-5" data-testid="case-groups">
       {caseGroups.map((g) => (
         <div>

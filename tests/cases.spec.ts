@@ -10,7 +10,7 @@ test('there are 11 use cases in 4 genres, each with a detail page', async ({ pag
   await expect(page.locator('[data-case-card]')).toHaveCount(11);
   await expect(page.locator('[data-genre-section]')).toHaveCount(4);
   await expect(page.locator('[data-genre-link]')).toHaveCount(4);
-  await expect(page.getByTestId('case-disclaimer')).toContainText('実際のお客様の事例ではありません');
+  await expect(page.getByTestId('case-disclaimer')).toContainText('という想定の場面です');
 });
 
 test('genre navigation jumps to its section', async ({ page }) => {
@@ -23,7 +23,7 @@ for (const slug of SLUGS) {
   test(`case page ${slug}: heading, disclaimer, help list, price, two consult buttons`, async ({ page }) => {
     await page.goto(`/cases/${slug}`);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await expect(page.locator('figcaption')).toContainText('実際のお客様の事例ではありません');
+    await expect(page.locator('figcaption')).toContainText('想定のご利用例です');
     expect(await page.getByTestId('case-help').locator('li').count()).toBeGreaterThanOrEqual(3);
     await expect(page.locator('.price-body')).toContainText('円（税込）〜');
     for (const id of ['case-cta', 'case-cta-bottom']) {

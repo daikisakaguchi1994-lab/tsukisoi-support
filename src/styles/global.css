@@ -107,6 +107,7 @@ html {
 .article-body ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; }
 .article-body li { margin-bottom: 0.5rem; }
 .article-body strong { color: var(--color-ink-strong); }
+.article-body a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ===== 部品（参考サイトの作りに合わせた見出し・ボタン・料金表） ===== */
 @layer components {

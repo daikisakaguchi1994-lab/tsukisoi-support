@@ -389,6 +389,34 @@ test('pages use the heading bar and underlined titles', async ({ page }) => {
   await expect(page.locator('h2.heading-bar')).toHaveCount(2);
 });
 
+test('news list shows a small category label instead of an empty thumbnail', async ({ page }) => {
+  await page.goto('/news');
+  const items = page.getByTestId('news-item');
+  await expect(items).toHaveCount(ARTICLES.length);
+  for (const item of await items.all()) {
+    await expect(item.getByTestId('news-category')).not.toBeEmpty();
+    // 中身のない大きな枠（サムネイル）を置かない
+    expect(await item.locator('[class*="aspect-"]').count()).toBe(0);
+    const box = await item.getByTestId('news-category').boundingBox();
+    expect(box!.height).toBeLessThan(48);
+  }
+});
+
+test('pending wording: pre-meeting fee and family sharing are not stated as decided', async ({ page }) => {
+  await page.goto('/service');
+  const flowText = await page.locator('main').innerText();
+  expect(flowText).toContain('お会いしての事前打ち合わせの料金は、準備中です');
+  expect(flowText).not.toContain('別途料金がかかります');
+  for (const path of ['/', '/about']) {
+    await page.goto(path);
+    const text = await page.locator('body').innerText();
+    expect(text, path).not.toContain('ご家族にもお伝えします');
+    expect(text, path).not.toContain('ご家族にも当日の様子を共有');
+  }
+  await page.goto('/about');
+  await expect(page.locator('#policy ~ ul')).toContainText('共有のしかたは、準備中です');
+});
+
 // お知らせ・読み物（参考サイトの構成に合わせた一覧・記事ページ）
 test('news list shows every article, newest first', async ({ page }) => {
   await page.goto('/news');
@@ -414,8 +442,10 @@ for (const path of ARTICLES) {
 test('about and links show preparing notices while details are unset', async ({ page }) => {
   await page.goto('/about');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('私たちについて');
-  await expect(page.locator('main')).toContainText('お名前は準備中です');
-  await expect(page.locator('main').getByText('準備中です', { exact: true })).toHaveCount(2);
+  // 代表者の欄は、写真・名前・資格・経歴の4つの「準備中」を並べず、1つの短い表示にまとめる
+  await expect(page.getByTestId('profile-pending')).toContainText('準備中です');
+  await expect(page.locator('main').getByText('準備中です', { exact: true })).toHaveCount(0);
+  await expect(page.locator('main').getByRole('img', { name: '写真は準備中です' })).toHaveCount(0);
   await page.goto('/links');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('関連リンク');
   await expect(page.locator('main a[target="_blank"]')).toHaveCount(0);
@@ -687,4 +717,71 @@ test('intro note text is readable, not white on a light box', async ({ page }) =
   await page.goto('/');
   const color = await page.locator('#intro .border-accent p').last().evaluate((el) => getComputedStyle(el).color);
   expect(color).not.toBe('rgb(255, 255, 255)');
+});
+
+// バッチ D: 相談時に伺うことの整理と、対応範囲などの未確定事項は断定しない
+test('service page lists what is asked at the consultation and the estimate rule near the prices', async ({ page }) => {
+  await page.goto('/service');
+  const box = page.getByTestId('consult-checklist');
+  for (const word of ['行き先', '日時', '必要なお手伝い', '費用の見積り']) await expect(box).toContainText(word);
+  await expect(page.getByTestId('estimate-note')).toContainText('ご了承いただいてから日程を確定します');
+  const list = await page.getByTestId('price-list').boundingBox();
+  const note = await page.getByTestId('estimate-note').boundingBox();
+  expect(note!.y).toBeGreaterThan(list!.y);
+  expect(note!.y).toBeLessThan(list!.y + list!.height);
+});
+
+test('scope, extra-fee terms, family sharing and medical care stay pending and are not asserted', async ({ page }) => {
+  await page.goto('/service');
+  const box = page.getByTestId('pending-scope');
+  await expect(box).toContainText('準備中');
+  for (const word of ['対応できる範囲', '料金のほかに、費用がかかる場合の条件', 'ご家族への共有の具体的な方法', '医療的なケア']) await expect(box).toContainText(word);
+  // 既に決まっているとも読める言い方（「追加費用はかかりません」「ご家族に必ず共有」など）にしない
+  const text = await box.innerText();
+  for (const word of ['かかりません', '無料', '必ず', 'いつでも', 'すべて対応']) expect(text, word).not.toContain(word);
+  // 医療的ケアなどを「できる」と読める言い回しをサイト全体で書かない
+  const CAN_DO = ['医療行為を行', '医療的ケアに対応', '医療的なケアに対応', '医療的ケアも', '医療的なケアも', '医療行為も', '看護', '介護保険'];
+  for (const path of PAGES) {
+    await page.goto(path);
+    const text = await page.locator('body').innerText();
+    for (const word of CAN_DO) expect(text, `${path} ${word}`).not.toContain(word);
+  }
+});
+
+test('dead ends lead on: articles, preparing pages, privacy and 404 each offer a next step', async ({ page }) => {
+  for (const path of ARTICLES) {
+    await page.goto(path);
+    // このビルドは受付前（送信キーのみ・受付開始フラグなし）。「相談してください」と促さず、準備中と伝える
+    const cta = page.getByTestId('article-cta');
+    await expect(cta).toContainText('ご相談の受付は準備中です');
+    await expect(cta).not.toContainText('付き添いについて相談する');
+    await expect(cta.getByRole('link', { name: 'サービス・料金を見る' })).toHaveAttribute('href', '/service');
+    await expect(cta.getByRole('link', { name: '受付の状況を見る' })).toHaveAttribute('href', '/contact');
+  }
+  await page.goto('/links');
+  await expect(page.locator('main').getByRole('link', { name: 'サービス・料金を見る' })).toHaveAttribute('href', '/service');
+  await page.goto('/privacy');
+  await expect(page.locator('main').getByRole('link', { name: '相談フォームに戻る' })).toHaveAttribute('href', '/contact');
+  await page.goto('/this-page-does-not-exist');
+  await expect(page.locator('main').getByRole('link', { name: 'サービス・料金を見る' })).toHaveAttribute('href', '/service');
+  // 送信完了・個人情報の取り扱いに、強い営業の誘導（料金・相談の大きな案内）を足さない
+  await page.goto('/thanks');
+  await expect(page.locator('main').getByRole('link', { name: '相談フォームへ' })).toHaveCount(0);
+});
+
+test('preparing notice links price and flow to the real sections, and the targets exist', async ({ page }) => {
+  await page.goto('/news/preparing-website');
+  const body = page.locator('.article-body');
+  for (const [name, href] of [['基本料金', '/service#prices'], ['ご利用の流れ', '/service#flow'], ['相談フォーム', '/contact']] as const) {
+    await expect(body.getByRole('link', { name }), name).toHaveAttribute('href', href);
+  }
+  await page.goto('/service');
+  for (const hash of ['prices', 'flow']) await expect(page.locator(`#${hash}`)).toHaveCount(1);
+});
+
+test('article consult button stays on one line at 320px', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto('/news/preparing-website');
+  const box = await page.getByTestId('article-cta').locator('.btn-solid').boundingBox();
+  expect(box!.height).toBeLessThan(60);
 });

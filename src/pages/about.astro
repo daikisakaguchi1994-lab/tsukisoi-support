@@ -16,7 +16,7 @@ const hasProfile = Boolean(profile.name);
 const policies = [
   { title: 'ご本人のペースを大切に', text: '急がせず、できることはご本人にお任せし、必要なところだけをお手伝いします。' },
   { title: '「大丈夫」を一緒に確かめる', text: '段差や待ち時間など、不安に思うことを出かける前に一緒に確認します。' },
-  { title: 'ご家族にも安心を', text: '当日の様子は、ご希望に応じてご家族にもお伝えします。' },
+  { title: 'ご家族にも安心を', text: 'ご家族の不安にも耳を傾けます。当日の様子の共有のしかたは、準備中です。' },
 ];
 ---
 <Layout title="私たちについて" description={`${SITE.SERVICE_NAME}の考え方と、代表者のご紹介です。`} crumbs={[{ label: '私たちについて' }]}>
@@ -40,11 +40,13 @@ const policies = [
 
     <!-- Profile -->
     <SectionTitle class="mb-8">代表者のご紹介</SectionTitle>
+    {hasProfile ? (
+    <>
     <div class="flex flex-col items-center text-center mb-10">
       <div class="w-40 h-52 bg-base-alt border border-rule flex items-center justify-center text-ink-muted text-[1rem] mb-4" role="img" aria-label="写真は準備中です">
         写真 準備中
       </div>
-      <p class="font-heading text-lg font-bold text-ink-strong">{hasProfile ? profile.name : 'お名前は準備中です'}</p>
+      <p class="font-heading text-lg font-bold text-ink-strong">{profile.name}</p>
     </div>
 
     <div class="grid md:grid-cols-2 gap-8 mb-4">
@@ -65,6 +67,10 @@ const policies = [
         )}
       </div>
     </div>
+    </>
+    ) : (
+      <p class="text-center text-[17px] leading-loose text-ink-muted [word-break:auto-phrase] mb-4" data-testid="profile-pending">お名前・写真・保有資格・経験は、準備中です。</p>
+    )}
   </div>
   <ContactBlock />
 </Layout>

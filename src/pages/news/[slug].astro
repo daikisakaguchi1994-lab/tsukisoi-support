@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection, render } from 'astro:content';
 import { formatDate, isoDate } from '../../utils/date';
+import { isFormOpen } from '../../config';
 
 export async function getStaticPaths() {
   const articles = (await getCollection('news')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
@@ -18,6 +19,8 @@ export async function getStaticPaths() {
 
 const { article, newer, older, related } = Astro.props;
 const { Content } = await render(article);
+// 受付前は「相談してください」と促さない（相談フォームは公開準備中）。受付開始は PUBLIC_FORM_OPEN=1（利用者の判断）
+const formReady = isFormOpen(import.meta.env.PUBLIC_FORM_KEY || '', import.meta.env.PUBLIC_FORM_OPEN);
 ---
 <Layout title={article.data.title} description={article.data.summary} crumbs={[{ label: 'お知らせ・読み物', href: '/news' }, { label: article.data.title }]}>
   <div>
@@ -33,6 +36,28 @@ const { Content } = await render(article);
 
       <div class="article-body">
         <Content />
+      </div>
+
+      <!-- 読み終えた先に、相談とサービスの案内を置く -->
+      <div class="cta-panel mt-14" data-testid="article-cta">
+        {formReady ? (
+          <>
+            <p class="font-heading font-bold text-ink-strong text-lg mb-4">付き添いについて、お気軽にご相談ください</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+              <a href="/contact" class="btn-solid min-h-[52px] px-4 sm:px-11 tracking-[0.04em]">付き添いについて相談する</a>
+              <a href="/service" class="btn-outline">サービス・料金を見る</a>
+            </div>
+          </>
+        ) : (
+          <>
+            <p class="font-heading font-bold text-ink-strong text-lg mb-2">ご相談の受付は準備中です</p>
+            <p class="text-[1rem] text-ink-muted mb-4 [word-break:auto-phrase]">受付を始めるまで、サービスと料金をご覧ください。</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+              <a href="/service" class="btn-solid min-h-[52px] px-4 sm:px-11 tracking-[0.04em]">サービス・料金を見る</a>
+              <a href="/contact" class="btn-outline">受付の状況を見る</a>
+            </div>
+          </>
+        )}
       </div>
 
       <!-- Prev / Next -->
