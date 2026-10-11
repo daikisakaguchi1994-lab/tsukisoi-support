@@ -227,7 +227,7 @@ test('service page follows the reference layout: 3 steps, price blocks, usage ch
   await expect(page.getByRole('heading', { level: 2, name: 'ご利用例' })).toBeVisible();
   await expect(page.locator('.chip')).toHaveCount(11); // ご利用例11件（src/content/cases）
   await expect(page.locator('.chip').first()).toHaveAttribute('href', /^\/cases\//);
-  await expect(page.getByRole('navigation', { name: 'パンくずリスト' })).toContainText('サービス');
+  await expect(page.getByRole('navigation', { name: 'パンくずリスト' })).toContainText('サービス・料金');
 });
 
 // トップは参考サイトと同じ順番: 全面スライド → 導入 → お知らせ → 6つの特徴 → 旅行の手配 → 電話
@@ -596,4 +596,95 @@ test('hero says the images are illustrative, right below the photo', async ({ pa
     expect(Math.abs(box.y - (hero.y + hero.height))).toBeLessThanOrEqual(2);
     expect(parseFloat(await note.evaluate((el) => getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(14);
   }
+});
+
+// バッチ C: 相談の入口とページ内の近道
+test('navigation uses the consult-oriented names on every page', async ({ page }) => {
+  expect(NAV_ITEMS.map((i) => i.label)).toEqual(['ホーム', 'サービス・料金', 'お知らせ', '私たちについて', '関連リンク', '相談フォーム']);
+  for (const path of ['/', '/service', '/contact']) {
+    await page.goto(path);
+    const nav = page.getByRole('navigation', { name: 'メインナビゲーション' });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await expect(nav.getByRole('link', { name: 'サービス・料金' })).toBeVisible();
+    await expect(nav.getByRole('link', { name: '相談フォーム' })).toBeVisible();
+    await expect(page.locator('body')).not.toContainText('お問合せ');
+  }
+  await page.goto('/contact');
+  await expect(page.getByRole('navigation', { name: 'パンくずリスト' })).toContainText('相談フォーム');
+});
+
+test('english nav labels are decorative and hidden from assistive technology', async ({ page }) => {
+  await page.goto('/');
+  const labels = page.getByRole('navigation', { name: 'メインナビゲーション' }).locator('[aria-hidden="true"]');
+  await expect(labels).toHaveCount(NAV_ITEMS.length);
+});
+
+test('top page has a fixed consult entry right below the slides', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const primary = page.getByTestId('consult-primary');
+  const secondary = page.getByTestId('consult-secondary');
+  await expect(primary).toHaveText('相談フォームへ');
+  await expect(primary).toHaveAttribute('href', '/contact');
+  await expect(secondary).toHaveAttribute('href', '/service#prices');
+  expect((await primary.boundingBox())!.height).toBeGreaterThanOrEqual(52);
+  const heroBox = await page.locator('#hero').boundingBox();
+  const priBox = await primary.boundingBox();
+  expect(priBox!.y).toBeGreaterThan(heroBox!.y + heroBox!.height);
+  // 画面下の固定帯は再導入しない
+  await expect(page.locator('[data-mobile-fixed-bar]')).toHaveCount(0);
+});
+
+test('shortcuts to prices, flow and policy point at existing anchors', async ({ page }) => {
+  await page.goto('/');
+  const links = page.getByTestId('top-shortcuts').getByRole('link');
+  await expect(links).toHaveCount(3);
+  for (let i = 0; i < 3; i++) {
+    const href = (await links.nth(i).getAttribute('href'))!;
+    const [pathname, hash] = href.split('#');
+    await page.goto(pathname);
+    await expect(page.locator(`#${hash}`), href).toHaveCount(1);
+    await page.goto('/');
+  }
+  // 操作領域は高さ44px以上
+  for (let i = 0; i < 3; i++) expect((await links.nth(i).boundingBox())!.height).toBeGreaterThanOrEqual(44);
+});
+
+test('service page has in-page links and a consult button right after the price table', async ({ page }) => {
+  await page.goto('/service');
+  const toc = page.getByTestId('service-toc').getByRole('link');
+  await expect(toc).toHaveCount(3);
+  for (const hash of ['flow', 'prices', 'examples']) await expect(page.locator(`#${hash}`)).toHaveCount(1);
+  const cta = page.getByTestId('price-cta').getByRole('link', { name: '相談フォームへ' });
+  await expect(cta).toHaveAttribute('href', '/contact');
+  const list = await page.getByTestId('price-list').boundingBox();
+  const ctaBox = await cta.boundingBox();
+  expect(ctaBox!.y).toBeGreaterThan(list!.y);
+  expect(ctaBox!.y).toBeLessThan(list!.y + list!.height);
+  expect(ctaBox!.height).toBeGreaterThanOrEqual(52);
+});
+
+test('mobile menu puts the consult item first; footer links are tall enough', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/service');
+  await page.locator('#menu-toggle').click();
+  const first = page.locator('#mobile-menu a').first();
+  await expect(first).toContainText('相談フォーム');
+  const footerLinks = page.getByRole('navigation', { name: 'フッターナビゲーション' }).getByRole('link');
+  const n = await footerLinks.count();
+  for (let i = 0; i < n; i++) expect((await footerLinks.nth(i).boundingBox())!.height).toBeGreaterThanOrEqual(44);
+});
+
+// `text-base` は文字サイズではなく、色（--color-base = 白）になる。本文が白抜きで消える事故を防ぐ。16px にしたいときは `text-[1rem]`
+test('does not use the text-base class (it paints text white, not 16px)', () => {
+  const walk = (dir: string): string[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(`${dir}/${e.name}`) : [`${dir}/${e.name}`]));
+  const offenders = walk('src').filter((f) => /\.(astro|css|ts)$/.test(f) && /(^|[\s"'`:])text-base(?![\w-])/.test(readFileSync(f, 'utf8')));
+  expect(offenders).toEqual([]);
+});
+
+test('intro note text is readable, not white on a light box', async ({ page }) => {
+  await page.goto('/');
+  const color = await page.locator('#intro .border-accent p').last().evaluate((el) => getComputedStyle(el).color);
+  expect(color).not.toBe('rgb(255, 255, 255)');
 });

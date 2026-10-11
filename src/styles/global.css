@@ -30,7 +30,7 @@
 
 html {
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.8;
   letter-spacing: 0.02em;
   color: var(--color-ink);
@@ -39,6 +39,8 @@ html {
 }
 
 @layer base {
+  /* 本文は17px。html は16pxのまま（rem の基準を変えない） */
+  body { font-size: 1.0625rem; }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     color: var(--color-ink-strong);

@@ -35,7 +35,7 @@ const consult = `/contact?case=${item.id}#contact-form`;
           ? <img src={img} alt="" class="absolute inset-0 w-full h-full object-cover" />
           : <span class="absolute inset-0 flex items-center justify-center px-6 text-center font-heading font-bold text-white text-2xl md:text-3xl [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]" aria-hidden="true">{d.title}</span>}
       </div>
-      <figcaption class="text-base text-ink-muted mt-2">{img ? '画像はイメージです。' : '写真は準備中です。'}想定のご利用例で、実際のお客様の事例ではありません。手を添えるなど、お手伝いの範囲は事前のご相談でご確認ください。</figcaption>
+      <figcaption class="text-[1rem] text-ink-muted mt-2">{img ? '画像はイメージです。' : '写真は準備中です。'}想定のご利用例で、実際のお客様の事例ではありません。手を添えるなど、お手伝いの範囲は事前のご相談でご確認ください。</figcaption>
     </figure>
 
     <p class="text-[1.0625rem] leading-loose [word-break:auto-phrase] my-8">{d.summary}</p>
@@ -59,7 +59,7 @@ const consult = `/contact?case=${item.id}#contact-form`;
     <div class="cta-panel mb-14" data-testid="case-cta">
       <p class="font-heading font-bold text-ink-strong text-lg mb-4">このような付き添いをご希望ですか</p>
       <a href={consult} class="btn-solid" data-case-cta>この内容で相談する</a>
-      <p class="text-base text-ink-muted mt-4 [word-break:auto-phrase]">行き先や日時が決まっていなくても大丈夫です。フォームには、この場面の名前が自動で入ります。</p>
+      <p class="text-[1rem] text-ink-muted mt-4 [word-break:auto-phrase]">行き先や日時が決まっていなくても大丈夫です。フォームには、この場面の名前が自動で入ります。</p>
     </div>
 
     <SectionTitle class="is-left mb-6">料金の目安</SectionTitle>
@@ -69,11 +69,11 @@ const consult = `/contact?case=${item.id}#contact-form`;
         {price.lines.map((l) => (
           <p class="font-bold text-ink-strong">{l.label && <span class="mr-3">{l.label}</span>}{l.price}</p>
         ))}
-        <p class="text-base text-ink-muted mt-1">※{price.note}</p>
+        <p class="text-[1rem] text-ink-muted mt-1">※{price.note}</p>
       </div>
     </div>
-    <p class="text-base text-ink-muted leading-loose [word-break:auto-phrase] mb-2">正確な金額は、ご相談のあとの見積りでお知らせします。ご了承いただいてから日程を確定します。</p>
-    <p class="text-base mb-12"><a href="/service#prices" class="text-accent underline">料金の一覧を見る</a>　<a href="/service#flow" class="text-accent underline">ご利用の流れを見る</a></p>
+    <p class="text-[1rem] text-ink-muted leading-loose [word-break:auto-phrase] mb-2">正確な金額は、ご相談のあとの見積りでお知らせします。ご了承いただいてから日程を確定します。</p>
+    <p class="text-[1rem] mb-12"><a href="/service#prices" class="text-accent underline">料金の一覧を見る</a>　<a href="/service#flow" class="text-accent underline">ご利用の流れを見る</a></p>
 
     {related.length > 0 && (
       <section class="mb-14">

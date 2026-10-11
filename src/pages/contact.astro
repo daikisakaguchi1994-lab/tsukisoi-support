@@ -18,9 +18,9 @@ const kinds = ['通院・お買い物などの付き添い', '旅行の付き添
 // 返信方法に LINE は出さない。LINE の識別子の受け取り方・返信手順が決まるまで（確定後も、その手順を決めてから足す）
 const methods = ['電話', 'メール'];
 ---
-<Layout title="お問い合わせ" description={`${SITE.SERVICE_NAME}へのお問い合わせ。相談フォームからお気軽にご連絡ください。`} crumbs={[{ label: 'お問合せ' }]}>
+<Layout title="相談フォーム" description={`${SITE.SERVICE_NAME}へのお問い合わせ。相談フォームからお気軽にご連絡ください。`} crumbs={[{ label: '相談フォーム' }]}>
   <div class="max-w-3xl mx-auto px-4 py-14 md:py-20">
-    <h1 class="sr-only">お問い合わせ</h1>
+    <h1 class="sr-only">相談フォーム</h1>
 
     <p class="leading-loose mb-4 [word-break:auto-phrase]">
       {formReady
@@ -39,8 +39,8 @@ const methods = ['電話', 'メール'];
       ) : (
         <p class="text-[1rem] leading-loose">電話相談は準備中です。公開までしばらくお待ちください。</p>
       )}
-      {telSample && <p class="text-base text-ink-muted mt-2">（サンプル。実際の番号は準備中です）</p>}
-      {(telConfigured || telSample) && SITE.TEL_HOURS && <p class="text-base text-ink-muted mt-2">{SITE.TEL_HOURS}</p>}
+      {telSample && <p class="text-[1rem] text-ink-muted mt-2">（サンプル。実際の番号は準備中です）</p>}
+      {(telConfigured || telSample) && SITE.TEL_HOURS && <p class="text-[1rem] text-ink-muted mt-2">{SITE.TEL_HOURS}</p>}
     </div>
 
     <!-- LINE -->
@@ -110,7 +110,7 @@ const methods = ['電話', 'メール'];
           <label for="email" class="block font-bold text-[1rem] mb-2">メールアドレス <span data-required-mark="email" class="text-red-700" hidden>*</span></label>
           <input type="email" id="email" name="email" autocomplete="email" aria-describedby="hint-contact err-email" class="field md:max-w-md" placeholder="example@email.com" />
           <p id="err-email" class="field-error" role="alert" hidden></p>
-          <p id="hint-contact" class="text-base text-ink-muted mt-2">ご希望の連絡方法に合わせて、電話番号またはメールアドレスをご入力ください。</p>
+          <p id="hint-contact" class="text-[1rem] text-ink-muted mt-2">ご希望の連絡方法に合わせて、電話番号またはメールアドレスをご入力ください。</p>
         </div>
 
         <fieldset>
@@ -130,7 +130,7 @@ const methods = ['電話', 'メール'];
           <textarea id="message" name="message" rows={6} aria-describedby="hint-message err-message" class="field"
             placeholder="例：来月、病院への通院に付き添ってほしい。"></textarea>
           <p id="err-message" class="field-error" role="alert" hidden></p>
-          <p id="hint-message" class="text-base text-ink-muted mt-2">わかる範囲で構いません。お体の状態など、詳しいことは後からお伺いします。</p>
+          <p id="hint-message" class="text-[1rem] text-ink-muted mt-2">わかる範囲で構いません。お体の状態など、詳しいことは後からお伺いします。</p>
         </div>
 
         <div>

@@ -52,9 +52,9 @@ export const isFormOpen = (key: string | undefined, openFlag: string | undefined
 // ヘッダー/フッター共通のナビゲーション
 export const NAV_ITEMS = [
   { label: 'ホーム', en: 'Home', href: '/' },
-  { label: 'サービス', en: 'Service', href: '/service' },
+  { label: 'サービス・料金', en: 'Service', href: '/service' },
   { label: 'お知らせ', en: 'News', href: '/news' },
   { label: '私たちについて', en: 'About', href: '/about' },
   { label: '関連リンク', en: 'Related Links', href: '/links' },
-  { label: 'お問合せ', en: 'Contact form', href: '/contact' },
+  { label: '相談フォーム', en: 'Contact form', href: '/contact' },
 ] as const;

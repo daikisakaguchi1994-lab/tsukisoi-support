@@ -28,7 +28,7 @@ const telSample = isTelSample(SITE.TEL);
         {telSample && <p class="text-sm text-ink-muted">{SITE.TEL_HOURS}</p>}
         {telConfigured && SITE.TEL_HOURS && <p class="text-sm text-ink-muted mt-2">{SITE.TEL_HOURS}</p>}
       </div>
-      <p class="text-base leading-loose [word-break:auto-phrase]">
+      <p class="text-[1rem] leading-loose [word-break:auto-phrase]">
         お付き添い中などで、すぐにお電話に出られないことがあります。つながらないときは、お問い合わせフォームからご連絡ください。内容を確認のうえ、折り返しご連絡します。
       </p>
     </div>
@@ -39,7 +39,7 @@ const telSample = isTelSample(SITE.TEL);
           LINEで友だち追加
         </a>
       )}
-      <a href="/contact" class="btn-solid">お問い合わせフォーム</a>
+      <a href="/contact" class="btn-solid min-h-[52px]">相談フォームへ</a>
     </div>
   </div>
 </section>

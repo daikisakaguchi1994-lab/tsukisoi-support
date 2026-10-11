@@ -7,6 +7,8 @@ interface Props {
 }
 const { overlay = false } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+// スマホのメニューは、相談の入口を先頭に置く
+const mobileItems = [...NAV_ITEMS].sort((a, b) => Number(b.href === '/contact') - Number(a.href === '/contact'));
 const isCurrent = (href: string) => (href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`));
 ---
 <header
@@ -48,6 +50,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path === href
           class:list={[
             'group text-center leading-tight px-4 pt-2 pb-3 border-b-2 transition-colors',
             isCurrent(item.href) ? 'border-white' : 'border-transparent hover:border-white/60',
+            item.href === '/contact' && 'bg-white/15 ml-3',
           ]}
         >
           <span class="block text-[17px] tracking-[0.08em]">{item.label}</span>
@@ -60,9 +63,9 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path === href
   <!-- Mobile Menu -->
   <nav id="mobile-menu" class="hidden md:hidden bg-deep border-t border-white/20" aria-label="モバイルナビゲーション">
     <div class="px-4 py-4">
-      {NAV_ITEMS.map((item) => (
-        <a href={item.href} class="flex items-baseline justify-between py-3 border-b border-white/15 last:border-b-0 text-white">
-          <span class="text-base tracking-wider">{item.label}</span>
+      {mobileItems.map((item) => (
+        <a href={item.href} class:list={['flex items-baseline justify-between py-3 border-b border-white/15 last:border-b-0 text-white', item.href === '/contact' && 'bg-white/15 px-3 -mx-3']}>
+          <span class="text-[1rem] tracking-wider">{item.label}</span>
           <span class="text-[11px] tracking-wider opacity-85" aria-hidden="true">{item.en}</span>
         </a>
       ))}
