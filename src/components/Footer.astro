@@ -11,21 +11,21 @@ const year = new Date().getFullYear();
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
         </a>
       )}
-      <a href="/contact" aria-label="お問い合わせ">
+      <a href="/contact" aria-label="相談フォーム">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18a1 1 0 011 1v.4l-10 6.3L2 6.4V6a1 1 0 011-1zm-1 3.7l9.5 6a1 1 0 001 0L22 8.7V18a1 1 0 01-1 1H3a1 1 0 01-1-1V8.7z" /></svg>
       </a>
     </div>
 
     <nav aria-label="フッターナビゲーション" class="mb-6">
-      <ul class="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm">
+      <ul class="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-center gap-x-6 gap-y-0 text-[1rem]">
         {NAV_ITEMS.map((item) => (
-          <li><a href={item.href} class="hover:underline">{item.label}</a></li>
+          <li><a href={item.href} class="inline-flex items-center min-h-[44px] hover:underline">{item.label}</a></li>
         ))}
-        <li><a href="/privacy" class="hover:underline">個人情報の取り扱い</a></li>
+        <li><a href="/privacy" class="inline-flex items-center min-h-[44px] hover:underline">個人情報の取り扱い</a></li>
       </ul>
     </nav>
 
-    <div class="text-sm space-y-1">
+    <div class="text-[1rem] space-y-1">
       <p class="font-bold tracking-widest">{SITE.COMPANY_NAME}</p>
       {isConfigured(SITE.ADDRESS) && <p>{SITE.ADDRESS}</p>}
       {isTelConfigured(SITE.TEL)
@@ -37,6 +37,6 @@ const year = new Date().getFullYear();
         <p>Mail: <a href={`mailto:${SITE.EMAIL}`} class="hover:underline">{SITE.EMAIL}</a></p>
       )}
     </div>
-    <p class="mt-6 text-xs">&copy; {year} {SITE.COMPANY_NAME}</p>
+    <p class="mt-6 text-sm">&copy; {year} {SITE.COMPANY_NAME}</p>
   </div>
 </footer>

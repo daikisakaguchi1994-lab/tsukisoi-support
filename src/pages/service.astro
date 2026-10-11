@@ -20,19 +20,29 @@ const flow = [
 
 const caseGroups = await getCasesByGenre();
 ---
-<Layout title="サービス" description={`${SITE.SERVICE_NAME}のサービス内容、料金、ご利用の流れのご案内です。`} crumbs={[{ label: 'サービス' }]}>
+<Layout title="サービス・料金" description={`${SITE.SERVICE_NAME}のサービス内容、料金、ご利用の流れのご案内です。`} crumbs={[{ label: 'サービス・料金' }]}>
   <div class="max-w-3xl mx-auto px-4 py-14 md:py-20">
-    <h1 class="sr-only">サービス</h1>
+    <h1 class="sr-only">サービス・料金</h1>
+
+    <!-- このページの内容（ページ内リンク） -->
+    <nav aria-label="このページの内容" class="mb-12" data-testid="service-toc">
+      <ul class="flex flex-col sm:flex-row sm:flex-wrap sm:justify-center gap-3">
+        <li><a href="#flow" class="btn-outline w-full sm:w-auto">ご利用の流れ</a></li>
+        <li><a href="#prices" class="btn-outline w-full sm:w-auto">基本料金</a></li>
+        <li><a href="#examples" class="btn-outline w-full sm:w-auto">ご利用例</a></li>
+      </ul>
+    </nav>
 
     <!-- Flow -->
+    <div id="flow" class="scroll-mt-24"></div>
     <h2 class="font-heading text-xl md:text-2xl font-bold text-center border-[3px] border-base-alt outline outline-1 outline-rule py-5 mb-12 tracking-[0.12em]">ご利用の流れ</h2>
-    <ol class="mb-16 scroll-mt-24" id="flow">
+    <ol class="mb-16">
       {flow.map((f, i) => (
         <li class="step">
           <span class="step-badge" aria-hidden="true"><small>STEP</small><b>{i + 1}</b></span>
           <h3 class="font-heading text-lg font-bold pt-2 mb-3 text-ink-strong">{f.title}</h3>
-          <p class="text-[15px] leading-loose [word-break:auto-phrase]">{f.text}</p>
-          {f.note && <p class="text-[15px] leading-loose [word-break:auto-phrase]">※{f.note}</p>}
+          <p class="text-[17px] leading-loose [word-break:auto-phrase]">{f.text}</p>
+          {f.note && <p class="text-[17px] leading-loose [word-break:auto-phrase]">※{f.note}</p>}
         </li>
       ))}
     </ol>
@@ -43,12 +53,12 @@ const caseGroups = await getCasesByGenre();
     <div class="mb-16" data-testid="price-list">
       {prices.map((p) => (
         <section>
-          <h3 class="price-head text-[15px]">▼ {p.head}</h3>
+          <h3 class="price-head text-[17px]">▼ {p.head}</h3>
           <div class="price-body">
             {p.lines.map((l) => (
               <p class="font-bold text-ink-strong">{l.label && <span class="mr-3">{l.label}</span>}{l.price}</p>
             ))}
-            <p class="text-sm text-ink-muted mt-1">※{p.note}</p>
+            <p class="text-[1rem] text-ink-muted mt-1">※{p.note}</p>
           </div>
         </section>
       ))}
@@ -56,20 +66,25 @@ const caseGroups = await getCasesByGenre();
       <div data-testid="upcoming-menu">
         {upcoming.map((u) => (
           <section>
-            <h3 class="price-head text-[15px]">▼ {u.head}</h3>
+            <h3 class="price-head text-[17px]">▼ {u.head}</h3>
             <div class="price-body flex flex-col sm:flex-row sm:items-center gap-3">
-              <p class="grow text-[15px] leading-loose [word-break:auto-phrase]">{u.text}</p>
-              <span class="shrink-0 self-start border border-rule bg-base-alt text-ink-muted font-bold text-sm px-4 py-1 rounded-full">準備中</span>
+              <p class="grow text-[17px] leading-loose [word-break:auto-phrase]">{u.text}</p>
+              <span class="shrink-0 self-start border border-rule bg-base-alt text-ink-muted font-bold text-[1rem] px-4 py-1 rounded-full">準備中</span>
             </div>
           </section>
         ))}
       </div>
-      <p class="text-sm text-ink-muted mt-3">表示はすべて税込です。</p>
+      <p class="text-[1rem] text-ink-muted mt-3">表示はすべて税込です。</p>
+      <div class="text-center mt-10" data-testid="price-cta">
+        <p class="mb-4 text-[17px] [word-break:auto-phrase]">料金や内容について、まずはお気軽にご相談ください。</p>
+        <a href="/contact" class="btn-solid min-h-[52px]">相談フォームへ</a>
+      </div>
     </div>
 
     <!-- Examples -->
+    <div id="examples" class="scroll-mt-24"></div>
     <SectionTitle class="mb-4">ご利用例</SectionTitle>
-    <p class="text-sm text-ink-muted mb-6">気になる場面を選ぶと、写真とくわしい内容が見られます（想定の場面で、実際のお客様の事例ではありません）。</p>
+    <p class="text-[1rem] text-ink-muted mb-6">気になる場面を選ぶと、写真とくわしい内容が見られます（想定の場面で、実際のお客様の事例ではありません）。</p>
     <div class="mb-8 space-y-5" data-testid="case-groups">
       {caseGroups.map((g) => (
         <div>
@@ -83,7 +98,7 @@ const caseGroups = await getCasesByGenre();
     <p class="mb-12"><a href="/cases" class="btn-outline">ご利用例をすべて見る</a></p>
 
     <div class="text-center">
-      <a href="/contact" class="btn-solid">お問い合わせはこちら</a>
+      <a href="/contact" class="btn-solid min-h-[52px]">相談フォームへ</a>
     </div>
   </div>
 </Layout>

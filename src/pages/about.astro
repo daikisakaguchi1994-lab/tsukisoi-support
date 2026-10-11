@@ -22,17 +22,18 @@ const policies = [
 <Layout title="私たちについて" description={`${SITE.SERVICE_NAME}の考え方と、代表者のご紹介です。`} crumbs={[{ label: '私たちについて' }]}>
   <div class="max-w-3xl mx-auto px-4 py-14 md:py-20">
     <PageTitle class="mb-12">私たちについて</PageTitle>
-    <p class="text-center leading-loose mb-14 text-[15px] [word-break:auto-phrase]">
+    <p class="text-center leading-loose mb-14 text-[17px] [word-break:auto-phrase]">
       {SITE.SERVICE_NAME}が大切にしていることと、代表者のご紹介です。
     </p>
 
     <!-- Policy -->
+    <div id="policy" class="scroll-mt-24"></div>
     <SectionTitle class="mb-8">大切にしていること</SectionTitle>
     <ul class="grid md:grid-cols-3 gap-6 mb-16">
       {policies.map((p) => (
         <li class="border border-rule p-5">
-          <h3 class="font-heading font-bold text-ink-strong mb-2 text-[15px]"><span class="marker">{p.title}</span></h3>
-          <p class="text-sm leading-loose">{p.text}</p>
+          <h3 class="font-heading font-bold text-ink-strong mb-2 text-[17px]"><span class="marker">{p.title}</span></h3>
+          <p class="text-[1rem] leading-loose">{p.text}</p>
         </li>
       ))}
     </ul>
@@ -40,7 +41,7 @@ const policies = [
     <!-- Profile -->
     <SectionTitle class="mb-8">代表者のご紹介</SectionTitle>
     <div class="flex flex-col items-center text-center mb-10">
-      <div class="w-40 h-52 bg-base-alt border border-rule flex items-center justify-center text-ink-muted text-sm mb-4" role="img" aria-label="写真は準備中です">
+      <div class="w-40 h-52 bg-base-alt border border-rule flex items-center justify-center text-ink-muted text-[1rem] mb-4" role="img" aria-label="写真は準備中です">
         写真 準備中
       </div>
       <p class="font-heading text-lg font-bold text-ink-strong">{hasProfile ? profile.name : 'お名前は準備中です'}</p>
@@ -50,17 +51,17 @@ const policies = [
       <div>
         <h3 class="title-line is-left font-heading font-bold text-ink-strong mb-4">保有資格</h3>
         {profile.qualifications.length > 0 ? (
-          <ul class="list-disc pl-6 text-[15px]">{profile.qualifications.map((q) => <li>{q}</li>)}</ul>
+          <ul class="list-disc pl-6 text-[17px]">{profile.qualifications.map((q) => <li>{q}</li>)}</ul>
         ) : (
-          <p class="text-sm text-ink-muted">準備中です</p>
+          <p class="text-[1rem] text-ink-muted">準備中です</p>
         )}
       </div>
       <div>
         <h3 class="title-line is-left font-heading font-bold text-ink-strong mb-4">経験・経歴</h3>
         {profile.career.length > 0 ? (
-          <ul class="list-disc pl-6 text-[15px]">{profile.career.map((c) => <li>{c}</li>)}</ul>
+          <ul class="list-disc pl-6 text-[17px]">{profile.career.map((c) => <li>{c}</li>)}</ul>
         ) : (
-          <p class="text-sm text-ink-muted">準備中です</p>
+          <p class="text-[1rem] text-ink-muted">準備中です</p>
         )}
       </div>
     </div>

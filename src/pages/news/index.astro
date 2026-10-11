@@ -14,15 +14,15 @@ const articles = (await getCollection('news')).sort((a, b) => b.data.date.valueO
     <ul class="max-w-2xl mx-auto border-t border-rule">
       {articles.map((a) => (
         <li class="border-b border-rule">
-          <a href={`/news/${a.id}`} class="group grid grid-cols-[7.5rem_1fr] sm:grid-cols-[13rem_1fr] gap-4 sm:gap-6 py-6 items-start">
+          <a href={`/news/${a.id}`} class="group grid grid-cols-[6.5rem_minmax(0,1fr)] sm:grid-cols-[13rem_1fr] gap-4 sm:gap-6 py-6 items-start">
             <span class="relative block aspect-[8/5] bg-mist overflow-hidden" aria-hidden="true">
-              <span class="absolute left-2 top-2 bg-deep text-white text-[11px] font-bold tracking-wider px-3 py-0.5 rounded-full">{a.data.category}</span>
+              <span class="absolute left-1.5 top-1.5 bg-deep text-white text-sm font-bold sm:tracking-wider px-2 sm:px-3 py-0.5 rounded-full whitespace-nowrap">{a.data.category}</span>
             </span>
             <span class="block">
-              <h2 class="font-heading font-bold text-base sm:text-lg text-ink-strong leading-snug group-hover:text-accent">{a.data.title}</h2>
-              <time datetime={isoDate(a.data.date)} class="block text-xs text-ink-muted mt-2">{formatDate(a.data.date)}</time>
-              <span class="hidden sm:block text-sm mt-2 text-ink">{a.data.summary}</span>
-              <span class="hidden sm:inline-block mt-3 border border-rule rounded-full px-8 py-1 text-xs tracking-[0.15em] text-ink-muted group-hover:border-accent group-hover:text-accent" aria-hidden="true">READ MORE »</span>
+              <h2 class="font-heading font-bold text-[1rem] sm:text-lg text-ink-strong leading-snug group-hover:text-accent">{a.data.title}</h2>
+              <time datetime={isoDate(a.data.date)} class="block text-sm text-ink-muted mt-2">{formatDate(a.data.date)}</time>
+              <span class="hidden sm:block text-[1rem] mt-2 text-ink">{a.data.summary}</span>
+              <span class="hidden sm:inline-block mt-3 border border-rule rounded-full px-8 py-1 text-sm tracking-[0.15em] text-ink-muted group-hover:border-accent group-hover:text-accent" aria-hidden="true">READ MORE »</span>
             </span>
           </a>
         </li>

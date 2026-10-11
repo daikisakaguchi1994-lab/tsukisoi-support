@@ -31,7 +31,7 @@
 html {
   font-family: var(--font-body);
   font-size: 16px;
-  line-height: 1.95;
+  line-height: 1.8;
   letter-spacing: 0.02em;
   color: var(--color-ink);
   background-color: var(--color-base);
@@ -39,6 +39,8 @@ html {
 }
 
 @layer base {
+  /* 本文は17px。html は16pxのまま（rem の基準を変えない） */
+  body { font-size: 1.0625rem; }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     color: var(--color-ink-strong);
@@ -161,7 +163,7 @@ html {
     border-radius: 999px;
     background: #fff;
     color: var(--color-accent);
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 700;
     letter-spacing: 0.12em;
     transition: background-color var(--motion-color) var(--motion-ease), color var(--motion-color) var(--motion-ease);
@@ -317,7 +319,7 @@ html {
     letter-spacing: 0.06em;
     transition: background-color var(--motion-color) var(--motion-ease), color var(--motion-color) var(--motion-ease);
   }
-  .chip-count { font-size: 0.8125rem; background: var(--color-mist-strong); color: var(--color-deep); border-radius: 999px; padding: 0 0.6rem; min-width: 1.6rem; text-align: center; }
+  .chip-count { font-size: 0.875rem; background: var(--color-mist-strong); color: var(--color-deep); border-radius: 999px; padding: 0 0.6rem; min-width: 1.6rem; text-align: center; }
   .chip-link:active { background: var(--color-deep); color: #fff; transition-duration: var(--motion-press); }
   @media (hover: hover) {
     .chip-link:hover { background: var(--color-deep); color: #fff; }
@@ -333,7 +335,7 @@ html {
   }
   .case-card-media { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; }
   .case-card-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 1rem; text-align: center; color: #fff; font-family: var(--font-heading); font-weight: 700; font-size: 1.25rem; text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35); }
-  .case-card-genre { position: absolute; left: 0.6rem; top: 0.6rem; background: var(--color-deep); color: #fff; font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.06em; padding: 0.1rem 0.8rem; border-radius: 999px; }
+  .case-card-genre { position: absolute; left: 0.6rem; top: 0.6rem; background: var(--color-deep); color: #fff; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.06em; padding: 0.1rem 0.8rem; border-radius: 999px; }
   .case-card-more { display: inline-block; margin-top: 0.9rem; color: var(--color-accent); font-weight: 700; letter-spacing: 0.08em; }
   .case-card-more::after { content: ' ›'; }
   .case-card:active { background: var(--color-base-alt); }

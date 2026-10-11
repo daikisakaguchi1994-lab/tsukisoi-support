@@ -53,7 +53,7 @@ const sections = [
   <div class="max-w-3xl mx-auto px-4 py-14 md:py-20">
     <PageTitle class="mb-10">個人情報の取り扱い</PageTitle>
 
-    <div data-testid="privacy-draft-notice" class="bg-base-alt border-l-4 border-accent px-5 py-4 mb-12 text-sm leading-relaxed">
+    <div data-testid="privacy-draft-notice" class="bg-base-alt border-l-4 border-accent px-5 py-4 mb-12 text-[1rem] leading-relaxed">
       <p class="font-bold text-ink-strong mb-1">雛形・要確認</p>
       <p>このページは雛形です。正式な文面は公開前に確認が必要です。</p>
     </div>
@@ -62,16 +62,16 @@ const sections = [
       {sections.map((s) => (
         <section>
           <SectionTitle tag="h2" class="is-left mb-4 !text-lg">{s.title}</SectionTitle>
-          {s.body.map((t) => <p class="leading-loose text-[15px] [word-break:auto-phrase] mb-2">{t}</p>)}
+          {s.body.map((t) => <p class="leading-loose text-[17px] [word-break:auto-phrase] mb-2">{t}</p>)}
         </section>
       ))}
 
       <section>
         <SectionTitle tag="h2" class="is-left mb-4 !text-lg">8. 窓口</SectionTitle>
-        <p class="leading-loose text-[15px]">{SITE.COMPANY_NAME}</p>
+        <p class="leading-loose text-[17px]">{SITE.COMPANY_NAME}</p>
         {isConfigured(SITE.EMAIL)
-          ? <p class="leading-loose text-[15px]">メール: <a href={`mailto:${SITE.EMAIL}`} class="text-accent underline">{SITE.EMAIL}</a></p>
-          : <p class="leading-loose text-[15px] text-ink-muted">窓口の連絡先は準備中です。当面は<a href="/contact" class="text-accent underline">お問い合わせフォーム</a>からご連絡ください。</p>}
+          ? <p class="leading-loose text-[17px]">メール: <a href={`mailto:${SITE.EMAIL}`} class="text-accent underline">{SITE.EMAIL}</a></p>
+          : <p class="leading-loose text-[17px] text-ink-muted">窓口の連絡先は準備中です。当面は<a href="/contact" class="text-accent underline">お問い合わせフォーム</a>からご連絡ください。</p>}
       </section>
     </div>
   </div>
