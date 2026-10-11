@@ -1,12 +1,12 @@
 # つきそいサポート ホームページ — 作業の約束事
 
-Astro 7 + Tailwind 4 の静的サイト。ホスティングは Cloudflare Workers（静的アセット）へ移行中（`docs/CLOUDFLARE.md`。`wrangler.jsonc`、`npx wrangler deploy`）。Git 連携の切り替えが済むまで Vercel も残る。
+Astro 7 + Tailwind 4 の静的サイト。ホスティングは Cloudflare Workers（静的アセット）。Git 連携済みで、`master` へのマージで自動ビルド・デプロイされる（`docs/CLOUDFLARE.md`。`wrangler.jsonc`、`npx wrangler deploy`）。Vercel は Git 連携を外した（2026-10-11。プロジェクトは残してある）。
 このファイルは新しいセッションが最初に読む前提。ここに書いた方針はセッションをまたいで守る。
 
 ## 0. セッション開始時（利用者の説明がなくても、ここから始める）
 
 1. `docs/HANDOFF.md`（現在地・次にやること）を読み、`git log -5` / `git status` と合っているか確かめる。
-2. 目的・成果の基準は `docs/PROJECT.md`、進め方・Codex の使い分け・完了の定義は `docs/WORKFLOW.md`、決定の履歴は `docs/DECISIONS.md`。必要なときだけ読む（毎回全部は読まない）。ホスティングの Cloudflare への移行は `docs/CLOUDFLARE.md`（バッチ A の後に実施する決定。移行する場合、サンプル表示の安全装置が `VERCEL_ENV` に依存している点に注意）。
+2. 目的・成果の基準は `docs/PROJECT.md`、進め方・Codex の使い分け・完了の定義は `docs/WORKFLOW.md`、決定の履歴は `docs/DECISIONS.md`。必要なときだけ読む（毎回全部は読まない）。Cloudflare の設定と移行の経緯は `docs/CLOUDFLARE.md`。
 3. HANDOFF の「次にやること」から着手する。Codex の結果が画像で添付されていたら先に読む。目的や方針が決まらないときだけ利用者に聞く。
 
 ## 1. 公開前の安全方針（崩したら重大）
@@ -16,8 +16,8 @@ Astro 7 + Tailwind 4 の静的サイト。ホスティングは Cloudflare Worke
 - **サンプル表示（完成イメージ確認用）**: `PUBLIC_SAMPLE_PREVIEW=1` でビルドしたときだけ、未確定の連絡先を `src/config.sample.ts` の架空の値（電話 `03-0000-0000`、`example.com` など）で補い、全ページ上部に「サンプル表示中（連絡先は仮のものです）」の帯を出す。
   - `src/config.ts` の本来の値は書き換えない。確定した値は `config.ts` に入れる（サンプルは確定済みの値を上書きしない）。
   - サンプルの電話は文字で見せるだけで `tel:` リンクにしない（`isTelConfigured` は偽のまま）。`noindex, nofollow` と `SITE.PUBLISHED = false` は維持。JSON-LD にもサンプルの住所・受付時間は入れない。
-  - **安全装置は既定拒否**（2026-10-11）: `PUBLIC_SAMPLE_PREVIEW=1` だけでは有効にならず、`PUBLIC_DEPLOY_TARGET=preview`（または Vercel の Preview / Development）も必要。Cloudflare の本番ビルドには `PUBLIC_SAMPLE_PREVIEW` も `PUBLIC_DEPLOY_TARGET` も設定しない。サンプルを見せるときは、本番とは別の Worker（別名）にだけ設定する。
-  - Vercel では **Preview 環境にだけ**環境変数を設定する（Settings → Environment Variables → 環境で Preview のみにチェック）。Production には設定しない。誤って入れても、`VERCEL_ENV=production` のビルドでは無効になる（`isSamplePreview`）。
+  - **安全装置は既定拒否**（2026-10-11）: `PUBLIC_SAMPLE_PREVIEW=1` だけでは有効にならず、`PUBLIC_DEPLOY_TARGET=preview`も必要（Vercel の Preview / Development でも有効だが、Vercel は Git 連携を外したため、いまは使わない）。Cloudflare の本番ビルドには `PUBLIC_SAMPLE_PREVIEW` も `PUBLIC_DEPLOY_TARGET` も設定しない。サンプルを見せるときは、本番とは別の Worker（別名）にだけ設定する。
+  - Cloudflare の本番 Worker（Workers Builds のビルド変数）には、サンプル用の変数を一切設定しない。（参考: Vercel を使い直す場合は Preview 環境にだけ設定する。`VERCEL_ENV=production` のビルドでは無効になる（`isSamplePreview`）。）
 - 福祉タクシー（道路運送法の許可）や旅行手配（旅行業・旅行サービス手配業の登録）は、取得を確認するまで「取得済み」と読める書き方をしない。通常の提供メニュー・料金としても載せず、`service.astro` の「準備中のメニュー」に料金なしで置く。確認できたら `prices` へ移す。
 - 旅行の「付き添い」と「手配」は別物として書く。手配（交通・宿泊の予約など）は準備中。
 - 画面下に固定していた電話・LINE の帯（MobileFixedBar）は、参考サイトに無いため 2026-10-10 に外した。
@@ -48,7 +48,7 @@ Astro 7 + Tailwind 4 の静的サイト。ホスティングは Cloudflare Worke
 ## 3-2. 公開前に残る確認事項
 
 - 電話番号・住所・LINE・Instagram・メール・受付時間の**実際の値の確定**（`src/config.ts`）。サンプル表示（`config.sample.ts`）は確認用で、公開用の値ではない。
-- お問い合わせフォームの送信キー `PUBLIC_FORM_KEY`（未設定のままでは送信できない。キーがあっても `PUBLIC_FORM_OPEN=1` を足すまで「公開準備中」の表示のまま（受付開始は利用者の判断）。実送信の確認は Preview で両方を設定して行う。Vercel の環境変数に設定し、コードには書かない）。
+- お問い合わせフォームの送信キー `PUBLIC_FORM_KEY`（未設定のままでは送信できない。キーがあっても `PUBLIC_FORM_OPEN=1` を足すまで「公開準備中」の表示のまま（受付開始は利用者の判断）。実送信の確認は、本番とは別の確認用の環境で両方を設定して行う。Cloudflare の Workers Builds のビルド変数に設定し、コードには書かない。登録済み・2026-10-11）。
 - 個人情報の取り扱いページ（`/privacy`）は雛形。「雛形・要確認」の表示を、正式な文面に差し替えるまで外さない（取得する情報・委託先・窓口を実態に合わせて確認）。
 - 福祉タクシーの許可・旅行手配の登録の取得状況。
 - 参考サイトとの本文照合は 2026-10-10 に実施済み（`scripts/compare-reference.py`）。料金表下の注記とご利用の流れが言い換え程度だったため書き直した。文章を足したら再実行する。

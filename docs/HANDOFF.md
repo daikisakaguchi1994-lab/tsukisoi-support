@@ -19,7 +19,7 @@
 - 検証（マージ時）: `astro check` 0 errors、Playwright 192件成功。Codex 監査: バッチ A（段階 2・再監査済み）、Cloudflare（段階 2）、ご利用例（段階 1・指摘4件修正済み）。
 - `SITE.PUBLISHED = false`（全ページ noindex）のまま。公開判断は含まない。
 - 未決（利用者）: 手を添える・腕を支える写真が「身体介助の対応」と読まれるか。今は注記「お手伝いの範囲は事前のご相談でご確認ください」で進める。対応範囲が決まったら文言か写真を見直す（DECISIONS 参照）。
-- Cloudflare: https://tsukisoi-support.tsukisoi-support.workers.dev に手動デプロイ済み。残りは `docs/CLOUDFLARE.md` の「進捗」の未了4点（利用者の操作が要る）。
+- Cloudflare: https://tsukisoi-support.tsukisoi-support.workers.dev。2026-10-11 に利用者が Workers Builds の Git 連携（①）と `PUBLIC_FORM_KEY` の登録（②）、ビルド成功を確認し、Vercel の Git 連携を外した（③）。workers.dev は全ページ noindex・tel リンクなし・サンプル値なし・フォーム「公開準備中」を読み取りで確認済み。CLAUDE.md・PROJECT.md の Vercel 記述は Cloudflare 向けに直した（PR `claude/docs-cloudflare`）。残りは④公開時の独自ドメインと `astro.config.mjs` の `site`（公開判断の後）。
 - 画像生成の手順はスキル `codex-image-pipeline`。旧写真の退避先は DECISIONS 参照。
 - Codex は読み取り専用で build/test を完走できない（Playwright 実行は検証不要と指示する。所要は約20分）。呼ぶときは `-m gpt-5.6-sol`。
 
