@@ -17,6 +17,7 @@ const img = caseImage(id);
       : <span class="case-card-fallback">{title}</span>}
     <span class="case-card-genre">{genre}</span>
   </span>
+  {img && <span class="block bg-base-alt text-ink-muted text-sm px-4 py-1" data-testid="case-card-note">画像はイメージです</span>}
   <span class="block px-4 pt-4 pb-5">
     <span class="block font-heading font-bold text-[1.125rem] text-ink-strong leading-snug [word-break:auto-phrase]">{title}</span>
     <span class="block text-[1rem] leading-relaxed mt-2 text-ink [word-break:auto-phrase]">{summary}</span>

@@ -119,3 +119,26 @@ test('no horizontal scroll on case pages at 320px', async ({ page }) => {
     expect(over, path).toBeLessThanOrEqual(0);
   }
 });
+
+// Codex 監査（段階 1）の指摘: 一覧の各写真の直下にも「画像はイメージです」、手を添える写真で身体介助と読ませない、URL の境界値
+test('every photo card on the list says the image is illustrative, and the range of help is left to consultation', async ({ page }) => {
+  await page.goto('/cases');
+  await expect(page.getByTestId('case-card-note')).toHaveCount(11);
+  await expect(page.getByTestId('case-disclaimer')).toContainText('お手伝いの範囲は、事前のご相談でご確認ください');
+  await page.goto('/cases/hoji-hakamairi');
+  await expect(page.locator('figcaption')).toContainText('お手伝いの範囲は事前のご相談でご確認ください');
+});
+
+test('case summaries do not promise results', async ({ page }) => {
+  await page.goto('/cases');
+  const text = await page.locator('main').innerText();
+  for (const phrase of ['楽しめます', 'ができます', '大丈夫になります']) expect(text, phrase).not.toContain(phrase);
+});
+
+test('inherited property names in the case parameter are ignored by the contact form', async ({ page }) => {
+  for (const name of ['__proto__', 'constructor', 'toString', 'hasOwnProperty']) {
+    await page.goto(`/contact?case=${name}`);
+    await expect(page.getByTestId('case-from')).toBeHidden();
+    await expect(page.locator('#message')).toHaveValue('');
+  }
+});

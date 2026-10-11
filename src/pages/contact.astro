@@ -173,7 +173,9 @@ const methods = ['電話', 'メール'];
   // ご利用例から来たとき: 種類を選び、冒頭の一文を入れる（すでに書いてあれば上書きしない）
   const slug = new URLSearchParams(location.search).get('case');
   const mapText = document.getElementById('case-map')?.textContent;
-  const picked = slug && mapText ? (JSON.parse(mapText) as Record<string, { title: string; kind: string }>)[slug] : undefined;
+  const caseData = mapText ? (JSON.parse(mapText) as Record<string, { title: string; kind: string }>) : {};
+  // __proto__ など継承されたプロパティを拾わないよう、自分の持つキーだけを許可する
+  const picked = slug && Object.hasOwn(caseData, slug) ? caseData[slug] : undefined;
   if (picked && form) {
     const radio = [...form.querySelectorAll<HTMLInputElement>('[name="inquiry_kind"]')].find((r) => r.value === picked.kind);
     if (radio) radio.checked = true;
