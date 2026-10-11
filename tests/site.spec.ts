@@ -389,6 +389,34 @@ test('pages use the heading bar and underlined titles', async ({ page }) => {
   await expect(page.locator('h2.heading-bar')).toHaveCount(2);
 });
 
+test('news list shows a small category label instead of an empty thumbnail', async ({ page }) => {
+  await page.goto('/news');
+  const items = page.getByTestId('news-item');
+  await expect(items).toHaveCount(ARTICLES.length);
+  for (const item of await items.all()) {
+    await expect(item.getByTestId('news-category')).not.toBeEmpty();
+    // 中身のない大きな枠（サムネイル）を置かない
+    expect(await item.locator('[class*="aspect-"]').count()).toBe(0);
+    const box = await item.getByTestId('news-category').boundingBox();
+    expect(box!.height).toBeLessThan(48);
+  }
+});
+
+test('pending wording: pre-meeting fee and family sharing are not stated as decided', async ({ page }) => {
+  await page.goto('/service');
+  const flowText = await page.locator('main').innerText();
+  expect(flowText).toContain('お会いしての事前打ち合わせの料金は、準備中です');
+  expect(flowText).not.toContain('別途料金がかかります');
+  for (const path of ['/', '/about']) {
+    await page.goto(path);
+    const text = await page.locator('body').innerText();
+    expect(text, path).not.toContain('ご家族にもお伝えします');
+    expect(text, path).not.toContain('ご家族にも当日の様子を共有');
+  }
+  await page.goto('/about');
+  await expect(page.locator('#policy ~ ul')).toContainText('共有のしかたは、準備中です');
+});
+
 // お知らせ・読み物（参考サイトの構成に合わせた一覧・記事ページ）
 test('news list shows every article, newest first', async ({ page }) => {
   await page.goto('/news');
