@@ -133,3 +133,13 @@ test('form is open only when both the key and the open flag are set', async ({ p
   await expect(page.locator('a[href="#contact-form"]').first()).toBeVisible();
   await expect(page.locator('main')).not.toContainText('公開準備中');
 });
+
+// 受付開始（キー＋PUBLIC_FORM_OPEN=1）のときだけ、記事末尾が相談を促す。受付前は site.spec.ts が準備中の表示を固定している
+for (const path of ARTICLES) {
+  test(`article ends with a consult button when the form is open: ${path}`, async ({ page }) => {
+    await page.goto(path);
+    const cta = page.getByTestId('article-cta');
+    await expect(cta.getByRole('link', { name: '付き添いについて相談する' })).toHaveAttribute('href', '/contact');
+    await expect(cta).not.toContainText('受付は準備中です');
+  });
+}

@@ -707,7 +707,10 @@ test('scope, extra-fee terms, family sharing and medical care stay pending and a
   await page.goto('/service');
   const box = page.getByTestId('pending-scope');
   await expect(box).toContainText('準備中');
-  for (const word of ['対応できる範囲', '追加の費用', 'ご家族への共有', '医療的なケア']) await expect(box).toContainText(word);
+  for (const word of ['対応できる範囲', '料金のほかに、費用がかかる場合の条件', 'ご家族への共有の具体的な方法', '医療的なケア']) await expect(box).toContainText(word);
+  // 既に決まっているとも読める言い方（「追加費用はかかりません」「ご家族に必ず共有」など）にしない
+  const text = await box.innerText();
+  for (const word of ['かかりません', '無料', '必ず', 'いつでも', 'すべて対応']) expect(text, word).not.toContain(word);
   // 医療的ケアなどを「できる」と読める言い回しをサイト全体で書かない
   const CAN_DO = ['医療行為を行', '医療的ケアに対応', '医療的なケアに対応', '医療的ケアも', '医療的なケアも', '医療行為も', '看護', '介護保険'];
   for (const path of PAGES) {
@@ -720,9 +723,12 @@ test('scope, extra-fee terms, family sharing and medical care stay pending and a
 test('dead ends lead on: articles, preparing pages, privacy and 404 each offer a next step', async ({ page }) => {
   for (const path of ARTICLES) {
     await page.goto(path);
+    // このビルドは受付前（送信キーのみ・受付開始フラグなし）。「相談してください」と促さず、準備中と伝える
     const cta = page.getByTestId('article-cta');
-    await expect(cta.getByRole('link', { name: '付き添いについて相談する' })).toHaveAttribute('href', '/contact');
+    await expect(cta).toContainText('ご相談の受付は準備中です');
+    await expect(cta).not.toContainText('付き添いについて相談する');
     await expect(cta.getByRole('link', { name: 'サービス・料金を見る' })).toHaveAttribute('href', '/service');
+    await expect(cta.getByRole('link', { name: '受付の状況を見る' })).toHaveAttribute('href', '/contact');
   }
   await page.goto('/links');
   await expect(page.locator('main').getByRole('link', { name: 'サービス・料金を見る' })).toHaveAttribute('href', '/service');
@@ -748,6 +754,6 @@ test('preparing notice links price and flow to the real sections, and the target
 test('article consult button stays on one line at 320px', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 800 });
   await page.goto('/news/preparing-website');
-  const box = await page.getByRole('link', { name: '付き添いについて相談する' }).boundingBox();
+  const box = await page.getByTestId('article-cta').locator('.btn-solid').boundingBox();
   expect(box!.height).toBeLessThan(60);
 });
