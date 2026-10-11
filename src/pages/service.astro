@@ -31,8 +31,8 @@ const caseGroups = await getCasesByGenre();
         <li class="step">
           <span class="step-badge" aria-hidden="true"><small>STEP</small><b>{i + 1}</b></span>
           <h3 class="font-heading text-lg font-bold pt-2 mb-3 text-ink-strong">{f.title}</h3>
-          <p class="text-[15px] leading-loose [word-break:auto-phrase]">{f.text}</p>
-          {f.note && <p class="text-[15px] leading-loose [word-break:auto-phrase]">※{f.note}</p>}
+          <p class="text-[17px] leading-loose [word-break:auto-phrase]">{f.text}</p>
+          {f.note && <p class="text-[17px] leading-loose [word-break:auto-phrase]">※{f.note}</p>}
         </li>
       ))}
     </ol>
@@ -43,12 +43,12 @@ const caseGroups = await getCasesByGenre();
     <div class="mb-16" data-testid="price-list">
       {prices.map((p) => (
         <section>
-          <h3 class="price-head text-[15px]">▼ {p.head}</h3>
+          <h3 class="price-head text-[17px]">▼ {p.head}</h3>
           <div class="price-body">
             {p.lines.map((l) => (
               <p class="font-bold text-ink-strong">{l.label && <span class="mr-3">{l.label}</span>}{l.price}</p>
             ))}
-            <p class="text-sm text-ink-muted mt-1">※{p.note}</p>
+            <p class="text-base text-ink-muted mt-1">※{p.note}</p>
           </div>
         </section>
       ))}
@@ -56,20 +56,20 @@ const caseGroups = await getCasesByGenre();
       <div data-testid="upcoming-menu">
         {upcoming.map((u) => (
           <section>
-            <h3 class="price-head text-[15px]">▼ {u.head}</h3>
+            <h3 class="price-head text-[17px]">▼ {u.head}</h3>
             <div class="price-body flex flex-col sm:flex-row sm:items-center gap-3">
-              <p class="grow text-[15px] leading-loose [word-break:auto-phrase]">{u.text}</p>
-              <span class="shrink-0 self-start border border-rule bg-base-alt text-ink-muted font-bold text-sm px-4 py-1 rounded-full">準備中</span>
+              <p class="grow text-[17px] leading-loose [word-break:auto-phrase]">{u.text}</p>
+              <span class="shrink-0 self-start border border-rule bg-base-alt text-ink-muted font-bold text-base px-4 py-1 rounded-full">準備中</span>
             </div>
           </section>
         ))}
       </div>
-      <p class="text-sm text-ink-muted mt-3">表示はすべて税込です。</p>
+      <p class="text-base text-ink-muted mt-3">表示はすべて税込です。</p>
     </div>
 
     <!-- Examples -->
     <SectionTitle class="mb-4">ご利用例</SectionTitle>
-    <p class="text-sm text-ink-muted mb-6">気になる場面を選ぶと、写真とくわしい内容が見られます（想定の場面で、実際のお客様の事例ではありません）。</p>
+    <p class="text-base text-ink-muted mb-6">気になる場面を選ぶと、写真とくわしい内容が見られます（想定の場面で、実際のお客様の事例ではありません）。</p>
     <div class="mb-8 space-y-5" data-testid="case-groups">
       {caseGroups.map((g) => (
         <div>

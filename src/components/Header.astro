@@ -50,8 +50,8 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path === href
             isCurrent(item.href) ? 'border-white' : 'border-transparent hover:border-white/60',
           ]}
         >
-          <span class="block text-[15px] tracking-[0.08em]">{item.label}</span>
-          <span class="block text-[10px] tracking-wider opacity-85">{item.en}</span>
+          <span class="block text-[17px] tracking-[0.08em]">{item.label}</span>
+          <span class="block text-[11px] tracking-wider opacity-85" aria-hidden="true">{item.en}</span>
         </a>
       ))}
     </nav>
@@ -63,7 +63,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path === href
       {NAV_ITEMS.map((item) => (
         <a href={item.href} class="flex items-baseline justify-between py-3 border-b border-white/15 last:border-b-0 text-white">
           <span class="text-base tracking-wider">{item.label}</span>
-          <span class="text-[11px] tracking-wider opacity-85">{item.en}</span>
+          <span class="text-[11px] tracking-wider opacity-85" aria-hidden="true">{item.en}</span>
         </a>
       ))}
     </div>

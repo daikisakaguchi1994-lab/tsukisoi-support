@@ -46,7 +46,7 @@ const slides = [
     </div>
   ))}
 
-  <a href="#intro" class="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center text-sm tracking-[0.3em] text-white" aria-label="下へスクロール" data-scroll-cue>
+  <a href="#intro" class="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center text-base tracking-[0.3em] text-white" aria-label="下へスクロール" data-scroll-cue>
     <svg class="w-4 h-4 mb-1 motion-safe:animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-scroll-chevron><path d="M6 7l6 6 6-6M6 13l6 6 6-6" /></svg>
     <span class="block">Scroll</span>
   </a>
@@ -72,7 +72,7 @@ const slides = [
   </button>
 </section>
 <!-- 生成AIの画像。実在の利用者・スタッフの写真と読めないように、写真の直下に明記する（CLAUDE.md 3）。写真の上は操作部品で混み合うので外に置く -->
-<p class="bg-base-alt text-ink-muted text-sm text-right px-4 py-1" data-testid="hero-image-note">画像はイメージです</p>
+<p class="bg-base-alt text-ink-muted text-base text-right px-4 py-1" data-testid="hero-image-note">画像はイメージです</p>
 
 <script>
   const slides = Array.from(document.querySelectorAll<HTMLElement>('[data-slide]'));

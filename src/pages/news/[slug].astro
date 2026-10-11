@@ -25,8 +25,8 @@ const { Content } = await render(article);
 
       <header class="mb-10">
         <div class="flex items-center gap-3 mb-3">
-          <a href="/news" class="bg-deep text-white text-[11px] font-bold tracking-wider px-3 py-0.5 rounded-full">{article.data.category}</a>
-          <time datetime={isoDate(article.data.date)} class="text-sm text-ink-muted">{formatDate(article.data.date)}</time>
+          <a href="/news" class="bg-deep text-white text-sm font-bold tracking-wider px-3 py-0.5 rounded-full">{article.data.category}</a>
+          <time datetime={isoDate(article.data.date)} class="text-base text-ink-muted">{formatDate(article.data.date)}</time>
         </div>
         <h1 class="font-heading text-2xl md:text-4xl font-bold text-ink-strong leading-snug">{article.data.title}</h1>
       </header>
@@ -36,11 +36,11 @@ const { Content } = await render(article);
       </div>
 
       <!-- Prev / Next -->
-      <nav aria-label="前後の記事" class="mt-16 border-t border-rule pt-8 grid sm:grid-cols-2 gap-4 text-sm">
+      <nav aria-label="前後の記事" class="mt-16 border-t border-rule pt-8 grid sm:grid-cols-2 gap-4 text-base">
         <div>
           {newer && (
             <a href={`/news/${newer.id}`} class="block hover:text-accent">
-              <span class="block text-xs text-ink-muted">← 新しい記事</span>
+              <span class="block text-sm text-ink-muted">← 新しい記事</span>
               {newer.data.title}
             </a>
           )}
@@ -48,7 +48,7 @@ const { Content } = await render(article);
         <div class="sm:text-right">
           {older && (
             <a href={`/news/${older.id}`} class="block hover:text-accent">
-              <span class="block text-xs text-ink-muted">古い記事 →</span>
+              <span class="block text-sm text-ink-muted">古い記事 →</span>
               {older.data.title}
             </a>
           )}
@@ -63,7 +63,7 @@ const { Content } = await render(article);
             {related.map((r) => (
               <li>
                 <a href={`/news/${r.id}`} class="block border border-rule p-4 hover:border-accent">
-                  <time datetime={isoDate(r.data.date)} class="text-xs text-ink-muted">{formatDate(r.data.date)}</time>
+                  <time datetime={isoDate(r.data.date)} class="text-sm text-ink-muted">{formatDate(r.data.date)}</time>
                   <span class="block font-bold text-ink-strong">{r.data.title}</span>
                 </a>
               </li>

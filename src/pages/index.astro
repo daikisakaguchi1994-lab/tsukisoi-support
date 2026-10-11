@@ -41,13 +41,13 @@ const news = (await getCollection('news'))
             </div>
           </LogoImage>
         </div>
-        <div class="leading-loose text-[15px] [word-break:auto-phrase] space-y-4">
+        <div class="leading-loose text-[17px] [word-break:auto-phrase] space-y-4">
           <p>{SITE.SERVICE_NAME}は、お出かけに付き添うサービスです。通院やお買い物、旅行まで、ひとりでは不安な外出にスタッフが寄り添います。</p>
           <p>年齢や体調、お住まいに関わらず、まずはお話をお聞かせください。ご希望を伺ったうえで、できることを一緒に考えます。</p>
         </div>
       </div>
 
-      <div class="bg-base-alt border-l-4 border-accent px-5 py-4 text-sm leading-loose">
+      <div class="bg-base-alt border-l-4 border-accent px-5 py-4 text-base leading-loose">
         <p class="font-bold mb-1"><span class="marker">付き添い（つきそい）</span>とは？</p>
         <p>行き先まで同行し、移動や手続きをそばで手伝うことです。ひとりで出かけるのが心細いとき、安心して外出できるようお手伝いします。</p>
       </div>
@@ -63,8 +63,8 @@ const news = (await getCollection('news'))
         {news.map((n) => (
           <li class="border-b border-rule/80">
             <a href={`/news/${n.id}`} class="block py-3 hover:text-accent">
-              <span class="block text-[15px]">{n.data.title}</span>
-              <time datetime={isoDate(n.data.date)} class="block text-xs text-ink-muted">{formatDate(n.data.date)}</time>
+              <span class="block text-[17px]">{n.data.title}</span>
+              <time datetime={isoDate(n.data.date)} class="block text-sm text-ink-muted">{formatDate(n.data.date)}</time>
             </a>
           </li>
         ))}
@@ -84,7 +84,7 @@ const news = (await getCollection('news'))
         {features.map((f, i) => (
           <li class="text-center">
             <FeatureIcon name={f.icon} />
-            <p class="mt-4 text-sm md:text-[15px] leading-snug [word-break:auto-phrase]">
+            <p class="mt-4 text-base md:text-[17px] leading-snug [word-break:auto-phrase]">
               <span class="marker"><span aria-hidden="true">{i + 1} </span>{f.label}</span>
             </p>
           </li>
@@ -100,7 +100,7 @@ const news = (await getCollection('news'))
   <section id="travel" class="pb-16 scroll-mt-4">
     <div class="max-w-3xl mx-auto px-4">
       <SectionTitle variant="bar" class="mb-8">旅行の手配について</SectionTitle>
-      <p class="leading-loose text-[15px] mb-6 [word-break:auto-phrase]">
+      <p class="leading-loose text-[17px] mb-6 [word-break:auto-phrase]">
         旅行の付き添いとは別に、交通・宿泊の予約などの手配も検討しています。必要な登録などの確認が済み次第、こちらでご案内します。
       </p>
       <div class="text-center">

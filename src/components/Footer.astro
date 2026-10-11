@@ -17,15 +17,15 @@ const year = new Date().getFullYear();
     </div>
 
     <nav aria-label="フッターナビゲーション" class="mb-6">
-      <ul class="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm">
+      <ul class="flex flex-wrap justify-center gap-x-6 gap-y-0 text-base">
         {NAV_ITEMS.map((item) => (
-          <li><a href={item.href} class="hover:underline">{item.label}</a></li>
+          <li><a href={item.href} class="inline-flex items-center min-h-[44px] hover:underline">{item.label}</a></li>
         ))}
-        <li><a href="/privacy" class="hover:underline">個人情報の取り扱い</a></li>
+        <li><a href="/privacy" class="inline-flex items-center min-h-[44px] hover:underline">個人情報の取り扱い</a></li>
       </ul>
     </nav>
 
-    <div class="text-sm space-y-1">
+    <div class="text-base space-y-1">
       <p class="font-bold tracking-widest">{SITE.COMPANY_NAME}</p>
       {isConfigured(SITE.ADDRESS) && <p>{SITE.ADDRESS}</p>}
       {isTelConfigured(SITE.TEL)
@@ -37,6 +37,6 @@ const year = new Date().getFullYear();
         <p>Mail: <a href={`mailto:${SITE.EMAIL}`} class="hover:underline">{SITE.EMAIL}</a></p>
       )}
     </div>
-    <p class="mt-6 text-xs">&copy; {year} {SITE.COMPANY_NAME}</p>
+    <p class="mt-6 text-sm">&copy; {year} {SITE.COMPANY_NAME}</p>
   </div>
 </footer>
